@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class MailSendLog {
     private String msgId;
-    private Integer empId;
+    private String empId;
     //0 消息投递中   1 投递成功   2投递失败
     private Integer status;
     private String routeKey;
@@ -22,11 +22,11 @@ public class MailSendLog {
         this.msgId = msgId;
     }
 
-    public Integer getEmpId() {
+    public String getEmpId() {
         return empId;
     }
 
-    public void setEmpId(Integer empId) {
+    public void setEmpId(String empId) {
         this.empId = empId;
     }
 

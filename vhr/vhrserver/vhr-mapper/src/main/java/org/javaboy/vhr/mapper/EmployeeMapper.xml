@@ -161,8 +161,20 @@
         <if test="emp.posId !=null">
             and e.posId =#{emp.posId}
         </if>
+        <if test="emp.wedlock !=null and emp.wedlock!=''">
+            and e.wedlock =#{emp.wedlock}
+        </if>
+        <if test="emp.tiptopDegree !=null and emp.tiptopDegree!=''">
+            and e.tiptopDegree =#{emp.tiptopDegree}
+        </if>
+        <if test="emp.fertilityStatus !=null and emp.fertilityStatus!=''">
+            and e.fertilityStatus =#{emp.fertilityStatus}
+        </if>
         <if test="beginDateScope !=null">
             and e.beginDate between #{beginDateScope[0]} and #{beginDateScope[1]}
+        </if>
+        <if test="ageScope !=null">
+            and e.birthday between date_sub(now(), interval #{ageScope[1]} year) and date_sub(now(), interval #{ageScope[0]} year)
         </if>
         <if test="page !=null and size!=null">
             limit #{page},#{size}
@@ -193,9 +205,21 @@
                 <if test="emp.posId !=null">
                     and e.posId =#{emp.posId}
                 </if>
+                <if test="emp.wedlock !=null and emp.wedlock!=''">
+                    and e.wedlock =#{emp.wedlock}
+                </if>
+                <if test="emp.tiptopDegree !=null and emp.tiptopDegree!=''">
+                    and e.tiptopDegree =#{emp.tiptopDegree}
+                </if>
+                <if test="emp.fertilityStatus !=null and emp.fertilityStatus!=''">
+                    and e.fertilityStatus =#{emp.fertilityStatus}
+                </if>
             </if>
             <if test="beginDateScope !=null">
                 and e.beginDate between #{beginDateScope[0]} and #{beginDateScope[1]}
+            </if>
+            <if test="ageScope !=null">
+                and e.birthday between date_sub(now(), interval #{ageScope[1]} year) and date_sub(now(), interval #{ageScope[0]} year)
             </if>
         </where>
     </select>

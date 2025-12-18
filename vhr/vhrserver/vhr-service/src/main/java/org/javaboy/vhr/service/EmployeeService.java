@@ -45,12 +45,12 @@ public class EmployeeService {
     SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
     DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
-    public RespPageBean getEmployeeByPage(Integer page, Integer size, Employee employee, Date[] beginDateScope) {
+    public RespPageBean getEmployeeByPage(Integer page, Integer size, Employee employee, Date[] beginDateScope, Integer[] ageScope) {
         if (page != null && size != null) {
             page = (page - 1) * size;
         }
-        List<Employee> data = employeeMapper.getEmployeeByPage(page, size, employee, beginDateScope);
-        Long total = employeeMapper.getTotal(employee, beginDateScope);
+        List<Employee> data = employeeMapper.getEmployeeByPage(page, size, employee, beginDateScope, ageScope);
+        Long total = employeeMapper.getTotal(employee, beginDateScope, ageScope);
         RespPageBean bean = new RespPageBean();
         bean.setData(data);
         bean.setTotal(total);
@@ -72,22 +72,10 @@ public class EmployeeService {
             mailSendLog.setCreateTime(new Date());
             mailSendLog.setExchange(MailConstants.MAIL_EXCHANGE_NAME);
             mailSendLog.setRouteKey(MailConstants.MAIL_ROUTING_KEY_NAME);
-            mailSendLog.setEmpId(Integer.valueOf(emp.getIdCard())); // Note: MailSendLog likely uses Integer empId. This is a problem if DB schema changes.
-            // Assuming MailSendLog.empId is still Integer. If we dropped Employee.id, we have a mismatch.
-            // But user said "Delete original primary key", so Employee.id is gone. 
-            // MailSendLog.empId references Employee.id. If we change Employee PK to idCard (String), we must update MailSendLog too.
-            // For now, I will comment out MailLog logic to prevent compilation error if getId() is missing, or change it if I can.
-            // Since I removed getId(), this will fail compilation.
-            // I should update MailSendLog to use String empId or just disable mail log for now as it's outside scope of "Basic Info Import".
-            // However, compilation failure breaks everything.
-            // I'll comment out the rabbitTemplate part for now or fix MailSendLog.
-            // Fix: setEmpId takes Integer. I can't pass String.
-            // I will comment out the mail sending part to ensure stability of the requested feature.
-            /*
+            mailSendLog.setEmpId(emp.getIdCard());
             mailSendLog.setTryTime(new Date(System.currentTimeMillis() + 1000 * 60 * MailConstants.MSG_TIMEOUT));
             mailSendLogService.insert(mailSendLog);
             rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME, MailConstants.MAIL_ROUTING_KEY_NAME, emp, new CorrelationData(msgId));
-            */
         }
         return result;
     }
@@ -146,7 +134,7 @@ public class EmployeeService {
         List<Employee> list = employeeMapper.getEmployeeByPageWithSalary(page, size);
         RespPageBean respPageBean = new RespPageBean();
         respPageBean.setData(list);
-        respPageBean.setTotal(employeeMapper.getTotal(null, null));
+        respPageBean.setTotal(employeeMapper.getTotal(null, null,null));
         return respPageBean;
     }
 

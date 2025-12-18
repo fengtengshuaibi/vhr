@@ -189,7 +189,40 @@
                                     end-placeholder="结束日期">
                             </el-date-picker>
                         </el-col>
-                        <el-col :span="5" :offset="4">
+                    </el-row>
+                    <el-row style="margin-top: 10px">
+                        <el-col :span="5">
+                            婚姻状况:
+                            <el-select v-model="searchValue.wedlock" placeholder="婚姻状况" size="mini" style="width: 130px;">
+                                <el-option label="已婚" value="已婚"></el-option>
+                                <el-option label="未婚" value="未婚"></el-option>
+                                <el-option label="离异" value="离异"></el-option>
+                            </el-select>
+                        </el-col>
+                        <el-col :span="4">
+                            生育状况:
+                            <el-input size="mini" style="width: 130px" v-model="searchValue.fertilityStatus" placeholder="生育状况"></el-input>
+                        </el-col>
+                        <el-col :span="4">
+                            最高学历:
+                            <el-select v-model="searchValue.tiptopDegree" placeholder="学历" size="mini" style="width: 130px;">
+                                <el-option
+                                        v-for="item in tiptopDegrees"
+                                        :key="item"
+                                        :label="item"
+                                        :value="item">
+                                </el-option>
+                            </el-select>
+                        </el-col>
+                        <el-col :span="6">
+                            年龄范围:
+                            <div style="display: inline-flex; width: 130px;">
+                                <el-input size="mini" v-model="searchValue.ageScopeMin" placeholder="最小" style="width: 60px" @input="searchValue.ageScope=[searchValue.ageScopeMin, searchValue.ageScopeMax]"></el-input>
+                                <span style="margin: 0 5px">-</span>
+                                <el-input size="mini" v-model="searchValue.ageScopeMax" placeholder="最大" style="width: 60px" @input="searchValue.ageScope=[searchValue.ageScopeMin, searchValue.ageScopeMax]"></el-input>
+                            </div>
+                        </el-col>
+                        <el-col :span="5">
                             <el-button size="mini">取消</el-button>
                             <el-button size="mini" icon="el-icon-search" type="primary" @click="initEmps('advanced')">搜索</el-button>
                         </el-col>
@@ -830,7 +863,13 @@
                     posId: null,
                     engageForm: null,
                     departmentId: null,
-                    beginDateScope: null
+                    beginDateScope: null,
+                    wedlock: null,
+                    fertilityStatus: null,
+                    ageScope: null,
+                    ageScopeMin: null,
+                    ageScopeMax: null,
+                    tiptopDegree: null
                 },
                 title: '',
                 isEdit: false,
@@ -1284,6 +1323,18 @@
                     }
                     if (this.searchValue.beginDateScope) {
                         url += '&beginDateScope=' + this.searchValue.beginDateScope;
+                    }
+                    if (this.searchValue.wedlock) {
+                        url += '&wedlock=' + this.searchValue.wedlock;
+                    }
+                    if (this.searchValue.fertilityStatus) {
+                        url += '&fertilityStatus=' + this.searchValue.fertilityStatus;
+                    }
+                    if (this.searchValue.tiptopDegree) {
+                        url += '&tiptopDegree=' + this.searchValue.tiptopDegree;
+                    }
+                    if (this.searchValue.ageScope && this.searchValue.ageScope.length === 2 && this.searchValue.ageScope[0] && this.searchValue.ageScope[1]) {
+                        url += '&ageScope=' + this.searchValue.ageScope;
                     }
                 } else {
                     url += "&name=" + this.keyword;

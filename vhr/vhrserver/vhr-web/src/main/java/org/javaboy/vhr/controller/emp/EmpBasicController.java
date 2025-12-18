@@ -40,8 +40,8 @@ public class EmpBasicController {
     DepartmentService departmentService;
 
     @GetMapping("/")
-    public RespPageBean getEmployeeByPage(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, Employee employee, Date[] beginDateScope) {
-        return employeeService.getEmployeeByPage(page, size, employee,beginDateScope);
+    public RespPageBean getEmployeeByPage(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, Employee employee, Date[] beginDateScope, Integer[] ageScope) {
+        return employeeService.getEmployeeByPage(page, size, employee,beginDateScope, ageScope);
     }
 
     @PostMapping("/")
@@ -102,7 +102,7 @@ public class EmpBasicController {
 
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportData() {
-        List<Employee> list = (List<Employee>) employeeService.getEmployeeByPage(null, null, new Employee(),null).getData();
+        List<Employee> list = (List<Employee>) employeeService.getEmployeeByPage(null, null, new Employee(),null,null).getData();
         return POIUtils.employee2Excel(list);
     }
 
