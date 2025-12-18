@@ -99,6 +99,7 @@ Vue.use(Form);
 Vue.use(Tag);
 Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$confirm = MessageBox.confirm
+Vue.prototype.$message = Message
 
 import {postRequest} from "./utils/api";
 import {postKeyValueRequest} from "./utils/api";

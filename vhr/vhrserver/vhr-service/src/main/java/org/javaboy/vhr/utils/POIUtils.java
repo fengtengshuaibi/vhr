@@ -6,18 +6,18 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.javaboy.vhr.model.*;
-import org.springframework.context.support.BeanDefinitionDslKt;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @作者 江南一点雨
@@ -60,159 +60,105 @@ public class POIUtils {
         dateCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
         HSSFSheet sheet = workbook.createSheet("员工信息表");
         //设置列的宽度
-        sheet.setColumnWidth(0, 5 * 256);
-        sheet.setColumnWidth(1, 12 * 256);
-        sheet.setColumnWidth(2, 10 * 256);
-        sheet.setColumnWidth(3, 5 * 256);
-        sheet.setColumnWidth(4, 12 * 256);
-        sheet.setColumnWidth(5, 20 * 256);
-        sheet.setColumnWidth(6, 10 * 256);
-        sheet.setColumnWidth(7, 10 * 256);
-        sheet.setColumnWidth(8, 16 * 256);
-        sheet.setColumnWidth(9, 12 * 256);
-        sheet.setColumnWidth(10, 15 * 256);
-        sheet.setColumnWidth(11, 20 * 256);
-        sheet.setColumnWidth(12, 16 * 256);
-        sheet.setColumnWidth(13, 14 * 256);
-        sheet.setColumnWidth(14, 14 * 256);
-        sheet.setColumnWidth(15, 12 * 256);
-        sheet.setColumnWidth(16, 8 * 256);
-        sheet.setColumnWidth(17, 20 * 256);
-        sheet.setColumnWidth(18, 20 * 256);
-        sheet.setColumnWidth(19, 15 * 256);
-        sheet.setColumnWidth(20, 8 * 256);
-        sheet.setColumnWidth(21, 25 * 256);
-        sheet.setColumnWidth(22, 14 * 256);
-        sheet.setColumnWidth(23, 15 * 256);
-        sheet.setColumnWidth(24, 15 * 256);
+        for (int i = 0; i < 50; i++) {
+            sheet.setColumnWidth(i, 15 * 256);
+        }
+        
         //6. 创建标题行
         HSSFRow r0 = sheet.createRow(0);
-        HSSFCell c0 = r0.createCell(0);
-        c0.setCellValue("编号");
-        c0.setCellStyle(headerStyle);
-        HSSFCell c1 = r0.createCell(1);
-        c1.setCellStyle(headerStyle);
-        c1.setCellValue("姓名");
-        HSSFCell c2 = r0.createCell(2);
-        c2.setCellStyle(headerStyle);
-        c2.setCellValue("工号");
-        HSSFCell c3 = r0.createCell(3);
-        c3.setCellStyle(headerStyle);
-        c3.setCellValue("性别");
-        HSSFCell c4 = r0.createCell(4);
-        c4.setCellStyle(headerStyle);
-        c4.setCellValue("出生日期");
-        HSSFCell c5 = r0.createCell(5);
-        c5.setCellStyle(headerStyle);
-        c5.setCellValue("身份证号码");
-        HSSFCell c6 = r0.createCell(6);
-        c6.setCellStyle(headerStyle);
-        c6.setCellValue("婚姻状况");
-        HSSFCell c7 = r0.createCell(7);
-        c7.setCellStyle(headerStyle);
-        c7.setCellValue("民族");
-        HSSFCell c8 = r0.createCell(8);
-        c8.setCellStyle(headerStyle);
-        c8.setCellValue("籍贯");
-        HSSFCell c9 = r0.createCell(9);
-        c9.setCellStyle(headerStyle);
-        c9.setCellValue("政治面貌");
-        HSSFCell c10 = r0.createCell(10);
-        c10.setCellStyle(headerStyle);
-        c10.setCellValue("电话号码");
-        HSSFCell c11 = r0.createCell(11);
-        c11.setCellStyle(headerStyle);
-        c11.setCellValue("联系地址");
-        HSSFCell c12 = r0.createCell(12);
-        c12.setCellStyle(headerStyle);
-        c12.setCellValue("所属部门");
-        HSSFCell c13 = r0.createCell(13);
-        c13.setCellStyle(headerStyle);
-        c13.setCellValue("职称");
-        HSSFCell c14 = r0.createCell(14);
-        c14.setCellStyle(headerStyle);
-        c14.setCellValue("职位");
-        HSSFCell c15 = r0.createCell(15);
-        c15.setCellStyle(headerStyle);
-        c15.setCellValue("聘用形式");
-        HSSFCell c16 = r0.createCell(16);
-        c16.setCellStyle(headerStyle);
-        c16.setCellValue("最高学历");
-        HSSFCell c17 = r0.createCell(17);
-        c17.setCellStyle(headerStyle);
-        c17.setCellValue("专业");
-        HSSFCell c18 = r0.createCell(18);
-        c18.setCellStyle(headerStyle);
-        c18.setCellValue("毕业院校");
-        HSSFCell c19 = r0.createCell(19);
-        c19.setCellStyle(headerStyle);
-        c19.setCellValue("入职日期");
-        HSSFCell c20 = r0.createCell(20);
-        c20.setCellStyle(headerStyle);
-        c20.setCellValue("在职状态");
-        HSSFCell c21 = r0.createCell(21);
-        c21.setCellStyle(headerStyle);
-        c21.setCellValue("邮箱");
-        HSSFCell c22 = r0.createCell(22);
-        c22.setCellStyle(headerStyle);
-        c22.setCellValue("合同期限(年)");
-        HSSFCell c23 = r0.createCell(23);
-        c23.setCellStyle(headerStyle);
-        c23.setCellValue("合同起始日期");
-        HSSFCell c24 = r0.createCell(24);
-        c24.setCellStyle(headerStyle);
-        c24.setCellValue("合同终止日期");
+        String[] headers = {
+            "姓名", "工号", "性别", "出生日期", "身份证号码", "婚姻状况", "民族", "籍贯", "政治面貌", 
+            "电话号码", "联系地址", "所属部门", "职称", "职位", "聘用形式", "最高学历", "专业", "毕业院校", "入职日期", 
+            "在职状态", "邮箱", "合同期限(年)", "合同起始日期", "合同终止日期", "转正日期",
+            "年龄", "身份证开始日期", "身份证终止日期", "户口类别", "户口所在地", "紧急联系人", "紧急联系电话", 
+            "生育状况", "子女信息", "毕业时间", "专业资格证书", "培训经历", "原工作单位", "原职位", 
+            "原入职/离职时间", "过往工作业绩", "原离职原因", "证明人", "证明人联系方式", "入职前测评结果", 
+            "试用期", "转正评分", "工作地点", "奖惩记录", "离职原因"
+        };
+        
+        for (int i = 0; i < headers.length; i++) {
+            HSSFCell cell = r0.createCell(i);
+            cell.setCellStyle(headerStyle);
+            cell.setCellValue(headers[i]);
+        }
+
         for (int i = 0; i < list.size(); i++) {
             Employee emp = list.get(i);
             HSSFRow row = sheet.createRow(i + 1);
-            row.createCell(0).setCellValue(emp.getId());
-            row.createCell(1).setCellValue(emp.getName());
-            row.createCell(2).setCellValue(emp.getWorkID());
-            row.createCell(3).setCellValue(emp.getGender());
-            HSSFCell cell4 = row.createCell(4);
-            cell4.setCellStyle(dateCellStyle);
-            cell4.setCellValue(emp.getBirthday());
-            row.createCell(5).setCellValue(emp.getIdCard());
-            row.createCell(6).setCellValue(emp.getWedlock());
-            row.createCell(7).setCellValue(emp.getNation().getName());
-            row.createCell(8).setCellValue(emp.getNativePlace());
-            row.createCell(9).setCellValue(emp.getPoliticsstatus().getName());
-            row.createCell(10).setCellValue(emp.getPhone());
-            row.createCell(11).setCellValue(emp.getAddress());
-            row.createCell(12).setCellValue(emp.getDepartment().getName());
-            row.createCell(13).setCellValue(emp.getJobLevel().getName());
-            row.createCell(14).setCellValue(emp.getPosition().getName());
-            row.createCell(15).setCellValue(emp.getEngageForm());
-            row.createCell(16).setCellValue(emp.getTiptopDegree());
-            row.createCell(17).setCellValue(emp.getSpecialty());
-            row.createCell(18).setCellValue(emp.getSchool());
-            HSSFCell cell19 = row.createCell(19);
-            cell19.setCellStyle(dateCellStyle);
-            cell19.setCellValue(emp.getBeginDate());
-            row.createCell(20).setCellValue(emp.getWorkState());
-            row.createCell(21).setCellValue(emp.getEmail());
-            row.createCell(22).setCellValue(emp.getContractTerm());
+            row.createCell(0).setCellValue(emp.getName());
+            row.createCell(1).setCellValue(emp.getWorkID());
+            row.createCell(2).setCellValue(emp.getGender());
+            HSSFCell cell3 = row.createCell(3);
+            cell3.setCellStyle(dateCellStyle);
+            cell3.setCellValue(emp.getBirthday());
+            row.createCell(4).setCellValue(emp.getIdCard());
+            row.createCell(5).setCellValue(emp.getWedlock());
+            row.createCell(6).setCellValue(emp.getNation().getName());
+            row.createCell(7).setCellValue(emp.getNativePlace());
+            row.createCell(8).setCellValue(emp.getPoliticsstatus().getName());
+            row.createCell(9).setCellValue(emp.getPhone());
+            row.createCell(10).setCellValue(emp.getAddress());
+            row.createCell(11).setCellValue(emp.getDepartment().getName());
+            row.createCell(12).setCellValue(emp.getJobLevel().getName());
+            row.createCell(13).setCellValue(emp.getPosition().getName());
+            row.createCell(14).setCellValue(emp.getEngageForm());
+            row.createCell(15).setCellValue(emp.getTiptopDegree());
+            row.createCell(16).setCellValue(emp.getSpecialty());
+            row.createCell(17).setCellValue(emp.getSchool());
+            HSSFCell cell18 = row.createCell(18);
+            cell18.setCellStyle(dateCellStyle);
+            cell18.setCellValue(emp.getBeginDate());
+            row.createCell(19).setCellValue(emp.getWorkState());
+            row.createCell(20).setCellValue(emp.getEmail());
+            row.createCell(21).setCellValue(emp.getContractTerm());
+            HSSFCell cell22 = row.createCell(22);
+            cell22.setCellStyle(dateCellStyle);
+            cell22.setCellValue(emp.getBeginContract());
             HSSFCell cell23 = row.createCell(23);
             cell23.setCellStyle(dateCellStyle);
-            cell23.setCellValue(emp.getBeginContract());
+            cell23.setCellValue(emp.getEndContract());
             HSSFCell cell24 = row.createCell(24);
             cell24.setCellStyle(dateCellStyle);
-            cell24.setCellValue(emp.getEndContract());
-            HSSFCell cell25 = row.createCell(25);
-            cell25.setCellStyle(dateCellStyle);
-            cell25.setCellValue(emp.getConversionTime());
+            cell24.setCellValue(emp.getConversionTime());
+            
+            // New fields
+            if(emp.getAge() != null) row.createCell(25).setCellValue(emp.getAge());
+            HSSFCell cell26 = row.createCell(26); cell26.setCellStyle(dateCellStyle); cell26.setCellValue(emp.getIdCardStartDate());
+            HSSFCell cell27 = row.createCell(27); cell27.setCellStyle(dateCellStyle); cell27.setCellValue(emp.getIdCardEndDate());
+            row.createCell(28).setCellValue(emp.getHukouType());
+            row.createCell(29).setCellValue(emp.getHukouLocation());
+            row.createCell(30).setCellValue(emp.getEmergencyContact());
+            row.createCell(31).setCellValue(emp.getEmergencyContactPhone());
+            row.createCell(32).setCellValue(emp.getFertilityStatus());
+            row.createCell(33).setCellValue(emp.getChildrenInfo());
+            HSSFCell cell34 = row.createCell(34); cell34.setCellStyle(dateCellStyle); cell34.setCellValue(emp.getGraduationDate());
+            row.createCell(35).setCellValue(emp.getCertificate());
+            row.createCell(36).setCellValue(emp.getTrainingHistory());
+            row.createCell(37).setCellValue(emp.getPreviousCompany());
+            row.createCell(38).setCellValue(emp.getPreviousPosition());
+            row.createCell(39).setCellValue(emp.getPreviousStartEnd());
+            row.createCell(40).setCellValue(emp.getPastPerformance());
+            row.createCell(41).setCellValue(emp.getPreviousResignationReason());
+            row.createCell(42).setCellValue(emp.getReference());
+            row.createCell(43).setCellValue(emp.getReferencePhone());
+            row.createCell(44).setCellValue(emp.getAssessmentResult());
+            if(emp.getProbation() != null) row.createCell(45).setCellValue(emp.getProbation());
+            if(emp.getConversionScore() != null) row.createCell(46).setCellValue(emp.getConversionScore());
+            row.createCell(47).setCellValue(emp.getWorkLocation());
+            row.createCell(48).setCellValue(emp.getRewardsPunishments());
+            row.createCell(49).setCellValue(emp.getResignationReason());
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers2 = new HttpHeaders();
         try {
-            headers.setContentDispositionFormData("attachment", new String("员工表.xls".getBytes("UTF-8"), "ISO-8859-1"));
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers2.setContentDispositionFormData("attachment", new String("员工表.xls".getBytes("UTF-8"), "ISO-8859-1"));
+            headers2.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             workbook.write(baos);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new ResponseEntity<byte[]>(baos.toByteArray(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<byte[]>(baos.toByteArray(), headers2, HttpStatus.CREATED);
     }
 
     /**
@@ -226,8 +172,11 @@ public class POIUtils {
      * @param allJobLevels
      * @return
      */
-    public static List<Employee> excel2Employee(MultipartFile file, List<Nation> allNations, List<Politicsstatus> allPoliticsstatus, List<Department> allDepartments, List<Position> allPositions, List<JobLevel> allJobLevels) {
+    public static Map<String, Object> excel2Employee(MultipartFile file, List<Nation> allNations, List<Politicsstatus> allPoliticsstatus, List<Department> allDepartments, List<Position> allPositions, List<JobLevel> allJobLevels) {
+        Map<String, Object> resultMap = new HashMap<>();
         List<Employee> list = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+        
         Employee employee = null;
         try {
             //1. 创建一个 workbook 对象
@@ -252,108 +201,159 @@ public class POIUtils {
                     //7. 获取列数
                     int physicalNumberOfCells = row.getPhysicalNumberOfCells();
                     employee = new Employee();
+                    boolean hasError = false;
+                    StringBuilder errorMsg = new StringBuilder("第 " + (j + 1) + " 行: ");
+                    
                     for (int k = 0; k < physicalNumberOfCells; k++) {
                         HSSFCell cell = row.getCell(k);
-                        switch (cell.getCellType()) {
-                            case STRING:
-                                String cellValue = cell.getStringCellValue();
-                                switch (k) {
-                                    case 1:
-                                        employee.setName(cellValue);
-                                        break;
-                                    case 2:
-                                        employee.setWorkID(cellValue);
-                                        break;
-                                    case 3:
-                                        employee.setGender(cellValue);
-                                        break;
-                                    case 5:
-                                        employee.setIdCard(cellValue);
-                                        break;
-                                    case 6:
-                                        employee.setWedlock(cellValue);
-                                        break;
-                                    case 7:
-                                        int nationIndex = allNations.indexOf(new Nation(cellValue));
-                                        employee.setNationId(allNations.get(nationIndex).getId());
-                                        break;
-                                    case 8:
-                                        employee.setNativePlace(cellValue);
-                                        break;
-                                    case 9:
-                                        int politicstatusIndex = allPoliticsstatus.indexOf(new Politicsstatus(cellValue));
-                                        employee.setPoliticId(allPoliticsstatus.get(politicstatusIndex).getId());
-                                        break;
-                                    case 10:
-                                        employee.setPhone(cellValue);
-                                        break;
-                                    case 11:
-                                        employee.setAddress(cellValue);
-                                        break;
-                                    case 12:
-                                        int departmentIndex = allDepartments.indexOf(new Department(cellValue));
-                                        employee.setDepartmentId(allDepartments.get(departmentIndex).getId());
-                                        break;
-                                    case 13:
-                                        int jobLevelIndex = allJobLevels.indexOf(new JobLevel(cellValue));
-                                        employee.setJobLevelId(allJobLevels.get(jobLevelIndex).getId());
-                                        break;
-                                    case 14:
-                                        int positionIndex = allPositions.indexOf(new Position(cellValue));
-                                        employee.setPosId(allPositions.get(positionIndex).getId());
-                                        break;
-                                    case 15:
-                                        employee.setEngageForm(cellValue);
-                                        break;
-                                    case 16:
-                                        employee.setTiptopDegree(cellValue);
-                                        break;
-                                    case 17:
-                                        employee.setSpecialty(cellValue);
-                                        break;
-                                    case 18:
-                                        employee.setSchool(cellValue);
-                                        break;
-                                    case 20:
-                                        employee.setWorkState(cellValue);
-                                        break;
-                                    case 21:
-                                        employee.setEmail(cellValue);
-                                        break;
-                                }
-                                break;
-                            default: {
-                                switch (k) {
-                                    case 4:
-                                        employee.setBirthday(cell.getDateCellValue());
-                                        break;
-                                    case 19:
-                                        employee.setBeginDate(cell.getDateCellValue());
-                                        break;
-                                    case 23:
-                                        employee.setBeginContract(cell.getDateCellValue());
-                                        break;
-                                    case 24:
-                                        employee.setEndContract(cell.getDateCellValue());
-                                        break;
-                                    case 22:
-                                        employee.setContractTerm(cell.getNumericCellValue());
-                                        break;
-                                    case 25:
-                                        employee.setConversionTime(cell.getDateCellValue());
-                                        break;
-                                }
+                        if (cell == null) continue;
+                        
+                        try {
+                            switch (cell.getCellType()) {
+                                case STRING:
+                                    String cellValue = cell.getStringCellValue();
+                                    switch (k) {
+                                        case 0: 
+                                            if (cellValue.length() > 10) throw new IllegalArgumentException("姓名超长(10)");
+                                            employee.setName(cellValue); 
+                                            break;
+                                        case 1: 
+                                            if (cellValue.length() > 8) throw new IllegalArgumentException("工号超长(8)");
+                                            employee.setWorkID(cellValue); 
+                                            break;
+                                        case 2: 
+                                            if (cellValue.length() > 4) throw new IllegalArgumentException("性别超长(4)");
+                                            employee.setGender(cellValue); 
+                                            break;
+                                        case 4:
+                                            if (cellValue.length() > 18) throw new IllegalArgumentException("身份证超长(18)");
+                                            employee.setIdCard(cellValue); 
+                                            break;
+                                        case 5: employee.setWedlock(cellValue); break;
+                                        case 6:
+                                            int nationIndex = allNations.indexOf(new Nation(cellValue));
+                                            if (nationIndex == -1) throw new IllegalArgumentException("民族不存在");
+                                            employee.setNationId(allNations.get(nationIndex).getId());
+                                            break;
+                                        case 7:
+                                            if (cellValue.length() > 100) throw new IllegalArgumentException("籍贯超长(100)");
+                                            employee.setNativePlace(cellValue); 
+                                            break;
+                                        case 8:
+                                            int politicstatusIndex = allPoliticsstatus.indexOf(new Politicsstatus(cellValue));
+                                            if (politicstatusIndex == -1) throw new IllegalArgumentException("政治面貌不存在");
+                                            employee.setPoliticId(allPoliticsstatus.get(politicstatusIndex).getId());
+                                            break;
+                                        case 9:
+                                            if (cellValue.length() > 11) throw new IllegalArgumentException("电话超长(11)");
+                                            employee.setPhone(cellValue); 
+                                            break;
+                                        case 10:
+                                            if (cellValue.length() > 64) throw new IllegalArgumentException("地址超长(64)");
+                                            employee.setAddress(cellValue); 
+                                            break;
+                                        case 11:
+                                            int departmentIndex = allDepartments.indexOf(new Department(cellValue));
+                                            if (departmentIndex == -1) throw new IllegalArgumentException("部门不存在");
+                                            employee.setDepartmentId(allDepartments.get(departmentIndex).getId());
+                                            break;
+                                        case 12:
+                                            int jobLevelIndex = allJobLevels.indexOf(new JobLevel(cellValue));
+                                            if (jobLevelIndex == -1) throw new IllegalArgumentException("职称不存在");
+                                            employee.setJobLevelId(allJobLevels.get(jobLevelIndex).getId());
+                                            break;
+                                        case 13:
+                                            int positionIndex = allPositions.indexOf(new Position(cellValue));
+                                            if (positionIndex == -1) throw new IllegalArgumentException("职位不存在");
+                                            employee.setPosId(allPositions.get(positionIndex).getId());
+                                            break;
+                                        case 14: employee.setEngageForm(cellValue); break;
+                                        case 15: employee.setTiptopDegree(cellValue); break;
+                                        case 16:
+                                            if (cellValue.length() > 32) throw new IllegalArgumentException("专业超长(32)");
+                                            employee.setSpecialty(cellValue); 
+                                            break;
+                                        case 17:
+                                            if (cellValue.length() > 32) throw new IllegalArgumentException("学校超长(32)");
+                                            employee.setSchool(cellValue); 
+                                            break;
+                                        case 19: employee.setWorkState(cellValue); break;
+                                        case 20:
+                                            if (cellValue.length() > 50) throw new IllegalArgumentException("邮箱超长(50)");
+                                            employee.setEmail(cellValue); 
+                                            break;
+                                        
+                                        // New String fields
+                                        case 28: if (cellValue.length() > 32) throw new IllegalArgumentException("户口类型超长(32)"); employee.setHukouType(cellValue); break;
+                                        case 29: if (cellValue.length() > 255) throw new IllegalArgumentException("户口所在地超长(255)"); employee.setHukouLocation(cellValue); break;
+                                        case 30: if (cellValue.length() > 32) throw new IllegalArgumentException("紧急联系人超长(32)"); employee.setEmergencyContact(cellValue); break;
+                                        case 31: if (cellValue.length() > 32) throw new IllegalArgumentException("紧急电话超长(32)"); employee.setEmergencyContactPhone(cellValue); break;
+                                        case 32: if (cellValue.length() > 32) throw new IllegalArgumentException("生育状况超长(32)"); employee.setFertilityStatus(cellValue); break;
+                                        case 33: if (cellValue.length() > 255) throw new IllegalArgumentException("子女信息超长(255)"); employee.setChildrenInfo(cellValue); break;
+                                        case 35: if (cellValue.length() > 255) throw new IllegalArgumentException("证书超长(255)"); employee.setCertificate(cellValue); break;
+                                        case 36: employee.setTrainingHistory(cellValue); break;
+                                        case 37: if (cellValue.length() > 255) throw new IllegalArgumentException("原单位超长(255)"); employee.setPreviousCompany(cellValue); break;
+                                        case 38: if (cellValue.length() > 255) throw new IllegalArgumentException("原职位超长(255)"); employee.setPreviousPosition(cellValue); break;
+                                        case 39: if (cellValue.length() > 64) throw new IllegalArgumentException("原起止超长(64)"); employee.setPreviousStartEnd(cellValue); break;
+                                        case 40: employee.setPastPerformance(cellValue); break;
+                                        case 41: if (cellValue.length() > 255) throw new IllegalArgumentException("原离职原因超长(255)"); employee.setPreviousResignationReason(cellValue); break;
+                                        case 42: if (cellValue.length() > 32) throw new IllegalArgumentException("证明人超长(32)"); employee.setReference(cellValue); break;
+                                        case 43: if (cellValue.length() > 32) throw new IllegalArgumentException("证明人电话超长(32)"); employee.setReferencePhone(cellValue); break;
+                                        case 44: if (cellValue.length() > 255) throw new IllegalArgumentException("测评结果超长(255)"); employee.setAssessmentResult(cellValue); break;
+                                        case 47: if (cellValue.length() > 255) throw new IllegalArgumentException("工作地点超长(255)"); employee.setWorkLocation(cellValue); break;
+                                        case 48: employee.setRewardsPunishments(cellValue); break;
+                                        case 49: if (cellValue.length() > 255) throw new IllegalArgumentException("离职原因超长(255)"); employee.setResignationReason(cellValue); break;
+                                    }
+                                    break;
+                                case NUMERIC:
+                                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                                        // Date fields
+                                        switch (k) {
+                                            case 3: employee.setBirthday(cell.getDateCellValue()); break;
+                                            case 18: employee.setBeginDate(cell.getDateCellValue()); break;
+                                            case 22: employee.setBeginContract(cell.getDateCellValue()); break;
+                                            case 23: employee.setEndContract(cell.getDateCellValue()); break;
+                                            case 24: employee.setConversionTime(cell.getDateCellValue()); break;
+                                            // New Date fields
+                                            case 26: employee.setIdCardStartDate(cell.getDateCellValue()); break;
+                                            case 27: employee.setIdCardEndDate(cell.getDateCellValue()); break;
+                                            case 34: employee.setGraduationDate(cell.getDateCellValue()); break;
+                                        }
+                                    } else {
+                                        // Numeric fields
+                                        switch (k) {
+                                            case 21: employee.setContractTerm(cell.getNumericCellValue()); break;
+                                            // New Numeric fields
+                                            case 25: employee.setAge((int)cell.getNumericCellValue()); break;
+                                            case 45: employee.setProbation((int)cell.getNumericCellValue()); break;
+                                            case 46: employee.setConversionScore((int)cell.getNumericCellValue()); break;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
-                            break;
+                        } catch (Exception e) {
+                            hasError = true;
+                            errorMsg.append("列").append(k + 1).append("错误: ").append(e.getMessage()).append("; ");
                         }
                     }
-                    list.add(employee);
+                    if (hasError) {
+                        errors.add(errorMsg.toString());
+                    } else if (employee.getIdCard() == null || employee.getIdCard().isEmpty()) {
+                        errors.add("第 " + (j + 1) + " 行: 身份证号为空");
+                    } else {
+                        list.add(employee);
+                    }
                 }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
+            errors.add("文件读取失败");
         }
-        return list;
+        resultMap.put("list", list);
+        resultMap.put("errors", errors);
+        return resultMap;
     }
 }

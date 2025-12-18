@@ -7,13 +7,13 @@ import java.util.Date;
 import java.util.List;
 
 public interface EmployeeMapper {
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(String id);
 
     int insert(Employee record);
 
     int insertSelective(Employee record);
 
-    Employee selectByPrimaryKey(Integer id);
+    Employee selectByPrimaryKey(String id);
 
     int updateByPrimaryKeySelective(Employee record);
 
@@ -27,7 +27,7 @@ public interface EmployeeMapper {
 
     Integer addEmps(@Param("list") List<Employee> list);
 
-    Employee getEmployeeById(Integer id);
+    Employee getEmployeeById(String id);
 
     List<Employee> getEmployeeByPageWithSalary(@Param("page") Integer page, @Param("size") Integer size);
 

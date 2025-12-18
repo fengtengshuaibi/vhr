@@ -6,50 +6,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Employee implements Serializable {
-    private Integer id;
+    // private Integer id;
 
     private String name;
 
     private String gender;
-
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", gender='" + gender + '\'' +
-                ", birthday=" + birthday +
-                ", idCard='" + idCard + '\'' +
-                ", wedlock='" + wedlock + '\'' +
-                ", nationId=" + nationId +
-                ", nativePlace='" + nativePlace + '\'' +
-                ", politicId=" + politicId +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", departmentId=" + departmentId +
-                ", jobLevelId=" + jobLevelId +
-                ", posId=" + posId +
-                ", engageForm='" + engageForm + '\'' +
-                ", tiptopDegree='" + tiptopDegree + '\'' +
-                ", specialty='" + specialty + '\'' +
-                ", school='" + school + '\'' +
-                ", beginDate=" + beginDate +
-                ", workState='" + workState + '\'' +
-                ", workID='" + workID + '\'' +
-                ", contractTerm=" + contractTerm +
-                ", conversionTime=" + conversionTime +
-                ", notWorkDate=" + notWorkDate +
-                ", beginContract=" + beginContract +
-                ", endContract=" + endContract +
-                ", workAge=" + workAge +
-                ", nation=" + nation +
-                ", politicsstatus=" + politicsstatus +
-                ", department=" + department +
-                ", jobLevel=" + jobLevel +
-                ", position=" + position +
-                '}';
-    }
 
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
     private Date birthday;
@@ -106,6 +67,37 @@ public class Employee implements Serializable {
     private Date endContract;
 
     private Integer workAge;
+    
+    // New Fields
+    private Integer age;
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+    private Date idCardStartDate;
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+    private Date idCardEndDate;
+    private String hukouType;
+    private String hukouLocation;
+    private String emergencyContact;
+    private String emergencyContactPhone;
+    private String fertilityStatus;
+    private String childrenInfo;
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+    private Date graduationDate;
+    private String certificate;
+    private String trainingHistory;
+    private String previousCompany;
+    private String previousPosition;
+    private String previousStartEnd;
+    private String pastPerformance;
+    private String previousResignationReason;
+    private String reference;
+    private String referencePhone;
+    private String assessmentResult;
+    private Integer probation;
+    private Integer conversionScore;
+    private String workLocation;
+    private String rewardsPunishments;
+    private String resignationReason;
+
     private Nation nation;
     private Politicsstatus politicsstatus;
     private Department department;
@@ -160,13 +152,13 @@ public class Employee implements Serializable {
         this.position = position;
     }
 
-    public Integer getId() {
+    /*public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
+    }*/
 
     public String getName() {
         return name;
@@ -382,5 +374,269 @@ public class Employee implements Serializable {
 
     public void setWorkAge(Integer workAge) {
         this.workAge = workAge;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Date getIdCardStartDate() {
+        return idCardStartDate;
+    }
+
+    public void setIdCardStartDate(Date idCardStartDate) {
+        this.idCardStartDate = idCardStartDate;
+    }
+
+    public Date getIdCardEndDate() {
+        return idCardEndDate;
+    }
+
+    public void setIdCardEndDate(Date idCardEndDate) {
+        this.idCardEndDate = idCardEndDate;
+    }
+
+    public String getHukouType() {
+        return hukouType;
+    }
+
+    public void setHukouType(String hukouType) {
+        this.hukouType = hukouType;
+    }
+
+    public String getHukouLocation() {
+        return hukouLocation;
+    }
+
+    public void setHukouLocation(String hukouLocation) {
+        this.hukouLocation = hukouLocation;
+    }
+
+    public String getEmergencyContact() {
+        return emergencyContact;
+    }
+
+    public void setEmergencyContact(String emergencyContact) {
+        this.emergencyContact = emergencyContact;
+    }
+
+    public String getEmergencyContactPhone() {
+        return emergencyContactPhone;
+    }
+
+    public void setEmergencyContactPhone(String emergencyContactPhone) {
+        this.emergencyContactPhone = emergencyContactPhone;
+    }
+
+    public String getFertilityStatus() {
+        return fertilityStatus;
+    }
+
+    public void setFertilityStatus(String fertilityStatus) {
+        this.fertilityStatus = fertilityStatus;
+    }
+
+    public String getChildrenInfo() {
+        return childrenInfo;
+    }
+
+    public void setChildrenInfo(String childrenInfo) {
+        this.childrenInfo = childrenInfo;
+    }
+
+    public Date getGraduationDate() {
+        return graduationDate;
+    }
+
+    public void setGraduationDate(Date graduationDate) {
+        this.graduationDate = graduationDate;
+    }
+
+    public String getCertificate() {
+        return certificate;
+    }
+
+    public void setCertificate(String certificate) {
+        this.certificate = certificate;
+    }
+
+    public String getTrainingHistory() {
+        return trainingHistory;
+    }
+
+    public void setTrainingHistory(String trainingHistory) {
+        this.trainingHistory = trainingHistory;
+    }
+
+    public String getPreviousCompany() {
+        return previousCompany;
+    }
+
+    public void setPreviousCompany(String previousCompany) {
+        this.previousCompany = previousCompany;
+    }
+
+    public String getPreviousPosition() {
+        return previousPosition;
+    }
+
+    public void setPreviousPosition(String previousPosition) {
+        this.previousPosition = previousPosition;
+    }
+
+    public String getPreviousStartEnd() {
+        return previousStartEnd;
+    }
+
+    public void setPreviousStartEnd(String previousStartEnd) {
+        this.previousStartEnd = previousStartEnd;
+    }
+
+    public String getPastPerformance() {
+        return pastPerformance;
+    }
+
+    public void setPastPerformance(String pastPerformance) {
+        this.pastPerformance = pastPerformance;
+    }
+
+    public String getPreviousResignationReason() {
+        return previousResignationReason;
+    }
+
+    public void setPreviousResignationReason(String previousResignationReason) {
+        this.previousResignationReason = previousResignationReason;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getReferencePhone() {
+        return referencePhone;
+    }
+
+    public void setReferencePhone(String referencePhone) {
+        this.referencePhone = referencePhone;
+    }
+
+    public String getAssessmentResult() {
+        return assessmentResult;
+    }
+
+    public void setAssessmentResult(String assessmentResult) {
+        this.assessmentResult = assessmentResult;
+    }
+
+    public Integer getProbation() {
+        return probation;
+    }
+
+    public void setProbation(Integer probation) {
+        this.probation = probation;
+    }
+
+    public Integer getConversionScore() {
+        return conversionScore;
+    }
+
+    public void setConversionScore(Integer conversionScore) {
+        this.conversionScore = conversionScore;
+    }
+
+    public String getWorkLocation() {
+        return workLocation;
+    }
+
+    public void setWorkLocation(String workLocation) {
+        this.workLocation = workLocation;
+    }
+
+    public String getRewardsPunishments() {
+        return rewardsPunishments;
+    }
+
+    public void setRewardsPunishments(String rewardsPunishments) {
+        this.rewardsPunishments = rewardsPunishments;
+    }
+
+    public String getResignationReason() {
+        return resignationReason;
+    }
+
+    public void setResignationReason(String resignationReason) {
+        this.resignationReason = resignationReason;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                // "id=" + id +
+                ", name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", birthday=" + birthday +
+                ", idCard='" + idCard + '\'' +
+                ", wedlock='" + wedlock + '\'' +
+                ", nationId=" + nationId +
+                ", nativePlace='" + nativePlace + '\'' +
+                ", politicId=" + politicId +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", departmentId=" + departmentId +
+                ", jobLevelId=" + jobLevelId +
+                ", posId=" + posId +
+                ", engageForm='" + engageForm + '\'' +
+                ", tiptopDegree='" + tiptopDegree + '\'' +
+                ", specialty='" + specialty + '\'' +
+                ", school='" + school + '\'' +
+                ", beginDate=" + beginDate +
+                ", workState='" + workState + '\'' +
+                ", workID='" + workID + '\'' +
+                ", contractTerm=" + contractTerm +
+                ", conversionTime=" + conversionTime +
+                ", notWorkDate=" + notWorkDate +
+                ", beginContract=" + beginContract +
+                ", endContract=" + endContract +
+                ", workAge=" + workAge +
+                ", age=" + age +
+                ", idCardStartDate=" + idCardStartDate +
+                ", idCardEndDate=" + idCardEndDate +
+                ", hukouType='" + hukouType + '\'' +
+                ", hukouLocation='" + hukouLocation + '\'' +
+                ", emergencyContact='" + emergencyContact + '\'' +
+                ", emergencyContactPhone='" + emergencyContactPhone + '\'' +
+                ", fertilityStatus='" + fertilityStatus + '\'' +
+                ", childrenInfo='" + childrenInfo + '\'' +
+                ", graduationDate=" + graduationDate +
+                ", certificate='" + certificate + '\'' +
+                ", trainingHistory='" + trainingHistory + '\'' +
+                ", previousCompany='" + previousCompany + '\'' +
+                ", previousPosition='" + previousPosition + '\'' +
+                ", previousStartEnd='" + previousStartEnd + '\'' +
+                ", pastPerformance='" + pastPerformance + '\'' +
+                ", previousResignationReason='" + previousResignationReason + '\'' +
+                ", reference='" + reference + '\'' +
+                ", referencePhone='" + referencePhone + '\'' +
+                ", assessmentResult='" + assessmentResult + '\'' +
+                ", probation=" + probation +
+                ", conversionScore=" + conversionScore +
+                ", workLocation='" + workLocation + '\'' +
+                ", rewardsPunishments='" + rewardsPunishments + '\'' +
+                ", resignationReason='" + resignationReason + '\'' +
+                ", nation=" + nation +
+                ", politicsstatus=" + politicsstatus +
+                ", department=" + department +
+                ", jobLevel=" + jobLevel +
+                ", position=" + position +
+                '}';
     }
 }

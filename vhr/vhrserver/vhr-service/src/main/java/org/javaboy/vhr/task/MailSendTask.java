@@ -33,7 +33,7 @@ public class MailSendTask {
                 mailSendLogService.updateMailSendLogStatus(mailSendLog.getMsgId(), 2);//直接设置该条消息发送失败
             }else{
                 mailSendLogService.updateCount(mailSendLog.getMsgId(), new Date());
-                Employee emp = employeeService.getEmployeeById(mailSendLog.getEmpId());
+                Employee emp = employeeService.getEmployeeById(String.valueOf(mailSendLog.getEmpId()));
                 rabbitTemplate.convertAndSend(MailConstants.MAIL_EXCHANGE_NAME, MailConstants.MAIL_ROUTING_KEY_NAME, emp, new CorrelationData(mailSendLog.getMsgId()));
             }
         });

@@ -2,11 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.javaboy.vhr.mapper.EmployeeMapper">
     <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.Employee">
-        <id column="id" property="id" jdbcType="INTEGER"/>
+        <!-- <id column="id" property="id" jdbcType="INTEGER"/> -->
+        <id column="idCard" property="idCard" jdbcType="CHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="gender" property="gender" jdbcType="CHAR"/>
         <result column="birthday" property="birthday" jdbcType="DATE"/>
-        <result column="idCard" property="idCard" jdbcType="CHAR"/>
+        <!-- <result column="idCard" property="idCard" jdbcType="CHAR"/> -->
         <result column="wedlock" property="wedlock" jdbcType="CHAR"/>
         <result column="nationId" property="nationId" jdbcType="INTEGER"/>
         <result column="nativePlace" property="nativePlace" jdbcType="VARCHAR"/>
@@ -30,6 +31,31 @@
         <result column="beginContract" property="beginContract" jdbcType="DATE"/>
         <result column="endContract" property="endContract" jdbcType="DATE"/>
         <result column="workAge" property="workAge" jdbcType="INTEGER"/>
+        <result column="age" property="age" jdbcType="INTEGER"/>
+        <result column="idCardStartDate" property="idCardStartDate" jdbcType="DATE"/>
+        <result column="idCardEndDate" property="idCardEndDate" jdbcType="DATE"/>
+        <result column="hukouType" property="hukouType" jdbcType="VARCHAR"/>
+        <result column="hukouLocation" property="hukouLocation" jdbcType="VARCHAR"/>
+        <result column="emergencyContact" property="emergencyContact" jdbcType="VARCHAR"/>
+        <result column="emergencyContactPhone" property="emergencyContactPhone" jdbcType="VARCHAR"/>
+        <result column="fertilityStatus" property="fertilityStatus" jdbcType="VARCHAR"/>
+        <result column="childrenInfo" property="childrenInfo" jdbcType="VARCHAR"/>
+        <result column="graduationDate" property="graduationDate" jdbcType="DATE"/>
+        <result column="certificate" property="certificate" jdbcType="VARCHAR"/>
+        <result column="trainingHistory" property="trainingHistory" jdbcType="VARCHAR"/>
+        <result column="previousCompany" property="previousCompany" jdbcType="VARCHAR"/>
+        <result column="previousPosition" property="previousPosition" jdbcType="VARCHAR"/>
+        <result column="previousStartEnd" property="previousStartEnd" jdbcType="VARCHAR"/>
+        <result column="pastPerformance" property="pastPerformance" jdbcType="VARCHAR"/>
+        <result column="previousResignationReason" property="previousResignationReason" jdbcType="VARCHAR"/>
+        <result column="reference" property="reference" jdbcType="VARCHAR"/>
+        <result column="referencePhone" property="referencePhone" jdbcType="VARCHAR"/>
+        <result column="assessmentResult" property="assessmentResult" jdbcType="VARCHAR"/>
+        <result column="probation" property="probation" jdbcType="INTEGER"/>
+        <result column="conversionScore" property="conversionScore" jdbcType="INTEGER"/>
+        <result column="workLocation" property="workLocation" jdbcType="VARCHAR"/>
+        <result column="rewardsPunishments" property="rewardsPunishments" jdbcType="VARCHAR"/>
+        <result column="resignationReason" property="resignationReason" jdbcType="VARCHAR"/>
     </resultMap>
     <resultMap id="AllEmployeeInfo" type="org.javaboy.vhr.model.Employee" extends="BaseResultMap">
         <association property="nation" javaType="org.javaboy.vhr.model.Nation">
@@ -54,10 +80,14 @@
         </association>
     </resultMap>
     <sql id="Base_Column_List">
-    id, name, gender, birthday, idCard, wedlock, nationId, nativePlace, politicId, email, 
+    name, gender, birthday, idCard, wedlock, nationId, nativePlace, politicId, email, 
     phone, address, departmentId, jobLevelId, posId, engageForm, tiptopDegree, specialty, 
     school, beginDate, workState, workID, contractTerm, conversionTime, notWorkDate, 
-    beginContract, endContract, workAge
+    beginContract, endContract, workAge, age, idCardStartDate, idCardEndDate, hukouType, 
+    hukouLocation, emergencyContact, emergencyContactPhone, fertilityStatus, childrenInfo, 
+    graduationDate, certificate, trainingHistory, previousCompany, previousPosition, 
+    previousStartEnd, pastPerformance, previousResignationReason, reference, referencePhone, 
+    assessmentResult, probation, conversionScore, workLocation, rewardsPunishments, resignationReason
   </sql>
     <select id="maxWorkID" resultType="java.lang.Integer">
     select max(workID) from employee
@@ -89,9 +119,9 @@
         sallSalary,s.`basicSalary` AS sbasicSalary,s.`bonus` AS sbonus,s.`createDate` AS screateDate,s.`lunchSalary` AS
         slunchSalary,s.`medicalBase` AS smedicalBase,s.`medicalPer` AS smedicalPer,s.`name` AS sname,s.`pensionBase` AS
         spensionBase,s.`pensionPer` AS spensionPer,s.`trafficSalary` AS strafficSalary FROM employee e LEFT JOIN
-        empsalary es ON e.`id`=es.`eid` LEFT JOIN salary s ON es.`sid`=s.`id` LEFT JOIN department d ON
+        empsalary es ON e.`idCard`=es.`eid` LEFT JOIN salary s ON es.`sid`=s.`id` LEFT JOIN department d ON
         e.`departmentId`=d.`id`
-        order by e.id
+        order by e.idCard
         <if test="page !=null and size !=null">
             limit #{page},#{size}
         </if>
@@ -103,7 +133,7 @@
         select e.*,p.`id` as pid,p.`name` as pname,n.`id` as nid,n.`name` as nname,d.`id` as did,d.`name` as
         dname,j.`id` as jid,j.`name` as jname,pos.`id` as posid,pos.`name` as posname from employee e,nation
         n,politicsstatus p,department d,joblevel j,position pos where e.`nationId`=n.`id` and e.`politicId`=p.`id` and
-        e.`departmentId`=d.`id` and e.`jobLevelId`=j.`id` and e.`posId`=pos.`id` and e.`id`=#{id}
+        e.`departmentId`=d.`id` and e.`jobLevelId`=j.`id` and e.`posId`=pos.`id` and e.`idCard`=#{id}
     </select>
     <select id="getEmployeeByPage" resultMap="AllEmployeeInfo">
         select e.*,p.`id` as pid,p.`name` as pname,n.`id` as nid,n.`name` as nname,d.`id` as did,d.`name` as
@@ -169,15 +199,15 @@
             </if>
         </where>
     </select>
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List"/>
         from employee
-        where id = #{id,jdbcType=INTEGER}
+        where idCard = #{idCard,jdbcType=CHAR}
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from employee
-    where id = #{id,jdbcType=INTEGER}
+    where idCard = #{idCard,jdbcType=CHAR}
   </delete>
     <insert id="addEmps">
         insert into employee (name, gender,
@@ -188,7 +218,12 @@
         tiptopDegree, specialty, school,
         beginDate, workState, workID,
         contractTerm, conversionTime, notWorkDate,
-        beginContract, endContract, workAge
+        beginContract, endContract, workAge,
+        age, idCardStartDate, idCardEndDate, hukouType, 
+        hukouLocation, emergencyContact, emergencyContactPhone, fertilityStatus, childrenInfo, 
+        graduationDate, certificate, trainingHistory, previousCompany, previousPosition, 
+        previousStartEnd, pastPerformance, previousResignationReason, reference, referencePhone, 
+        assessmentResult, probation, conversionScore, workLocation, rewardsPunishments, resignationReason
         )
         values
         <foreach collection="list" separator="," item="emp">
@@ -201,12 +236,39 @@
             #{emp.tiptopDegree,jdbcType=CHAR}, #{emp.specialty,jdbcType=VARCHAR}, #{emp.school,jdbcType=VARCHAR},
             #{emp.beginDate,jdbcType=DATE}, #{emp.workState,jdbcType=CHAR}, #{emp.workID,jdbcType=CHAR},
             #{emp.contractTerm,jdbcType=DOUBLE}, #{emp.conversionTime,jdbcType=DATE}, #{emp.notWorkDate,jdbcType=DATE},
-            #{emp.beginContract,jdbcType=DATE}, #{emp.endContract,jdbcType=DATE}, #{emp.workAge,jdbcType=INTEGER}
+            #{emp.beginContract,jdbcType=DATE}, #{emp.endContract,jdbcType=DATE}, #{emp.workAge,jdbcType=INTEGER},
+            #{emp.age,jdbcType=INTEGER}, #{emp.idCardStartDate,jdbcType=DATE}, #{emp.idCardEndDate,jdbcType=DATE}, 
+            #{emp.hukouType,jdbcType=VARCHAR}, #{emp.hukouLocation,jdbcType=VARCHAR}, #{emp.emergencyContact,jdbcType=VARCHAR}, 
+            #{emp.emergencyContactPhone,jdbcType=VARCHAR}, #{emp.fertilityStatus,jdbcType=VARCHAR}, #{emp.childrenInfo,jdbcType=VARCHAR}, 
+            #{emp.graduationDate,jdbcType=DATE}, #{emp.certificate,jdbcType=VARCHAR}, #{emp.trainingHistory,jdbcType=VARCHAR}, 
+            #{emp.previousCompany,jdbcType=VARCHAR}, #{emp.previousPosition,jdbcType=VARCHAR}, #{emp.previousStartEnd,jdbcType=VARCHAR}, 
+            #{emp.pastPerformance,jdbcType=VARCHAR}, #{emp.previousResignationReason,jdbcType=VARCHAR}, #{emp.reference,jdbcType=VARCHAR}, 
+            #{emp.referencePhone,jdbcType=VARCHAR}, #{emp.assessmentResult,jdbcType=VARCHAR}, #{emp.probation,jdbcType=INTEGER}, 
+            #{emp.conversionScore,jdbcType=INTEGER}, #{emp.workLocation,jdbcType=VARCHAR}, #{emp.rewardsPunishments,jdbcType=VARCHAR}, 
+            #{emp.resignationReason,jdbcType=VARCHAR}
             )
         </foreach>
+        ON DUPLICATE KEY UPDATE
+        name = VALUES(name), gender = VALUES(gender), birthday = VALUES(birthday), wedlock = VALUES(wedlock),
+        nationId = VALUES(nationId), nativePlace = VALUES(nativePlace), politicId = VALUES(politicId),
+        email = VALUES(email), phone = VALUES(phone), address = VALUES(address), departmentId = VALUES(departmentId),
+        jobLevelId = VALUES(jobLevelId), posId = VALUES(posId), engageForm = VALUES(engageForm),
+        tiptopDegree = VALUES(tiptopDegree), specialty = VALUES(specialty), school = VALUES(school),
+        beginDate = VALUES(beginDate), workState = VALUES(workState), workID = VALUES(workID),
+        contractTerm = VALUES(contractTerm), conversionTime = VALUES(conversionTime), notWorkDate = VALUES(notWorkDate),
+        beginContract = VALUES(beginContract), endContract = VALUES(endContract), workAge = VALUES(workAge),
+        age = VALUES(age), idCardStartDate = VALUES(idCardStartDate), idCardEndDate = VALUES(idCardEndDate),
+        hukouType = VALUES(hukouType), hukouLocation = VALUES(hukouLocation), emergencyContact = VALUES(emergencyContact),
+        emergencyContactPhone = VALUES(emergencyContactPhone), fertilityStatus = VALUES(fertilityStatus),
+        childrenInfo = VALUES(childrenInfo), graduationDate = VALUES(graduationDate), certificate = VALUES(certificate),
+        trainingHistory = VALUES(trainingHistory), previousCompany = VALUES(previousCompany), previousPosition = VALUES(previousPosition),
+        previousStartEnd = VALUES(previousStartEnd), pastPerformance = VALUES(pastPerformance), previousResignationReason = VALUES(previousResignationReason),
+        reference = VALUES(reference), referencePhone = VALUES(referencePhone), assessmentResult = VALUES(assessmentResult),
+        probation = VALUES(probation), conversionScore = VALUES(conversionScore), workLocation = VALUES(workLocation),
+        rewardsPunishments = VALUES(rewardsPunishments), resignationReason = VALUES(resignationReason)
     </insert>
     <insert id="insert" parameterType="org.javaboy.vhr.model.Employee">
-    insert into employee (id, name, gender, 
+    insert into employee (name, gender, 
       birthday, idCard, wedlock, nationId, 
       nativePlace, politicId, email, 
       phone, address, departmentId, 
@@ -214,9 +276,14 @@
       tiptopDegree, specialty, school, 
       beginDate, workState, workID, 
       contractTerm, conversionTime, notWorkDate, 
-      beginContract, endContract, workAge
+      beginContract, endContract, workAge,
+      age, idCardStartDate, idCardEndDate, hukouType, 
+      hukouLocation, emergencyContact, emergencyContactPhone, fertilityStatus, childrenInfo, 
+      graduationDate, certificate, trainingHistory, previousCompany, previousPosition, 
+      previousStartEnd, pastPerformance, previousResignationReason, reference, referencePhone, 
+      assessmentResult, probation, conversionScore, workLocation, rewardsPunishments, resignationReason
       )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{gender,jdbcType=CHAR}, 
+    values (#{name,jdbcType=VARCHAR}, #{gender,jdbcType=CHAR}, 
       #{birthday,jdbcType=DATE}, #{idCard,jdbcType=CHAR}, #{wedlock,jdbcType=CHAR}, #{nationId,jdbcType=INTEGER}, 
       #{nativePlace,jdbcType=VARCHAR}, #{politicId,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{departmentId,jdbcType=INTEGER}, 
@@ -224,16 +291,22 @@
       #{tiptopDegree,jdbcType=CHAR}, #{specialty,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR}, 
       #{beginDate,jdbcType=DATE}, #{workState,jdbcType=CHAR}, #{workID,jdbcType=CHAR}, 
       #{contractTerm,jdbcType=DOUBLE}, #{conversionTime,jdbcType=DATE}, #{notWorkDate,jdbcType=DATE}, 
-      #{beginContract,jdbcType=DATE}, #{endContract,jdbcType=DATE}, #{workAge,jdbcType=INTEGER}
+      #{beginContract,jdbcType=DATE}, #{endContract,jdbcType=DATE}, #{workAge,jdbcType=INTEGER},
+      #{age,jdbcType=INTEGER}, #{idCardStartDate,jdbcType=DATE}, #{idCardEndDate,jdbcType=DATE}, 
+      #{hukouType,jdbcType=VARCHAR}, #{hukouLocation,jdbcType=VARCHAR}, #{emergencyContact,jdbcType=VARCHAR}, 
+      #{emergencyContactPhone,jdbcType=VARCHAR}, #{fertilityStatus,jdbcType=VARCHAR}, #{childrenInfo,jdbcType=VARCHAR}, 
+      #{graduationDate,jdbcType=DATE}, #{certificate,jdbcType=VARCHAR}, #{trainingHistory,jdbcType=VARCHAR}, 
+      #{previousCompany,jdbcType=VARCHAR}, #{previousPosition,jdbcType=VARCHAR}, #{previousStartEnd,jdbcType=VARCHAR}, 
+      #{pastPerformance,jdbcType=VARCHAR}, #{previousResignationReason,jdbcType=VARCHAR}, #{reference,jdbcType=VARCHAR}, 
+      #{referencePhone,jdbcType=VARCHAR}, #{assessmentResult,jdbcType=VARCHAR}, #{probation,jdbcType=INTEGER}, 
+      #{conversionScore,jdbcType=INTEGER}, #{workLocation,jdbcType=VARCHAR}, #{rewardsPunishments,jdbcType=VARCHAR}, 
+      #{resignationReason,jdbcType=VARCHAR}
       )
   </insert>
-    <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Employee" useGeneratedKeys="true"
-            keyProperty="id">
+    <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Employee">
         insert into employee
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
+            <!-- id removed -->
             <if test="name != null">
                 name,
             </if>
@@ -315,11 +388,83 @@
             <if test="workAge != null">
                 workAge,
             </if>
+            <if test="age != null">
+                age,
+            </if>
+            <if test="idCardStartDate != null">
+                idCardStartDate,
+            </if>
+            <if test="idCardEndDate != null">
+                idCardEndDate,
+            </if>
+            <if test="hukouType != null">
+                hukouType,
+            </if>
+            <if test="hukouLocation != null">
+                hukouLocation,
+            </if>
+            <if test="emergencyContact != null">
+                emergencyContact,
+            </if>
+            <if test="emergencyContactPhone != null">
+                emergencyContactPhone,
+            </if>
+            <if test="fertilityStatus != null">
+                fertilityStatus,
+            </if>
+            <if test="childrenInfo != null">
+                childrenInfo,
+            </if>
+            <if test="graduationDate != null">
+                graduationDate,
+            </if>
+            <if test="certificate != null">
+                certificate,
+            </if>
+            <if test="trainingHistory != null">
+                trainingHistory,
+            </if>
+            <if test="previousCompany != null">
+                previousCompany,
+            </if>
+            <if test="previousPosition != null">
+                previousPosition,
+            </if>
+            <if test="previousStartEnd != null">
+                previousStartEnd,
+            </if>
+            <if test="pastPerformance != null">
+                pastPerformance,
+            </if>
+            <if test="previousResignationReason != null">
+                previousResignationReason,
+            </if>
+            <if test="reference != null">
+                reference,
+            </if>
+            <if test="referencePhone != null">
+                referencePhone,
+            </if>
+            <if test="assessmentResult != null">
+                assessmentResult,
+            </if>
+            <if test="probation != null">
+                probation,
+            </if>
+            <if test="conversionScore != null">
+                conversionScore,
+            </if>
+            <if test="workLocation != null">
+                workLocation,
+            </if>
+            <if test="rewardsPunishments != null">
+                rewardsPunishments,
+            </if>
+            <if test="resignationReason != null">
+                resignationReason,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="name != null">
                 #{name,jdbcType=VARCHAR},
             </if>
@@ -401,6 +546,81 @@
             <if test="workAge != null">
                 #{workAge,jdbcType=INTEGER},
             </if>
+            <if test="age != null">
+                #{age,jdbcType=INTEGER},
+            </if>
+            <if test="idCardStartDate != null">
+                #{idCardStartDate,jdbcType=DATE},
+            </if>
+            <if test="idCardEndDate != null">
+                #{idCardEndDate,jdbcType=DATE},
+            </if>
+            <if test="hukouType != null">
+                #{hukouType,jdbcType=VARCHAR},
+            </if>
+            <if test="hukouLocation != null">
+                #{hukouLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="emergencyContact != null">
+                #{emergencyContact,jdbcType=VARCHAR},
+            </if>
+            <if test="emergencyContactPhone != null">
+                #{emergencyContactPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="fertilityStatus != null">
+                #{fertilityStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="childrenInfo != null">
+                #{childrenInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="graduationDate != null">
+                #{graduationDate,jdbcType=DATE},
+            </if>
+            <if test="certificate != null">
+                #{certificate,jdbcType=VARCHAR},
+            </if>
+            <if test="trainingHistory != null">
+                #{trainingHistory,jdbcType=VARCHAR},
+            </if>
+            <if test="previousCompany != null">
+                #{previousCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="previousPosition != null">
+                #{previousPosition,jdbcType=VARCHAR},
+            </if>
+            <if test="previousStartEnd != null">
+                #{previousStartEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="pastPerformance != null">
+                #{pastPerformance,jdbcType=VARCHAR},
+            </if>
+            <if test="previousResignationReason != null">
+                #{previousResignationReason,jdbcType=VARCHAR},
+            </if>
+            <if test="reference != null">
+                #{reference,jdbcType=VARCHAR},
+            </if>
+            <if test="referencePhone != null">
+                #{referencePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="assessmentResult != null">
+                #{assessmentResult,jdbcType=VARCHAR},
+            </if>
+            <if test="probation != null">
+                #{probation,jdbcType=INTEGER},
+            </if>
+            <if test="conversionScore != null">
+                #{conversionScore,jdbcType=INTEGER},
+            </if>
+            <if test="workLocation != null">
+                #{workLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="rewardsPunishments != null">
+                #{rewardsPunishments,jdbcType=VARCHAR},
+            </if>
+            <if test="resignationReason != null">
+                #{resignationReason,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.Employee">
@@ -415,9 +635,7 @@
             <if test="birthday != null">
                 birthday = #{birthday,jdbcType=DATE},
             </if>
-            <if test="idCard != null">
-                idCard = #{idCard,jdbcType=CHAR},
-            </if>
+            <!-- idCard removed from update because it's PK -->
             <if test="wedlock != null">
                 wedlock = #{wedlock,jdbcType=CHAR},
             </if>
@@ -487,15 +705,89 @@
             <if test="workAge != null">
                 workAge = #{workAge,jdbcType=INTEGER},
             </if>
+            <if test="age != null">
+                age = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="idCardStartDate != null">
+                idCardStartDate = #{idCardStartDate,jdbcType=DATE},
+            </if>
+            <if test="idCardEndDate != null">
+                idCardEndDate = #{idCardEndDate,jdbcType=DATE},
+            </if>
+            <if test="hukouType != null">
+                hukouType = #{hukouType,jdbcType=VARCHAR},
+            </if>
+            <if test="hukouLocation != null">
+                hukouLocation = #{hukouLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="emergencyContact != null">
+                emergencyContact = #{emergencyContact,jdbcType=VARCHAR},
+            </if>
+            <if test="emergencyContactPhone != null">
+                emergencyContactPhone = #{emergencyContactPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="fertilityStatus != null">
+                fertilityStatus = #{fertilityStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="childrenInfo != null">
+                childrenInfo = #{childrenInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="graduationDate != null">
+                graduationDate = #{graduationDate,jdbcType=DATE},
+            </if>
+            <if test="certificate != null">
+                certificate = #{certificate,jdbcType=VARCHAR},
+            </if>
+            <if test="trainingHistory != null">
+                trainingHistory = #{trainingHistory,jdbcType=VARCHAR},
+            </if>
+            <if test="previousCompany != null">
+                previousCompany = #{previousCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="previousPosition != null">
+                previousPosition = #{previousPosition,jdbcType=VARCHAR},
+            </if>
+            <if test="previousStartEnd != null">
+                previousStartEnd = #{previousStartEnd,jdbcType=VARCHAR},
+            </if>
+            <if test="pastPerformance != null">
+                pastPerformance = #{pastPerformance,jdbcType=VARCHAR},
+            </if>
+            <if test="previousResignationReason != null">
+                previousResignationReason = #{previousResignationReason,jdbcType=VARCHAR},
+            </if>
+            <if test="reference != null">
+                reference = #{reference,jdbcType=VARCHAR},
+            </if>
+            <if test="referencePhone != null">
+                referencePhone = #{referencePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="assessmentResult != null">
+                assessmentResult = #{assessmentResult,jdbcType=VARCHAR},
+            </if>
+            <if test="probation != null">
+                probation = #{probation,jdbcType=INTEGER},
+            </if>
+            <if test="conversionScore != null">
+                conversionScore = #{conversionScore,jdbcType=INTEGER},
+            </if>
+            <if test="workLocation != null">
+                workLocation = #{workLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="rewardsPunishments != null">
+                rewardsPunishments = #{rewardsPunishments,jdbcType=VARCHAR},
+            </if>
+            <if test="resignationReason != null">
+                resignationReason = #{resignationReason,jdbcType=VARCHAR},
+            </if>
         </set>
-        where id = #{id,jdbcType=INTEGER}
+        where idCard = #{idCard,jdbcType=CHAR}
     </update>
     <update id="updateByPrimaryKey" parameterType="org.javaboy.vhr.model.Employee">
     update employee
     set name = #{name,jdbcType=VARCHAR},
       gender = #{gender,jdbcType=CHAR},
       birthday = #{birthday,jdbcType=DATE},
-      idCard = #{idCard,jdbcType=CHAR},
       wedlock = #{wedlock,jdbcType=CHAR},
       nationId = #{nationId,jdbcType=INTEGER},
       nativePlace = #{nativePlace,jdbcType=VARCHAR},
@@ -518,7 +810,32 @@
       notWorkDate = #{notWorkDate,jdbcType=DATE},
       beginContract = #{beginContract,jdbcType=DATE},
       endContract = #{endContract,jdbcType=DATE},
-      workAge = #{workAge,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
+      workAge = #{workAge,jdbcType=INTEGER},
+      age = #{age,jdbcType=INTEGER},
+      idCardStartDate = #{idCardStartDate,jdbcType=DATE},
+      idCardEndDate = #{idCardEndDate,jdbcType=DATE},
+      hukouType = #{hukouType,jdbcType=VARCHAR},
+      hukouLocation = #{hukouLocation,jdbcType=VARCHAR},
+      emergencyContact = #{emergencyContact,jdbcType=VARCHAR},
+      emergencyContactPhone = #{emergencyContactPhone,jdbcType=VARCHAR},
+      fertilityStatus = #{fertilityStatus,jdbcType=VARCHAR},
+      childrenInfo = #{childrenInfo,jdbcType=VARCHAR},
+      graduationDate = #{graduationDate,jdbcType=DATE},
+      certificate = #{certificate,jdbcType=VARCHAR},
+      trainingHistory = #{trainingHistory,jdbcType=VARCHAR},
+      previousCompany = #{previousCompany,jdbcType=VARCHAR},
+      previousPosition = #{previousPosition,jdbcType=VARCHAR},
+      previousStartEnd = #{previousStartEnd,jdbcType=VARCHAR},
+      pastPerformance = #{pastPerformance,jdbcType=VARCHAR},
+      previousResignationReason = #{previousResignationReason,jdbcType=VARCHAR},
+      reference = #{reference,jdbcType=VARCHAR},
+      referencePhone = #{referencePhone,jdbcType=VARCHAR},
+      assessmentResult = #{assessmentResult,jdbcType=VARCHAR},
+      probation = #{probation,jdbcType=INTEGER},
+      conversionScore = #{conversionScore,jdbcType=INTEGER},
+      workLocation = #{workLocation,jdbcType=VARCHAR},
+      rewardsPunishments = #{rewardsPunishments,jdbcType=VARCHAR},
+      resignationReason = #{resignationReason,jdbcType=VARCHAR}
+    where idCard = #{idCard,jdbcType=CHAR}
   </update>
 </mapper>

@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @作者 江南一点雨
@@ -51,7 +53,7 @@ public class EmpBasicController {
     }
 
     @DeleteMapping("/{id}")
-    public RespBean deleteEmpByEid(@PathVariable Integer id) {
+    public RespBean deleteEmpByEid(@PathVariable String id) {
         if (employeeService.deleteEmpByEid(id) == 1) {
             return RespBean.ok("删除成功!");
         }
@@ -104,12 +106,24 @@ public class EmpBasicController {
         return POIUtils.employee2Excel(list);
     }
 
+    @GetMapping("/import/template")
+    public ResponseEntity<byte[]> importTemplate() {
+        return POIUtils.employee2Excel(new ArrayList<>());
+    }
+
     @PostMapping("/import")
     public RespBean importData(MultipartFile file) throws IOException {
-        List<Employee> list = POIUtils.excel2Employee(file, nationService.getAllNations(), politicsstatusService.getAllPoliticsstatus(), departmentService.getAllDepartmentsWithOutChildren(), positionService.getAllPositions(), jobLevelService.getAllJobLevels());
-        if (employeeService.addEmps(list) == list.size()) {
-            return RespBean.ok("上传成功");
+        Map<String, Object> map = POIUtils.excel2Employee(file, nationService.getAllNations(), politicsstatusService.getAllPoliticsstatus(), departmentService.getAllDepartmentsWithOutChildren(), positionService.getAllPositions(), jobLevelService.getAllJobLevels());
+        List<Employee> list = (List<Employee>) map.get("list");
+        List<String> errors = (List<String>) map.get("errors");
+        
+        if (list != null && list.size() > 0) {
+            employeeService.addEmps(list);
         }
-        return RespBean.error("上传失败");
+        
+        if (errors != null && !errors.isEmpty()) {
+            return RespBean.ok("部分数据存在问题", errors);
+        }
+        return RespBean.ok("上传成功");
     }
 }

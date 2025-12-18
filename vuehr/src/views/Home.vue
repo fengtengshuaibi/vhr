@@ -7,7 +7,7 @@
                     <el-button icon="el-icon-bell" type="text" style="margin-right: 8px;color: #000000;" size="normal" @click="goChat"></el-button>
                     <el-dropdown class="userInfo" @command="commandHandler">
   <span class="el-dropdown-link">
-    {{user.name}}<i><img :src="user.userface" alt=""></i>
+    {{user.name}}<i><img :src="user.userface" alt="" @error="imgError"></i>
   </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="userinfo">个人中心</el-dropdown-item>
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+    import img from '../assets/logo.png';
     export default {
         name: "Home",
         data() {
@@ -63,6 +64,9 @@
             }
         },
         methods: {
+            imgError(e) {
+                e.target.src = img;
+            },
             goChat() {
                 this.$router.push("/chat");
             },
