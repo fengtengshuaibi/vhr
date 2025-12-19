@@ -1,18 +1,28 @@
 <template>
     <div>
-        <div>
-            <el-input size="small" v-model="jl.name" style="width: 300px;" prefix-icon="el-icon-plus"
-                      placeholder="添加职称..."></el-input>
-            <el-select v-model="jl.titleLevel" placeholder="职称等级" size="small"
-                       style="margin-left: 5px;margin-right: 5px">
-                <el-option
-                        v-for="item in titleLevels"
-                        :key="item"
-                        :label="item"
-                        :value="item">
-                </el-option>
-            </el-select>
-            <el-button icon="el-icon-plus" type="primary" size="small" @click="addJobLevel">添加</el-button>
+        <div style="display: flex; justify-content: space-between">
+            <div>
+                <el-input placeholder="请输入职称名称进行搜索..." prefix-icon="el-icon-search"
+                          clearable
+                          @clear="initJls"
+                          style="width: 300px;margin-right: 10px" v-model="keyword"
+                          @keydown.enter.native="initJls"></el-input>
+                <el-button icon="el-icon-search" type="primary" @click="initJls">搜索</el-button>
+            </div>
+            <div>
+                <el-input size="small" v-model="jl.name" style="width: 300px;" prefix-icon="el-icon-plus"
+                          placeholder="添加职称..."></el-input>
+                <el-select v-model="jl.titleLevel" placeholder="职称等级" size="small"
+                           style="margin-left: 5px;margin-right: 5px">
+                    <el-option
+                            v-for="item in titleLevels"
+                            :key="item"
+                            :label="item"
+                            :value="item">
+                    </el-option>
+                </el-select>
+                <el-button icon="el-icon-plus" type="primary" size="small" @click="addJobLevel">添加</el-button>
+            </div>
         </div>
         <div style="margin-top: 10px">
             <el-table
@@ -65,6 +75,15 @@
             <el-button type="danger" size="small" style="margin-top: 10px" :disabled="multipleSelection.length==0"
                        @click="deleteMany">批量删除
             </el-button>
+            <div style="display: flex;justify-content: flex-end;margin-top: 10px">
+                <el-pagination
+                        background
+                        @current-change="currentChange"
+                        @size-change="sizeChange"
+                        layout="sizes, prev, pager, next, jumper, ->, total, slot"
+                        :total="total">
+                </el-pagination>
+            </div>
 
         </div>
         <el-dialog
@@ -143,13 +162,25 @@
                     '中级',
                     '初级',
                     '员级',
-                ]
+                ],
+                total: 0,
+                page: 1,
+                size: 10,
+                keyword: ''
             }
         },
         mounted() {
             this.initJls();
         },
         methods: {
+            sizeChange(currentSize) {
+                this.size = currentSize;
+                this.initJls();
+            },
+            currentChange(currentPage) {
+                this.page = currentPage;
+                this.initJls();
+            },
             deleteMany() {
                 this.$confirm('此操作将永久删除【' + this.multipleSelection.length + '】条记录, 是否继续?', '提示', {
                     confirmButtonText: '确定',
@@ -219,10 +250,15 @@
             },
             initJls() {
                 this.loading = true;
-                this.getRequest("/system/basic/joblevel/").then(resp => {
+                let url = '/system/basic/joblevel/?page=' + this.page + '&size=' + this.size;
+                if (this.keyword) {
+                    url += '&name=' + this.keyword;
+                }
+                this.getRequest(url).then(resp => {
                     this.loading = false;
                     if (resp) {
-                        this.jls = resp;
+                        this.jls = resp.data;
+                        this.total = resp.total;
                         this.jl = {
                             name: '',
                             titleLevel: ''

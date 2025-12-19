@@ -40,8 +40,8 @@ public class EmpBasicController {
     DepartmentService departmentService;
 
     @GetMapping("/")
-    public RespPageBean getEmployeeByPage(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, Employee employee, Date[] beginDateScope, Integer[] ageScope) {
-        return employeeService.getEmployeeByPage(page, size, employee,beginDateScope, ageScope);
+    public RespPageBean getEmployeeByPage(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, Employee employee, Date[] beginDateScope, Integer[] ageScope, Date[] conversionTimeScope, Date[] notWorkDateScope) {
+        return employeeService.getEmployeeByPage(page, size, employee,beginDateScope, ageScope, conversionTimeScope, notWorkDateScope);
     }
 
     @PostMapping("/")
@@ -58,6 +58,14 @@ public class EmpBasicController {
             return RespBean.ok("删除成功!");
         }
         return RespBean.error("删除失败!");
+    }
+
+    @DeleteMapping("/")
+    public RespBean deleteMany(@RequestParam List<String> ids) {
+        if (employeeService.deleteEmps(ids) == ids.size()) {
+            return RespBean.ok("删除成功!");
+        }
+        return RespBean.ok("删除成功!");
     }
 
     @PutMapping("/")
@@ -100,9 +108,14 @@ public class EmpBasicController {
         return departmentService.getAllDepartments();
     }
 
+    @GetMapping("/simple")
+    public List<Employee> getAllSimpleEmployees() {
+        return (List<Employee>) employeeService.getEmployeeByPage(null, null, new Employee(), null, null, null, null).getData();
+    }
+
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportData() {
-        List<Employee> list = (List<Employee>) employeeService.getEmployeeByPage(null, null, new Employee(),null,null).getData();
+        List<Employee> list = (List<Employee>) employeeService.getEmployeeByPage(null, null, new Employee(),null,null, null, null).getData();
         return POIUtils.employee2Excel(list);
     }
 

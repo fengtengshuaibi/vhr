@@ -18,7 +18,9 @@ public interface PositionMapper {
 
     int updateByPrimaryKey(Position record);
 
-    List<Position> getAllPositions();
+    List<Position> getAllPositions(@Param("page") Integer page, @Param("size") Integer size, @Param("name") String name);
+
+    Long getTotal(@Param("name") String name);
 
     Integer deletePositionsByIds(@Param("ids") Integer[] ids);
 }

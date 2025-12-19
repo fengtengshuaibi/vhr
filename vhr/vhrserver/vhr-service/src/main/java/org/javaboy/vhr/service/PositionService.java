@@ -3,6 +3,7 @@ package org.javaboy.vhr.service;
 import org.javaboy.vhr.mapper.PositionMapper;
 import org.javaboy.vhr.model.Position;
 import org.javaboy.vhr.model.RespBean;
+import org.javaboy.vhr.model.RespPageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +17,27 @@ import java.util.List;
  * @GitHub https://github.com/lenve
  * @博客 http://wangsong.blog.csdn.net
  * @网站 http://www.javaboy.org
- * @时间 2019-10-01 15:54
+ * @时间 2019-10-01 15:58
  */
 @Service
 public class PositionService {
     @Autowired
     PositionMapper positionMapper;
+
+    public RespPageBean getAllPositions(Integer page, Integer size, String name) {
+        if (page != null && size != null) {
+            page = (page - 1) * size;
+        }
+        List<Position> data = positionMapper.getAllPositions(page, size, name);
+        Long total = positionMapper.getTotal(name);
+        RespPageBean bean = new RespPageBean();
+        bean.setData(data);
+        bean.setTotal(total);
+        return bean;
+    }
+
     public List<Position> getAllPositions() {
-        return positionMapper.getAllPositions();
+        return positionMapper.getAllPositions(null, null, null);
     }
 
     public Integer addPosition(Position position) {

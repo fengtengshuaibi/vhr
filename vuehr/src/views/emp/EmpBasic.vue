@@ -39,61 +39,60 @@
                     <el-button type="primary" icon="el-icon-plus" @click="showAddEmpView">
                         添加用户
                     </el-button>
+                    <el-button type="danger" @click="deleteManyEmps" :disabled="multipleSelection.length===0">
+                        批量删除
+                    </el-button>
                     <el-popover
                             placement="bottom"
                             title="显示列"
                             width="200"
                             trigger="click">
                         <div style="height: 300px; overflow-y: scroll;">
+                            <el-checkbox v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox><br>
                             <el-checkbox v-model="showColumns.name">姓名</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.workID">工号</el-checkbox><br>
                             <el-checkbox v-model="showColumns.gender">性别</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.birthday">出生日期</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.idCard">身份证号码</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.wedlock">婚姻状况</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.nationId">民族</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.nativePlace">籍贯</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.politicId">政治面貌</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.email">电子邮件</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.phone">电话号码</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.address">联系地址</el-checkbox><br>
                             <el-checkbox v-model="showColumns.departmentId">所属部门</el-checkbox><br>
                             <el-checkbox v-model="showColumns.posId">职位</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.jobLevelId">职称</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.engageForm">聘用形式</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.tiptopDegree">最高学历</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.specialty">专业</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.school">毕业院校</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.beginDate">入职日期</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.conversionTime">转正日期</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.beginContract">合同起始日期</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.endContract">合同截止日期</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.contractTerm">合同期限</el-checkbox><br>
-                            <!-- New Fields -->
                             <el-checkbox v-model="showColumns.age">年龄</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.birthday">出生日期</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.nationId">民族</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.idCard">身份证号码</el-checkbox><br>
                             <el-checkbox v-model="showColumns.idCardStartDate">身份证开始</el-checkbox><br>
                             <el-checkbox v-model="showColumns.idCardEndDate">身份证结束</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.beginDate">入职日期</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.probation">试用期</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.conversionTime">转正日期</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.conversionScore">转正评分</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.workAge">司龄(月)</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.workLocation">工作地点</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.politicId">政治面貌</el-checkbox><br>
                             <el-checkbox v-model="showColumns.hukouType">户口类别</el-checkbox><br>
                             <el-checkbox v-model="showColumns.hukouLocation">户口所在地</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.address">现居住地址</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.email">电子邮箱</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.phone">联系方式</el-checkbox><br>
                             <el-checkbox v-model="showColumns.emergencyContact">紧急联系人</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.emergencyContactPhone">紧急电话</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.emergencyContactPhone">紧急联系电话</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.wedlock">婚姻状况</el-checkbox><br>
                             <el-checkbox v-model="showColumns.fertilityStatus">生育状况</el-checkbox><br>
                             <el-checkbox v-model="showColumns.childrenInfo">子女信息</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.tiptopDegree">学历</el-checkbox><br>
                             <el-checkbox v-model="showColumns.graduationDate">毕业时间</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.certificate">资格证书</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.school">毕业院校</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.specialty">专业</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.certificate">职称/资格证书</el-checkbox><br>
                             <el-checkbox v-model="showColumns.trainingHistory">培训经历</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.previousCompany">原单位</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.previousPosition">原职位</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.previousStartEnd">原起止时间</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.pastPerformance">过往业绩</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.previousResignationReason">原离职原因</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.previousCompany">原工作单位</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.previousPosition">原职务</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.previousStartEnd">入职/离职时间</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.pastPerformance">过往工作业绩</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.previousResignationReason">原单位离职原因</el-checkbox><br>
                             <el-checkbox v-model="showColumns.reference">证明人</el-checkbox><br>
                             <el-checkbox v-model="showColumns.referencePhone">证明人电话</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.assessmentResult">测评结果</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.probation">试用期</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.conversionScore">转正评分</el-checkbox><br>
-                            <el-checkbox v-model="showColumns.workLocation">工作地点</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.assessmentResult">入职前测评结果</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.workState">工作状态</el-checkbox><br>
                             <el-checkbox v-model="showColumns.rewardsPunishments">奖惩记录</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.notWorkDate">离职日期</el-checkbox><br>
                             <el-checkbox v-model="showColumns.resignationReason">离职原因</el-checkbox><br>
                         </div>
                         <el-button slot="reference" icon="el-icon-s-grid" style="margin-left: 8px">显示列</el-button>
@@ -105,61 +104,12 @@
                      style="border: 1px solid #409eff;border-radius: 5px;box-sizing: border-box;padding: 5px;margin: 10px 0px;">
                     <el-row>
                         <el-col :span="5">
-                            政治面貌:
-                            <el-select v-model="searchValue.politicId" placeholder="政治面貌" size="mini"
-                                       style="width: 130px;">
-                                <el-option
-                                        v-for="item in politicsstatus"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </el-col>
-                        <el-col :span="4">
-                            民族:
-                            <el-select v-model="searchValue.nationId" placeholder="民族" size="mini"
-                                       style="width: 130px;">
-                                <el-option
-                                        v-for="item in nations"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </el-col>
-                        <el-col :span="4">
-                            职位:
-                            <el-select v-model="searchValue.posId" placeholder="职位" size="mini" style="width: 130px;">
-                                <el-option
-                                        v-for="item in positions"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </el-col>
-                        <el-col :span="4">
-                            职称:
-                            <el-select v-model="searchValue.jobLevelId" placeholder="职称" size="mini"
-                                       style="width: 130px;">
-                                <el-option
-                                        v-for="item in joblevels"
-                                        :key="item.id"
-                                        :label="item.name"
-                                        :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </el-col>
-                        <el-col :span="7">
-                            聘用形式:
-                            <el-radio-group v-model="searchValue.engageForm">
-                                <el-radio label="劳动合同">劳动合同</el-radio>
-                                <el-radio label="劳务合同">劳务合同</el-radio>
+                            性别:
+                            <el-radio-group v-model="searchValue.gender">
+                                <el-radio label="男">男</el-radio>
+                                <el-radio label="女">女</el-radio>
                             </el-radio-group>
                         </el-col>
-                    </el-row>
-                    <el-row style="margin-top: 10px">
                         <el-col :span="5">
                             所属部门:
                             <el-popover
@@ -176,10 +126,18 @@
                                 </div>
                             </el-popover>
                         </el-col>
-                        <el-col :span="10">
-                            入职日期:
+                        <el-col :span="7">
+                            年龄范围:
+                            <div style="display: inline-flex; width: 130px;">
+                                <el-input size="mini" v-model="searchValue.ageScopeMin" placeholder="最小" style="width: 60px" @input="searchValue.ageScope=[searchValue.ageScopeMin, searchValue.ageScopeMax]"></el-input>
+                                <span style="margin: 0 5px">-</span>
+                                <el-input size="mini" v-model="searchValue.ageScopeMax" placeholder="最大" style="width: 60px" @input="searchValue.ageScope=[searchValue.ageScopeMin, searchValue.ageScopeMax]"></el-input>
+                            </div>
+                        </el-col>
+                        <el-col :span="7">
+                            转正日期:
                             <el-date-picker
-                                    v-model="searchValue.beginDateScope"
+                                    v-model="searchValue.conversionTimeScope"
                                     type="daterange"
                                     size="mini"
                                     unlink-panels
@@ -192,6 +150,26 @@
                     </el-row>
                     <el-row style="margin-top: 10px">
                         <el-col :span="5">
+                            司龄:
+                            <el-input size="mini" style="width: 130px" v-model="searchValue.workAge" placeholder="工龄"></el-input>
+                        </el-col>
+                        <el-col :span="5">
+                            工作地点:
+                            <el-input size="mini" style="width: 130px" v-model="searchValue.workLocation" placeholder="工作地点(模糊)"></el-input>
+                        </el-col>
+                        <el-col :span="5">
+                            政治面貌:
+                            <el-select v-model="searchValue.politicId" placeholder="政治面貌" size="mini"
+                                       style="width: 130px;">
+                                <el-option
+                                        v-for="item in politicsstatus"
+                                        :key="item.id"
+                                        :label="item.name"
+                                        :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-col>
+                        <el-col :span="5">
                             婚姻状况:
                             <el-select v-model="searchValue.wedlock" placeholder="婚姻状况" size="mini" style="width: 130px;">
                                 <el-option label="已婚" value="已婚"></el-option>
@@ -199,12 +177,10 @@
                                 <el-option label="离异" value="离异"></el-option>
                             </el-select>
                         </el-col>
-                        <el-col :span="4">
-                            生育状况:
-                            <el-input size="mini" style="width: 130px" v-model="searchValue.fertilityStatus" placeholder="生育状况"></el-input>
-                        </el-col>
-                        <el-col :span="4">
-                            最高学历:
+                    </el-row>
+                    <el-row style="margin-top: 10px">
+                        <el-col :span="5">
+                            学历:
                             <el-select v-model="searchValue.tiptopDegree" placeholder="学历" size="mini" style="width: 130px;">
                                 <el-option
                                         v-for="item in tiptopDegrees"
@@ -214,16 +190,31 @@
                                 </el-option>
                             </el-select>
                         </el-col>
-                        <el-col :span="6">
-                            年龄范围:
-                            <div style="display: inline-flex; width: 130px;">
-                                <el-input size="mini" v-model="searchValue.ageScopeMin" placeholder="最小" style="width: 60px" @input="searchValue.ageScope=[searchValue.ageScopeMin, searchValue.ageScopeMax]"></el-input>
-                                <span style="margin: 0 5px">-</span>
-                                <el-input size="mini" v-model="searchValue.ageScopeMax" placeholder="最大" style="width: 60px" @input="searchValue.ageScope=[searchValue.ageScopeMin, searchValue.ageScopeMax]"></el-input>
-                            </div>
-                        </el-col>
                         <el-col :span="5">
-                            <el-button size="mini">取消</el-button>
+                            工作状态:
+                            <el-input size="mini" style="width: 130px" v-model="searchValue.workState" placeholder="工作状态(模糊)"></el-input>
+                        </el-col>
+                         <el-col :span="9">
+                            离职日期:
+                            <el-date-picker
+                                    v-model="searchValue.notWorkDateScope"
+                                    type="daterange"
+                                    size="mini"
+                                    unlink-panels
+                                    value-format="yyyy-MM-dd"
+                                    range-separator="至"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期">
+                            </el-date-picker>
+                        </el-col>
+                    </el-row>
+                    <el-row style="margin-top: 10px">
+                        <el-col :span="5">
+                            离职原因:
+                            <el-input size="mini" style="width: 130px" v-model="searchValue.resignationReason" placeholder="离职原因(模糊)"></el-input>
+                        </el-col>
+                        <el-col :span="5" :offset="14">
+                            <el-button size="mini" @click="resetSearch">重置</el-button>
                             <el-button size="mini" icon="el-icon-search" type="primary" @click="initEmps('advanced')">搜索</el-button>
                         </el-col>
                     </el-row>
@@ -239,210 +230,66 @@
                     element-loading-text="正在加载..."
                     element-loading-spinner="el-icon-loading"
                     element-loading-background="rgba(0, 0, 0, 0.8)"
-                    style="width: 100%">
+                    @selection-change="handleSelectionChange"
+                    style="width: 100%"
+                    ref="empTable"
+                    height="calc(100vh - 200px)">
                 <el-table-column
                         type="selection"
                         width="55">
                 </el-table-column>
-                <el-table-column
-                        v-if="showColumns.name"
-                        prop="name"
-                        fixed
-                        align="left"
-                        label="姓名"
-                        width="90">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.workID"
-                        prop="workID"
-                        label="工号"
-                        align="left"
-                        width="85">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.gender"
-                        prop="gender"
-                        label="性别"
-                        align="left"
-                        width="85">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.birthday"
-                        prop="birthday"
-                        width="95"
-                        align="left"
-                        label="出生日期">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.idCard"
-                        prop="idCard"
-                        width="150"
-                        align="left"
-                        label="身份证号码">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.wedlock"
-                        prop="wedlock"
-                        width="70"
-                        label="婚姻状况">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.nationId"
-                        prop="nation.name"
-                        width="50"
-                        label="民族">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.nativePlace"
-                        prop="nativePlace"
-                        width="80"
-                        label="籍贯">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.politicId"
-                        prop="politicsstatus.name"
-                        label="政治面貌">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.email"
-                        prop="email"
-                        width="180"
-                        align="left"
-                        label="电子邮件">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.phone"
-                        prop="phone"
-                        width="100"
-                        align="left"
-                        label="电话号码">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.address"
-                        prop="address"
-                        width="220"
-                        align="left"
-                        label="联系地址">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.departmentId"
-                        prop="department.name"
-                        width="100"
-                        align="left"
-                        label="所属部门">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.posId"
-                        prop="position.name"
-                        width="100"
-                        label="职位">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.jobLevelId"
-                        prop="jobLevel.name"
-                        width="100"
-                        label="职称">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.engageForm"
-                        prop="engageForm"
-                        width="100"
-                        align="left"
-                        label="聘用形式">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.tiptopDegree"
-                        prop="tiptopDegree"
-                        width="80"
-                        align="left"
-                        label="最高学历">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.specialty"
-                        prop="specialty"
-                        width="150"
-                        align="left"
-                        label="专业">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.school"
-                        prop="school"
-                        width="150"
-                        align="left"
-                        label="毕业院校">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.beginDate"
-                        prop="beginDate"
-                        width="95"
-                        align="left"
-                        label="入职日期">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.conversionTime"
-                        prop="conversionTime"
-                        width="95"
-                        align="left"
-                        label="转正日期">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.beginContract"
-                        prop="beginContract"
-                        width="95"
-                        align="left"
-                        label="合同起始日期">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.endContract"
-                        prop="endContract"
-                        width="95"
-                        align="left"
-                        label="合同截止日期">
-                </el-table-column>
-                <el-table-column
-                        v-if="showColumns.contractTerm"
-                        width="100"
-                        align="left"
-                        label="合同期限">
-                    <template slot-scope="scope">
-                        <el-tag>{{scope.row.contractTerm}}</el-tag>
-                        年
-                    </template>
-                </el-table-column>
-                <!-- New Columns -->
+                <el-table-column v-if="showColumns.name" prop="name" fixed align="left" label="姓名" width="90"></el-table-column>
+                <el-table-column v-if="showColumns.gender" prop="gender" label="性别" align="left" width="50"></el-table-column>
+                <el-table-column v-if="showColumns.departmentId" prop="department.name" width="100" align="left" label="所属部门"></el-table-column>
+                <el-table-column v-if="showColumns.posId" prop="position.name" width="100" label="职位"></el-table-column>
                 <el-table-column v-if="showColumns.age" prop="age" label="年龄" width="60"></el-table-column>
+                <el-table-column v-if="showColumns.birthday" prop="birthday" width="95" align="left" label="出生日期"></el-table-column>
+                <el-table-column v-if="showColumns.nationId" prop="nation.name" width="50" label="民族"></el-table-column>
+                <el-table-column v-if="showColumns.idCard" prop="idCard" width="150" align="left" label="身份证号码"></el-table-column>
                 <el-table-column v-if="showColumns.idCardStartDate" prop="idCardStartDate" label="身份证开始" width="100"></el-table-column>
                 <el-table-column v-if="showColumns.idCardEndDate" prop="idCardEndDate" label="身份证结束" width="100"></el-table-column>
+                <el-table-column v-if="showColumns.beginDate" prop="beginDate" width="95" align="left" label="入职日期"></el-table-column>
+                <el-table-column v-if="showColumns.probation" prop="probation" label="试用期" width="80"></el-table-column>
+                <el-table-column v-if="showColumns.conversionTime" prop="conversionTime" width="95" align="left" label="转正日期"></el-table-column>
+                <el-table-column v-if="showColumns.conversionScore" prop="conversionScore" label="转正评分" width="80"></el-table-column>
+                <el-table-column v-if="showColumns.workAge" prop="workAge" label="司龄(月)" width="60"></el-table-column>
+                <el-table-column v-if="showColumns.workLocation" prop="workLocation" label="工作地点" width="100"></el-table-column>
+                <el-table-column v-if="showColumns.politicId" prop="politicsstatus.name" label="政治面貌"></el-table-column>
                 <el-table-column v-if="showColumns.hukouType" prop="hukouType" label="户口类别" width="100"></el-table-column>
                 <el-table-column v-if="showColumns.hukouLocation" prop="hukouLocation" label="户口所在地" width="150"></el-table-column>
+                <el-table-column v-if="showColumns.address" prop="address" width="220" align="left" label="现居住地址"></el-table-column>
+                <el-table-column v-if="showColumns.email" prop="email" width="180" align="left" label="电子邮箱"></el-table-column>
+                <el-table-column v-if="showColumns.phone" prop="phone" width="100" align="left" label="联系方式"></el-table-column>
                 <el-table-column v-if="showColumns.emergencyContact" prop="emergencyContact" label="紧急联系人" width="100"></el-table-column>
-                <el-table-column v-if="showColumns.emergencyContactPhone" prop="emergencyContactPhone" label="紧急电话" width="120"></el-table-column>
+                <el-table-column v-if="showColumns.emergencyContactPhone" prop="emergencyContactPhone" label="紧急联系电话" width="120"></el-table-column>
+                <el-table-column v-if="showColumns.wedlock" prop="wedlock" width="70" label="婚姻状况"></el-table-column>
                 <el-table-column v-if="showColumns.fertilityStatus" prop="fertilityStatus" label="生育状况" width="80"></el-table-column>
                 <el-table-column v-if="showColumns.childrenInfo" prop="childrenInfo" label="子女信息" width="150"></el-table-column>
+                <el-table-column v-if="showColumns.tiptopDegree" prop="tiptopDegree" width="80" align="left" label="学历"></el-table-column>
                 <el-table-column v-if="showColumns.graduationDate" prop="graduationDate" label="毕业时间" width="100"></el-table-column>
-                <el-table-column v-if="showColumns.certificate" prop="certificate" label="资格证书" width="150"></el-table-column>
+                <el-table-column v-if="showColumns.school" prop="school" width="150" align="left" label="毕业院校"></el-table-column>
+                <el-table-column v-if="showColumns.specialty" prop="specialty" width="150" align="left" label="专业"></el-table-column>
+                <el-table-column v-if="showColumns.certificate" prop="certificate" label="职称/资格证书" width="150"></el-table-column>
                 <el-table-column v-if="showColumns.trainingHistory" prop="trainingHistory" label="培训经历" width="200"></el-table-column>
-                <el-table-column v-if="showColumns.previousCompany" prop="previousCompany" label="原单位" width="150"></el-table-column>
-                <el-table-column v-if="showColumns.previousPosition" prop="previousPosition" label="原职位" width="100"></el-table-column>
-                <el-table-column v-if="showColumns.previousStartEnd" prop="previousStartEnd" label="原起止时间" width="150"></el-table-column>
-                <el-table-column v-if="showColumns.pastPerformance" prop="pastPerformance" label="过往业绩" width="200"></el-table-column>
-                <el-table-column v-if="showColumns.previousResignationReason" prop="previousResignationReason" label="原离职原因" width="150"></el-table-column>
+                <el-table-column v-if="showColumns.previousCompany" prop="previousCompany" label="原工作单位" width="150"></el-table-column>
+                <el-table-column v-if="showColumns.previousPosition" prop="previousPosition" label="原职务" width="100"></el-table-column>
+                <el-table-column v-if="showColumns.previousStartEnd" prop="previousStartEnd" label="入职/离职时间" width="150"></el-table-column>
+                <el-table-column v-if="showColumns.pastPerformance" prop="pastPerformance" label="过往工作业绩" width="200"></el-table-column>
+                <el-table-column v-if="showColumns.previousResignationReason" prop="previousResignationReason" label="原单位离职原因" width="150"></el-table-column>
                 <el-table-column v-if="showColumns.reference" prop="reference" label="证明人" width="100"></el-table-column>
                 <el-table-column v-if="showColumns.referencePhone" prop="referencePhone" label="证明人电话" width="120"></el-table-column>
-                <el-table-column v-if="showColumns.assessmentResult" prop="assessmentResult" label="测评结果" width="150"></el-table-column>
-                <el-table-column v-if="showColumns.probation" prop="probation" label="试用期" width="80"></el-table-column>
-                <el-table-column v-if="showColumns.conversionScore" prop="conversionScore" label="转正评分" width="80"></el-table-column>
-                <el-table-column v-if="showColumns.workLocation" prop="workLocation" label="工作地点" width="100"></el-table-column>
+                <el-table-column v-if="showColumns.assessmentResult" prop="assessmentResult" label="入职前测评结果" width="150"></el-table-column>
+                <el-table-column v-if="showColumns.workState" prop="workState" label="工作状态" width="100"></el-table-column>
                 <el-table-column v-if="showColumns.rewardsPunishments" prop="rewardsPunishments" label="奖惩记录" width="200"></el-table-column>
+                <el-table-column v-if="showColumns.notWorkDate" prop="notWorkDate" label="离职日期" width="100"></el-table-column>
                 <el-table-column v-if="showColumns.resignationReason" prop="resignationReason" label="离职原因" width="150"></el-table-column>
 
                 <el-table-column
                         fixed="right"
-                        width="200"
+                        width="150"
                         label="操作">
                     <template slot-scope="scope">
                         <el-button @click="showEditEmpView(scope.row)" style="padding: 3px" size="mini">编辑</el-button>
-                        <el-button style="padding: 3px" size="mini" type="primary">查看高级资料</el-button>
                         <el-button @click="deleteEmp(scope.row)" style="padding: 3px" size="mini" type="danger">删除
                         </el-button>
                     </template>
@@ -672,7 +519,7 @@
                         <el-col :span="8">
                             <el-form-item label="身份证号码:" prop="idCard">
                                 <el-input size="mini" style="width: 180px" prefix-icon="el-icon-edit"
-                                          v-model="emp.idCard" placeholder="请输入身份证号码" maxlength="18" :disabled="isEdit"></el-input>
+                                          v-model="emp.idCard" placeholder="请输入身份证号码" maxlength="18" :disabled="isEdit" @input="handleIdCardInput"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="8">
@@ -857,19 +704,20 @@
         data() {
             return {
                 searchValue: {
-                    politicId: null,
-                    nationId: null,
-                    jobLevelId: null,
-                    posId: null,
-                    engageForm: null,
+                    gender: null,
                     departmentId: null,
-                    beginDateScope: null,
-                    wedlock: null,
-                    fertilityStatus: null,
                     ageScope: null,
                     ageScopeMin: null,
                     ageScopeMax: null,
-                    tiptopDegree: null
+                    conversionTimeScope: null,
+                    workAge: null,
+                    workLocation: null,
+                    politicId: null,
+                    wedlock: null,
+                    tiptopDegree: null,
+                    workState: null,
+                    notWorkDateScope: null,
+                    resignationReason: null
                 },
                 title: '',
                 isEdit: false,
@@ -909,44 +757,40 @@
                     label: '北京烤鸭'
                 }],
                 inputDepName: '所属部门',
+                multipleSelection: [],
+                checkAll: true,
                 showColumns: {
                     name: true,
-                    workID: true,
                     gender: true,
-                    birthday: true,
-                    idCard: true,
-                    wedlock: true,
-                    nationId: true,
-                    nativePlace: true,
-                    politicId: true,
-                    email: true,
-                    phone: true,
-                    address: true,
                     departmentId: true,
                     posId: true,
-                    jobLevelId: true,
-                    engageForm: true,
-                    tiptopDegree: true,
-                    specialty: true,
-                    school: true,
-                    beginDate: true,
-                    workState: true,
-                    contractTerm: true,
-                    conversionTime: true,
-                    notWorkDate: true,
-                    beginContract: true,
-                    endContract: true,
-                    workAge: true,
                     age: true,
+                    birthday: true,
+                    nationId: true,
+                    idCard: true,
                     idCardStartDate: true,
                     idCardEndDate: true,
+                    beginDate: true,
+                    probation: true,
+                    conversionTime: true,
+                    conversionScore: true,
+                    workAge: true,
+                    workLocation: true,
+                    politicId: true,
                     hukouType: true,
                     hukouLocation: true,
+                    address: true,
+                    email: true,
+                    phone: true,
                     emergencyContact: true,
                     emergencyContactPhone: true,
+                    wedlock: true,
                     fertilityStatus: true,
                     childrenInfo: true,
+                    tiptopDegree: true,
                     graduationDate: true,
+                    school: true,
+                    specialty: true,
                     certificate: true,
                     trainingHistory: true,
                     previousCompany: true,
@@ -957,10 +801,9 @@
                     reference: true,
                     referencePhone: true,
                     assessmentResult: true,
-                    probation: true,
-                    conversionScore: true,
-                    workLocation: true,
+                    workState: true,
                     rewardsPunishments: true,
+                    notWorkDate: true,
                     resignationReason: true
                 },
                 emp: {
@@ -1059,6 +902,18 @@
                     endContract: [{required: true, message: '请输入合同结束日期', trigger: 'blur'}],
                     workAge: [{required: true, message: '请输入工龄', trigger: 'blur'}],
                 }
+            }
+        },
+        watch: {
+            showColumns: {
+                handler() {
+                    this.$nextTick(() => {
+                        if (this.$refs.empTable) {
+                            this.$refs.empTable.doLayout();
+                        }
+                    })
+                },
+                deep: true
             }
         },
         mounted() {
@@ -1299,42 +1154,104 @@
                 this.getMaxWordID();
                 this.dialogVisible = true;
             },
+            handleCheckAllChange(val) {
+                for (let key in this.showColumns) {
+                    this.showColumns[key] = val;
+                }
+                this.$nextTick(() => {
+                    if (this.$refs.empTable) {
+                        this.$refs.empTable.doLayout();
+                    }
+                })
+            },
+            handleIdCardInput(val) {
+                if (val.length == 18 && !this.emp.birthday) {
+                    this.emp.birthday = val.substring(6, 10) + "-" + val.substring(10, 12) + "-" + val.substring(12, 14);
+                }
+            },
+            deleteManyEmps() {
+                this.$confirm('此操作将永久删除【' + this.multipleSelection.length + '】条记录, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let ids = '?';
+                    this.multipleSelection.forEach(item => {
+                        ids += 'ids=' + item.idCard + '&';
+                    })
+                    this.deleteRequest("/employee/basic/" + ids).then(resp => {
+                        if (resp) {
+                            this.initEmps();
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
+            resetSearch() {
+                this.searchValue = {
+                    gender: null,
+                    departmentId: null,
+                    ageScope: null,
+                    ageScopeMin: null,
+                    ageScopeMax: null,
+                    conversionTimeScope: null,
+                    workAge: null,
+                    workLocation: null,
+                    politicId: null,
+                    wedlock: null,
+                    tiptopDegree: null,
+                    workState: null,
+                    notWorkDateScope: null,
+                    resignationReason: null
+                };
+                this.initEmps();
+            },
             initEmps(type) {
                 this.loading = true;
                 let url = '/employee/basic/?page=' + this.page + '&size=' + this.size;
                 if (type && type == 'advanced') {
-                    if (this.searchValue.politicId) {
-                        url += '&politicId=' + this.searchValue.politicId;
-                    }
-                    if (this.searchValue.nationId) {
-                        url += '&nationId=' + this.searchValue.nationId;
-                    }
-                    if (this.searchValue.jobLevelId) {
-                        url += '&jobLevelId=' + this.searchValue.jobLevelId;
-                    }
-                    if (this.searchValue.posId) {
-                        url += '&posId=' + this.searchValue.posId;
-                    }
-                    if (this.searchValue.engageForm) {
-                        url += '&engageForm=' + this.searchValue.engageForm;
+                    if (this.searchValue.gender) {
+                        url += '&gender=' + this.searchValue.gender;
                     }
                     if (this.searchValue.departmentId) {
                         url += '&departmentId=' + this.searchValue.departmentId;
                     }
-                    if (this.searchValue.beginDateScope) {
-                        url += '&beginDateScope=' + this.searchValue.beginDateScope;
+                    if (this.searchValue.ageScope && this.searchValue.ageScope.length === 2) {
+                        url += '&ageScope=' + this.searchValue.ageScope;
+                    }
+                    if (this.searchValue.conversionTimeScope) {
+                        url += '&conversionTimeScope=' + this.searchValue.conversionTimeScope;
+                    }
+                    if (this.searchValue.workAge) {
+                        url += '&workAge=' + this.searchValue.workAge;
+                    }
+                    if (this.searchValue.workLocation) {
+                        url += '&workLocation=' + this.searchValue.workLocation;
+                    }
+                    if (this.searchValue.politicId) {
+                        url += '&politicId=' + this.searchValue.politicId;
                     }
                     if (this.searchValue.wedlock) {
                         url += '&wedlock=' + this.searchValue.wedlock;
                     }
-                    if (this.searchValue.fertilityStatus) {
-                        url += '&fertilityStatus=' + this.searchValue.fertilityStatus;
-                    }
                     if (this.searchValue.tiptopDegree) {
                         url += '&tiptopDegree=' + this.searchValue.tiptopDegree;
                     }
-                    if (this.searchValue.ageScope && this.searchValue.ageScope.length === 2 && this.searchValue.ageScope[0] && this.searchValue.ageScope[1]) {
-                        url += '&ageScope=' + this.searchValue.ageScope;
+                    if (this.searchValue.workState) {
+                        url += '&workState=' + this.searchValue.workState;
+                    }
+                    if (this.searchValue.notWorkDateScope) {
+                        url += '&notWorkDateScope=' + this.searchValue.notWorkDateScope;
+                    }
+                    if (this.searchValue.resignationReason) {
+                        url += '&resignationReason=' + this.searchValue.resignationReason;
                     }
                 } else {
                     url += "&name=" + this.keyword;

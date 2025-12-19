@@ -16,21 +16,15 @@
         <result column="phone" property="phone" jdbcType="VARCHAR"/>
         <result column="address" property="address" jdbcType="VARCHAR"/>
         <result column="departmentId" property="departmentId" jdbcType="INTEGER"/>
-        <result column="jobLevelId" property="jobLevelId" jdbcType="INTEGER"/>
         <result column="posId" property="posId" jdbcType="INTEGER"/>
-        <result column="engageForm" property="engageForm" jdbcType="VARCHAR"/>
         <result column="tiptopDegree" property="tiptopDegree" jdbcType="CHAR"/>
         <result column="specialty" property="specialty" jdbcType="VARCHAR"/>
         <result column="school" property="school" jdbcType="VARCHAR"/>
         <result column="beginDate" property="beginDate" jdbcType="DATE"/>
         <result column="workState" property="workState" jdbcType="CHAR"/>
-        <result column="workID" property="workID" jdbcType="CHAR"/>
-        <result column="contractTerm" property="contractTerm" jdbcType="DOUBLE"/>
         <result column="conversionTime" property="conversionTime" jdbcType="DATE"/>
         <result column="notWorkDate" property="notWorkDate" jdbcType="DATE"/>
-        <result column="beginContract" property="beginContract" jdbcType="DATE"/>
-        <result column="endContract" property="endContract" jdbcType="DATE"/>
-        <result column="workAge" property="workAge" jdbcType="INTEGER"/>
+        <result column="workAge" property="workAge" jdbcType="DOUBLE"/>
         <result column="age" property="age" jdbcType="INTEGER"/>
         <result column="idCardStartDate" property="idCardStartDate" jdbcType="DATE"/>
         <result column="idCardEndDate" property="idCardEndDate" jdbcType="DATE"/>
@@ -70,10 +64,6 @@
             <id column="did" property="id"/>
             <result column="dname" property="name"/>
         </association>
-        <association property="jobLevel" javaType="org.javaboy.vhr.model.JobLevel">
-            <id column="jid" property="id"/>
-            <result column="jname" property="name"/>
-        </association>
         <association property="position" javaType="org.javaboy.vhr.model.Position">
             <id column="posid" property="id"/>
             <result column="posname" property="name"/>
@@ -81,9 +71,9 @@
     </resultMap>
     <sql id="Base_Column_List">
     name, gender, birthday, idCard, wedlock, nationId, nativePlace, politicId, email, 
-    phone, address, departmentId, jobLevelId, posId, engageForm, tiptopDegree, specialty, 
-    school, beginDate, workState, workID, contractTerm, conversionTime, notWorkDate, 
-    beginContract, endContract, workAge, age, idCardStartDate, idCardEndDate, hukouType, 
+    phone, address, departmentId, posId, tiptopDegree, specialty, 
+    school, beginDate, workState, conversionTime, notWorkDate, 
+    workAge, age, idCardStartDate, idCardEndDate, hukouType, 
     hukouLocation, emergencyContact, emergencyContactPhone, fertilityStatus, childrenInfo, 
     graduationDate, certificate, trainingHistory, previousCompany, previousPosition, 
     previousStartEnd, pastPerformance, previousResignationReason, reference, referencePhone, 
@@ -131,35 +121,26 @@
     </insert>
     <select id="getEmployeeById" resultMap="AllEmployeeInfo">
         select e.*,p.`id` as pid,p.`name` as pname,n.`id` as nid,n.`name` as nname,d.`id` as did,d.`name` as
-        dname,j.`id` as jid,j.`name` as jname,pos.`id` as posid,pos.`name` as posname from employee e,nation
-        n,politicsstatus p,department d,joblevel j,position pos where e.`nationId`=n.`id` and e.`politicId`=p.`id` and
-        e.`departmentId`=d.`id` and e.`jobLevelId`=j.`id` and e.`posId`=pos.`id` and e.`idCard`=#{id}
+        dname,pos.`id` as posid,pos.`name` as posname from employee e,nation
+        n,politicsstatus p,department d,position pos where e.`nationId`=n.`id` and e.`politicId`=p.`id` and
+        e.`departmentId`=d.`id` and e.`posId`=pos.`id` and e.`idCard`=#{id}
     </select>
     <select id="getEmployeeByPage" resultMap="AllEmployeeInfo">
         select e.*,p.`id` as pid,p.`name` as pname,n.`id` as nid,n.`name` as nname,d.`id` as did,d.`name` as
-        dname,j.`id` as jid,j.`name` as jname,pos.`id` as posid,pos.`name` as posname from employee e,nation
-        n,politicsstatus p,department d,joblevel j,position pos where e.`nationId`=n.`id` and e.`politicId`=p.`id` and
-        e.`departmentId`=d.`id` and e.`jobLevelId`=j.`id` and e.`posId`=pos.`id`
+        dname,pos.`id` as posid,pos.`name` as posname from employee e,nation
+        n,politicsstatus p,department d,position pos where e.`nationId`=n.`id` and e.`politicId`=p.`id` and
+        e.`departmentId`=d.`id` and e.`posId`=pos.`id`
         <if test="emp.name !=null and emp.name!=''">
             and e.name like concat('%',#{emp.name},'%')
+        </if>
+        <if test="emp.gender !=null and emp.gender!=''">
+            and e.gender =#{emp.gender}
         </if>
         <if test="emp.politicId !=null">
             and e.politicId =#{emp.politicId}
         </if>
-        <if test="emp.nationId !=null">
-            and e.nationId =#{emp.nationId}
-        </if>
         <if test="emp.departmentId !=null">
             and e.departmentId =#{emp.departmentId}
-        </if>
-        <if test="emp.jobLevelId !=null">
-            and e.jobLevelId =#{emp.jobLevelId}
-        </if>
-        <if test="emp.engageForm !=null and emp.engageForm!=''">
-            and e.engageForm =#{emp.engageForm}
-        </if>
-        <if test="emp.posId !=null">
-            and e.posId =#{emp.posId}
         </if>
         <if test="emp.wedlock !=null and emp.wedlock!=''">
             and e.wedlock =#{emp.wedlock}
@@ -167,14 +148,29 @@
         <if test="emp.tiptopDegree !=null and emp.tiptopDegree!=''">
             and e.tiptopDegree =#{emp.tiptopDegree}
         </if>
-        <if test="emp.fertilityStatus !=null and emp.fertilityStatus!=''">
-            and e.fertilityStatus =#{emp.fertilityStatus}
+        <if test="emp.workLocation !=null and emp.workLocation!=''">
+            and e.workLocation like concat('%',#{emp.workLocation},'%')
+        </if>
+        <if test="emp.workState !=null and emp.workState!=''">
+            and e.workState like concat('%',#{emp.workState},'%')
+        </if>
+        <if test="emp.resignationReason !=null and emp.resignationReason!=''">
+            and e.resignationReason like concat('%',#{emp.resignationReason},'%')
+        </if>
+        <if test="emp.workAge !=null">
+            and e.workAge = #{emp.workAge}
         </if>
         <if test="beginDateScope !=null">
             and e.beginDate between #{beginDateScope[0]} and #{beginDateScope[1]}
         </if>
         <if test="ageScope !=null">
             and e.birthday between date_sub(now(), interval #{ageScope[1]} year) and date_sub(now(), interval #{ageScope[0]} year)
+        </if>
+        <if test="conversionTimeScope !=null">
+            and e.conversionTime between #{conversionTimeScope[0]} and #{conversionTimeScope[1]}
+        </if>
+        <if test="notWorkDateScope !=null">
+            and e.notWorkDate between #{notWorkDateScope[0]} and #{notWorkDateScope[1]}
         </if>
         <if test="page !=null and size!=null">
             limit #{page},#{size}
@@ -187,23 +183,14 @@
                 <if test="emp.name !=null and emp.name!=''">
                     and e.name like concat('%',#{emp.name},'%')
                 </if>
+                <if test="emp.gender !=null and emp.gender!=''">
+                    and e.gender =#{emp.gender}
+                </if>
                 <if test="emp.politicId !=null">
                     and e.politicId =#{emp.politicId}
                 </if>
-                <if test="emp.nationId !=null">
-                    and e.nationId =#{emp.nationId}
-                </if>
-                <if test="emp.jobLevelId !=null">
-                    and e.jobLevelId =#{emp.jobLevelId}
-                </if>
                 <if test="emp.departmentId !=null">
                     and e.departmentId =#{emp.departmentId}
-                </if>
-                <if test="emp.engageForm !=null and emp.engageForm!=''">
-                    and e.engageForm =#{emp.engageForm}
-                </if>
-                <if test="emp.posId !=null">
-                    and e.posId =#{emp.posId}
                 </if>
                 <if test="emp.wedlock !=null and emp.wedlock!=''">
                     and e.wedlock =#{emp.wedlock}
@@ -211,8 +198,17 @@
                 <if test="emp.tiptopDegree !=null and emp.tiptopDegree!=''">
                     and e.tiptopDegree =#{emp.tiptopDegree}
                 </if>
-                <if test="emp.fertilityStatus !=null and emp.fertilityStatus!=''">
-                    and e.fertilityStatus =#{emp.fertilityStatus}
+                <if test="emp.workLocation !=null and emp.workLocation!=''">
+                    and e.workLocation like concat('%',#{emp.workLocation},'%')
+                </if>
+                <if test="emp.workState !=null and emp.workState!=''">
+                    and e.workState like concat('%',#{emp.workState},'%')
+                </if>
+                <if test="emp.resignationReason !=null and emp.resignationReason!=''">
+                    and e.resignationReason like concat('%',#{emp.resignationReason},'%')
+                </if>
+                <if test="emp.workAge !=null">
+                    and e.workAge = #{emp.workAge}
                 </if>
             </if>
             <if test="beginDateScope !=null">
@@ -220,6 +216,12 @@
             </if>
             <if test="ageScope !=null">
                 and e.birthday between date_sub(now(), interval #{ageScope[1]} year) and date_sub(now(), interval #{ageScope[0]} year)
+            </if>
+            <if test="conversionTimeScope !=null">
+                and e.conversionTime between #{conversionTimeScope[0]} and #{conversionTimeScope[1]}
+            </if>
+            <if test="notWorkDateScope !=null">
+                and e.notWorkDate between #{notWorkDateScope[0]} and #{notWorkDateScope[1]}
             </if>
         </where>
     </select>
@@ -233,17 +235,20 @@
     delete from employee
     where idCard = #{idCard,jdbcType=CHAR}
   </delete>
+    <delete id="deleteEmps">
+        delete from employee where idCard in
+        <foreach collection="ids" separator="," item="id" open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
     <insert id="addEmps">
         insert into employee (name, gender,
         birthday, idCard, wedlock, nationId,
         nativePlace, politicId, email,
         phone, address, departmentId,
-        jobLevelId, posId, engageForm,
-        tiptopDegree, specialty, school,
-        beginDate, workState, workID,
-        contractTerm, conversionTime, notWorkDate,
-        beginContract, endContract, workAge,
-        age, idCardStartDate, idCardEndDate, hukouType, 
+        posId, tiptopDegree, specialty, school,
+        beginDate, workState, conversionTime, notWorkDate,
+        workAge, age, idCardStartDate, idCardEndDate, hukouType, 
         hukouLocation, emergencyContact, emergencyContactPhone, fertilityStatus, childrenInfo, 
         graduationDate, certificate, trainingHistory, previousCompany, previousPosition, 
         previousStartEnd, pastPerformance, previousResignationReason, reference, referencePhone, 
@@ -256,12 +261,9 @@
             #{emp.nationId,jdbcType=INTEGER},
             #{emp.nativePlace,jdbcType=VARCHAR}, #{emp.politicId,jdbcType=INTEGER}, #{emp.email,jdbcType=VARCHAR},
             #{emp.phone,jdbcType=VARCHAR}, #{emp.address,jdbcType=VARCHAR}, #{emp.departmentId,jdbcType=INTEGER},
-            #{emp.jobLevelId,jdbcType=INTEGER}, #{emp.posId,jdbcType=INTEGER}, #{emp.engageForm,jdbcType=VARCHAR},
-            #{emp.tiptopDegree,jdbcType=CHAR}, #{emp.specialty,jdbcType=VARCHAR}, #{emp.school,jdbcType=VARCHAR},
-            #{emp.beginDate,jdbcType=DATE}, #{emp.workState,jdbcType=CHAR}, #{emp.workID,jdbcType=CHAR},
-            #{emp.contractTerm,jdbcType=DOUBLE}, #{emp.conversionTime,jdbcType=DATE}, #{emp.notWorkDate,jdbcType=DATE},
-            #{emp.beginContract,jdbcType=DATE}, #{emp.endContract,jdbcType=DATE}, #{emp.workAge,jdbcType=INTEGER},
-            #{emp.age,jdbcType=INTEGER}, #{emp.idCardStartDate,jdbcType=DATE}, #{emp.idCardEndDate,jdbcType=DATE}, 
+            #{emp.posId,jdbcType=INTEGER}, #{emp.tiptopDegree,jdbcType=CHAR}, #{emp.specialty,jdbcType=VARCHAR}, #{emp.school,jdbcType=VARCHAR},
+            #{emp.beginDate,jdbcType=DATE}, #{emp.workState,jdbcType=CHAR}, #{emp.conversionTime,jdbcType=DATE}, #{emp.notWorkDate,jdbcType=DATE},
+            #{emp.workAge,jdbcType=DOUBLE}, #{emp.age,jdbcType=INTEGER}, #{emp.idCardStartDate,jdbcType=DATE}, #{emp.idCardEndDate,jdbcType=DATE}, 
             #{emp.hukouType,jdbcType=VARCHAR}, #{emp.hukouLocation,jdbcType=VARCHAR}, #{emp.emergencyContact,jdbcType=VARCHAR}, 
             #{emp.emergencyContactPhone,jdbcType=VARCHAR}, #{emp.fertilityStatus,jdbcType=VARCHAR}, #{emp.childrenInfo,jdbcType=VARCHAR}, 
             #{emp.graduationDate,jdbcType=DATE}, #{emp.certificate,jdbcType=VARCHAR}, #{emp.trainingHistory,jdbcType=VARCHAR}, 
@@ -276,12 +278,9 @@
         name = VALUES(name), gender = VALUES(gender), birthday = VALUES(birthday), wedlock = VALUES(wedlock),
         nationId = VALUES(nationId), nativePlace = VALUES(nativePlace), politicId = VALUES(politicId),
         email = VALUES(email), phone = VALUES(phone), address = VALUES(address), departmentId = VALUES(departmentId),
-        jobLevelId = VALUES(jobLevelId), posId = VALUES(posId), engageForm = VALUES(engageForm),
-        tiptopDegree = VALUES(tiptopDegree), specialty = VALUES(specialty), school = VALUES(school),
-        beginDate = VALUES(beginDate), workState = VALUES(workState), workID = VALUES(workID),
-        contractTerm = VALUES(contractTerm), conversionTime = VALUES(conversionTime), notWorkDate = VALUES(notWorkDate),
-        beginContract = VALUES(beginContract), endContract = VALUES(endContract), workAge = VALUES(workAge),
-        age = VALUES(age), idCardStartDate = VALUES(idCardStartDate), idCardEndDate = VALUES(idCardEndDate),
+        posId = VALUES(posId), tiptopDegree = VALUES(tiptopDegree), specialty = VALUES(specialty), school = VALUES(school),
+        beginDate = VALUES(beginDate), workState = VALUES(workState), conversionTime = VALUES(conversionTime), notWorkDate = VALUES(notWorkDate),
+        workAge = VALUES(workAge), age = VALUES(age), idCardStartDate = VALUES(idCardStartDate), idCardEndDate = VALUES(idCardEndDate),
         hukouType = VALUES(hukouType), hukouLocation = VALUES(hukouLocation), emergencyContact = VALUES(emergencyContact),
         emergencyContactPhone = VALUES(emergencyContactPhone), fertilityStatus = VALUES(fertilityStatus),
         childrenInfo = VALUES(childrenInfo), graduationDate = VALUES(graduationDate), certificate = VALUES(certificate),
@@ -296,12 +295,9 @@
       birthday, idCard, wedlock, nationId, 
       nativePlace, politicId, email, 
       phone, address, departmentId, 
-      jobLevelId, posId, engageForm, 
-      tiptopDegree, specialty, school, 
-      beginDate, workState, workID, 
-      contractTerm, conversionTime, notWorkDate, 
-      beginContract, endContract, workAge,
-      age, idCardStartDate, idCardEndDate, hukouType, 
+      posId, tiptopDegree, specialty, school, 
+      beginDate, workState, conversionTime, notWorkDate, 
+      workAge, age, idCardStartDate, idCardEndDate, hukouType, 
       hukouLocation, emergencyContact, emergencyContactPhone, fertilityStatus, childrenInfo, 
       graduationDate, certificate, trainingHistory, previousCompany, previousPosition, 
       previousStartEnd, pastPerformance, previousResignationReason, reference, referencePhone, 
@@ -311,12 +307,9 @@
       #{birthday,jdbcType=DATE}, #{idCard,jdbcType=CHAR}, #{wedlock,jdbcType=CHAR}, #{nationId,jdbcType=INTEGER}, 
       #{nativePlace,jdbcType=VARCHAR}, #{politicId,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{departmentId,jdbcType=INTEGER}, 
-      #{jobLevelId,jdbcType=INTEGER}, #{posId,jdbcType=INTEGER}, #{engageForm,jdbcType=VARCHAR}, 
-      #{tiptopDegree,jdbcType=CHAR}, #{specialty,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR}, 
-      #{beginDate,jdbcType=DATE}, #{workState,jdbcType=CHAR}, #{workID,jdbcType=CHAR}, 
-      #{contractTerm,jdbcType=DOUBLE}, #{conversionTime,jdbcType=DATE}, #{notWorkDate,jdbcType=DATE}, 
-      #{beginContract,jdbcType=DATE}, #{endContract,jdbcType=DATE}, #{workAge,jdbcType=INTEGER},
-      #{age,jdbcType=INTEGER}, #{idCardStartDate,jdbcType=DATE}, #{idCardEndDate,jdbcType=DATE}, 
+      #{posId,jdbcType=INTEGER}, #{tiptopDegree,jdbcType=CHAR}, #{specialty,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR}, 
+      #{beginDate,jdbcType=DATE}, #{workState,jdbcType=CHAR}, #{conversionTime,jdbcType=DATE}, #{notWorkDate,jdbcType=DATE}, 
+      #{workAge,jdbcType=DOUBLE}, #{age,jdbcType=INTEGER}, #{idCardStartDate,jdbcType=DATE}, #{idCardEndDate,jdbcType=DATE}, 
       #{hukouType,jdbcType=VARCHAR}, #{hukouLocation,jdbcType=VARCHAR}, #{emergencyContact,jdbcType=VARCHAR}, 
       #{emergencyContactPhone,jdbcType=VARCHAR}, #{fertilityStatus,jdbcType=VARCHAR}, #{childrenInfo,jdbcType=VARCHAR}, 
       #{graduationDate,jdbcType=DATE}, #{certificate,jdbcType=VARCHAR}, #{trainingHistory,jdbcType=VARCHAR}, 
@@ -367,14 +360,8 @@
             <if test="departmentId != null">
                 departmentId,
             </if>
-            <if test="jobLevelId != null">
-                jobLevelId,
-            </if>
             <if test="posId != null">
                 posId,
-            </if>
-            <if test="engageForm != null">
-                engageForm,
             </if>
             <if test="tiptopDegree != null">
                 tiptopDegree,
@@ -391,23 +378,11 @@
             <if test="workState != null">
                 workState,
             </if>
-            <if test="workID != null">
-                workID,
-            </if>
-            <if test="contractTerm != null">
-                contractTerm,
-            </if>
             <if test="conversionTime != null">
                 conversionTime,
             </if>
             <if test="notWorkDate != null">
                 notWorkDate,
-            </if>
-            <if test="beginContract != null">
-                beginContract,
-            </if>
-            <if test="endContract != null">
-                endContract,
             </if>
             <if test="workAge != null">
                 workAge,
@@ -525,14 +500,8 @@
             <if test="departmentId != null">
                 #{departmentId,jdbcType=INTEGER},
             </if>
-            <if test="jobLevelId != null">
-                #{jobLevelId,jdbcType=INTEGER},
-            </if>
             <if test="posId != null">
                 #{posId,jdbcType=INTEGER},
-            </if>
-            <if test="engageForm != null">
-                #{engageForm,jdbcType=VARCHAR},
             </if>
             <if test="tiptopDegree != null">
                 #{tiptopDegree,jdbcType=CHAR},
@@ -549,26 +518,14 @@
             <if test="workState != null">
                 #{workState,jdbcType=CHAR},
             </if>
-            <if test="workID != null">
-                #{workID,jdbcType=CHAR},
-            </if>
-            <if test="contractTerm != null">
-                #{contractTerm,jdbcType=DOUBLE},
-            </if>
             <if test="conversionTime != null">
                 #{conversionTime,jdbcType=DATE},
             </if>
             <if test="notWorkDate != null">
                 #{notWorkDate,jdbcType=DATE},
             </if>
-            <if test="beginContract != null">
-                #{beginContract,jdbcType=DATE},
-            </if>
-            <if test="endContract != null">
-                #{endContract,jdbcType=DATE},
-            </if>
             <if test="workAge != null">
-                #{workAge,jdbcType=INTEGER},
+                #{workAge,jdbcType=DOUBLE},
             </if>
             <if test="age != null">
                 #{age,jdbcType=INTEGER},
@@ -684,14 +641,8 @@
             <if test="departmentId != null">
                 departmentId = #{departmentId,jdbcType=INTEGER},
             </if>
-            <if test="jobLevelId != null">
-                jobLevelId = #{jobLevelId,jdbcType=INTEGER},
-            </if>
             <if test="posId != null">
                 posId = #{posId,jdbcType=INTEGER},
-            </if>
-            <if test="engageForm != null">
-                engageForm = #{engageForm,jdbcType=VARCHAR},
             </if>
             <if test="tiptopDegree != null">
                 tiptopDegree = #{tiptopDegree,jdbcType=CHAR},
@@ -708,26 +659,14 @@
             <if test="workState != null">
                 workState = #{workState,jdbcType=CHAR},
             </if>
-            <if test="workID != null">
-                workID = #{workID,jdbcType=CHAR},
-            </if>
-            <if test="contractTerm != null">
-                contractTerm = #{contractTerm,jdbcType=DOUBLE},
-            </if>
             <if test="conversionTime != null">
                 conversionTime = #{conversionTime,jdbcType=DATE},
             </if>
             <if test="notWorkDate != null">
                 notWorkDate = #{notWorkDate,jdbcType=DATE},
             </if>
-            <if test="beginContract != null">
-                beginContract = #{beginContract,jdbcType=DATE},
-            </if>
-            <if test="endContract != null">
-                endContract = #{endContract,jdbcType=DATE},
-            </if>
             <if test="workAge != null">
-                workAge = #{workAge,jdbcType=INTEGER},
+                workAge = #{workAge,jdbcType=DOUBLE},
             </if>
             <if test="age != null">
                 age = #{age,jdbcType=INTEGER},
@@ -820,21 +759,15 @@
       phone = #{phone,jdbcType=VARCHAR},
       address = #{address,jdbcType=VARCHAR},
       departmentId = #{departmentId,jdbcType=INTEGER},
-      jobLevelId = #{jobLevelId,jdbcType=INTEGER},
       posId = #{posId,jdbcType=INTEGER},
-      engageForm = #{engageForm,jdbcType=VARCHAR},
       tiptopDegree = #{tiptopDegree,jdbcType=CHAR},
       specialty = #{specialty,jdbcType=VARCHAR},
       school = #{school,jdbcType=VARCHAR},
       beginDate = #{beginDate,jdbcType=DATE},
       workState = #{workState,jdbcType=CHAR},
-      workID = #{workID,jdbcType=CHAR},
-      contractTerm = #{contractTerm,jdbcType=DOUBLE},
       conversionTime = #{conversionTime,jdbcType=DATE},
       notWorkDate = #{notWorkDate,jdbcType=DATE},
-      beginContract = #{beginContract,jdbcType=DATE},
-      endContract = #{endContract,jdbcType=DATE},
-      workAge = #{workAge,jdbcType=INTEGER},
+      workAge = #{workAge,jdbcType=DOUBLE},
       age = #{age,jdbcType=INTEGER},
       idCardStartDate = #{idCardStartDate,jdbcType=DATE},
       idCardEndDate = #{idCardEndDate,jdbcType=DATE},

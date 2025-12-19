@@ -2,6 +2,7 @@ package org.javaboy.vhr.service;
 
 import org.javaboy.vhr.mapper.JobLevelMapper;
 import org.javaboy.vhr.model.JobLevel;
+import org.javaboy.vhr.model.RespPageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +16,27 @@ import java.util.List;
  * @GitHub https://github.com/lenve
  * @博客 http://wangsong.blog.csdn.net
  * @网站 http://www.javaboy.org
- * @时间 2019-10-01 18:00
+ * @时间 2019-10-01 16:03
  */
 @Service
 public class JobLevelService {
     @Autowired
     JobLevelMapper jobLevelMapper;
 
+    public RespPageBean getAllJobLevels(Integer page, Integer size, String name) {
+        if (page != null && size != null) {
+            page = (page - 1) * size;
+        }
+        List<JobLevel> data = jobLevelMapper.getAllJobLevels(page, size, name);
+        Long total = jobLevelMapper.getTotal(name);
+        RespPageBean bean = new RespPageBean();
+        bean.setData(data);
+        bean.setTotal(total);
+        return bean;
+    }
+
     public List<JobLevel> getAllJobLevels() {
-        return jobLevelMapper.getAllJobLevels();
+        return jobLevelMapper.getAllJobLevels(null, null, null);
     }
 
     public Integer addJobLevel(JobLevel jobLevel) {

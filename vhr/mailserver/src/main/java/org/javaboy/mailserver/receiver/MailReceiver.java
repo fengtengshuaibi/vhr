@@ -69,7 +69,6 @@ public class MailReceiver {
             Context context = new Context();
             context.setVariable("name", employee.getName());
             context.setVariable("posName", employee.getPosition().getName());
-            context.setVariable("joblevelName", employee.getJobLevel().getName());
             context.setVariable("departmentName", employee.getDepartment().getName());
             String mail = templateEngine.process("mail", context);
             helper.setText(mail, true);

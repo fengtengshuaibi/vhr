@@ -5,6 +5,7 @@
             <el-tab-pane label="职位管理" name="posmana"><PosMana></PosMana></el-tab-pane>
             <el-tab-pane label="职称管理" name="joblevelmana"><JobLevelMana></JobLevelMana></el-tab-pane>
             <el-tab-pane label="奖惩规则" name="ecmana"><EcMana></EcMana></el-tab-pane>
+            <el-tab-pane label="公司管理" name="company"><SysCompany></SysCompany></el-tab-pane>
             <el-tab-pane label="权限组" name="permissmana"><PermissMana></PermissMana></el-tab-pane>
         </el-tabs>
     </div>
@@ -16,6 +17,7 @@
     import JobLevelMana from '../../components/sys/basic/JobLevelMana'
     import EcMana from '../../components/sys/basic/EcMana'
     import PermissMana from '../../components/sys/basic/PermissMana'
+    import SysCompany from '../../components/sys/basic/SysCompany'
     export default {
         name: "SysBasic",
         data(){
@@ -28,7 +30,8 @@
             PosMana,
             JobLevelMana,
             EcMana,
-            PermissMana
+            PermissMana,
+            SysCompany
         }
     }
 </script>

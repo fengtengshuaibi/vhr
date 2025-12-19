@@ -18,7 +18,9 @@ public interface JobLevelMapper {
 
     int updateByPrimaryKey(JobLevel record);
 
-    List<JobLevel> getAllJobLevels();
+    List<JobLevel> getAllJobLevels(@Param("page") Integer page, @Param("size") Integer size, @Param("name") String name);
+
+    Long getTotal(@Param("name") String name);
 
     Integer deleteJobLevelsByIds(@Param("ids") Integer[] ids);
 }

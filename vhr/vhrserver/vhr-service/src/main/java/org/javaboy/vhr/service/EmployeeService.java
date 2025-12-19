@@ -45,12 +45,12 @@ public class EmployeeService {
     SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
     DecimalFormat decimalFormat = new DecimalFormat("##.00");
 
-    public RespPageBean getEmployeeByPage(Integer page, Integer size, Employee employee, Date[] beginDateScope, Integer[] ageScope) {
+    public RespPageBean getEmployeeByPage(Integer page, Integer size, Employee employee, Date[] beginDateScope, Integer[] ageScope, Date[] conversionTimeScope, Date[] notWorkDateScope) {
         if (page != null && size != null) {
             page = (page - 1) * size;
         }
-        List<Employee> data = employeeMapper.getEmployeeByPage(page, size, employee, beginDateScope, ageScope);
-        Long total = employeeMapper.getTotal(employee, beginDateScope, ageScope);
+        List<Employee> data = employeeMapper.getEmployeeByPage(page, size, employee, beginDateScope, ageScope, conversionTimeScope, notWorkDateScope);
+        Long total = employeeMapper.getTotal(employee, beginDateScope, ageScope, conversionTimeScope, notWorkDateScope);
         RespPageBean bean = new RespPageBean();
         bean.setData(data);
         bean.setTotal(total);
@@ -58,10 +58,6 @@ public class EmployeeService {
     }
 
     public Integer addEmp(Employee employee) {
-        Date beginContract = employee.getBeginContract();
-        Date endContract = employee.getEndContract();
-        double month = (Double.parseDouble(yearFormat.format(endContract)) - Double.parseDouble(yearFormat.format(beginContract))) * 12 + (Double.parseDouble(monthFormat.format(endContract)) - Double.parseDouble(monthFormat.format(beginContract)));
-        employee.setContractTerm(Double.parseDouble(decimalFormat.format(month / 12)));
         int result = employeeMapper.insertSelective(employee);
         if (result == 1) {
             Employee emp = employeeMapper.getEmployeeById(employee.getIdCard());
@@ -86,6 +82,10 @@ public class EmployeeService {
 
     public Integer deleteEmpByEid(String id) {
         return employeeMapper.deleteByPrimaryKey(id);
+    }
+
+    public Integer deleteEmps(List<String> ids) {
+        return employeeMapper.deleteEmps(ids);
     }
 
     public Integer updateEmp(Employee employee) {
@@ -134,7 +134,7 @@ public class EmployeeService {
         List<Employee> list = employeeMapper.getEmployeeByPageWithSalary(page, size);
         RespPageBean respPageBean = new RespPageBean();
         respPageBean.setData(list);
-        respPageBean.setTotal(employeeMapper.getTotal(null, null,null));
+        respPageBean.setTotal(employeeMapper.getTotal(null, null,null, null, null));
         return respPageBean;
     }
 

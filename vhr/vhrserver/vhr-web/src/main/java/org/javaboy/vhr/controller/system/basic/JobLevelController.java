@@ -2,6 +2,7 @@ package org.javaboy.vhr.controller.system.basic;
 
 import org.apache.ibatis.annotations.Delete;
 import org.javaboy.vhr.model.JobLevel;
+import org.javaboy.vhr.model.RespPageBean;
 import org.javaboy.vhr.model.RespBean;
 import org.javaboy.vhr.service.JobLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class JobLevelController {
     @Autowired
     JobLevelService jobLevelService;
     @GetMapping("/")
-    public List<JobLevel> getAllJobLevels() {
-        return jobLevelService.getAllJobLevels();
+    public RespPageBean getAllJobLevels(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, String name) {
+        return jobLevelService.getAllJobLevels(page, size, name);
     }
 
     @PostMapping("/")

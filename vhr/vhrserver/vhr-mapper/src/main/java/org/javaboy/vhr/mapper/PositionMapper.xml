@@ -6,12 +6,29 @@
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
     <result column="enabled" property="enabled" jdbcType="BIT" />
+    <result column="reportTo" property="reportTo" jdbcType="CHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, createDate, enabled
+    id, name, createDate, enabled, reportTo
   </sql>
   <select id="getAllPositions" resultMap="BaseResultMap">
-    select * from position;
+    select * from position
+    <where>
+      <if test="name != null and name != ''">
+        and name like concat('%',#{name},'%')
+      </if>
+    </where>
+    <if test="page != null and size != null">
+      limit #{page},#{size}
+    </if>
+  </select>
+  <select id="getTotal" resultType="java.lang.Long">
+    select count(*) from position
+    <where>
+      <if test="name != null and name != ''">
+        and name like concat('%',#{name},'%')
+      </if>
+    </where>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -25,9 +42,9 @@
   </delete>
   <insert id="insert" parameterType="org.javaboy.vhr.model.Position" >
     insert into position (id, name, createDate, 
-      enabled)
+      enabled, reportTo)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{enabled,jdbcType=BIT})
+      #{enabled,jdbcType=BIT}, #{reportTo,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Position" >
     insert into position
@@ -44,6 +61,9 @@
       <if test="enabled != null" >
         enabled,
       </if>
+      <if test="reportTo != null" >
+        reportTo,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -57,6 +77,9 @@
       </if>
       <if test="enabled != null" >
         #{enabled,jdbcType=BIT},
+      </if>
+      <if test="reportTo != null" >
+        #{reportTo,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -78,6 +101,9 @@
       <if test="enabled != null" >
         enabled = #{enabled,jdbcType=BIT},
       </if>
+      <if test="reportTo != null" >
+        reportTo = #{reportTo,jdbcType=CHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -85,7 +111,8 @@
     update position
     set name = #{name,jdbcType=VARCHAR},
       createDate = #{createDate,jdbcType=TIMESTAMP},
-      enabled = #{enabled,jdbcType=BIT}
+      enabled = #{enabled,jdbcType=BIT},
+      reportTo = #{reportTo,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

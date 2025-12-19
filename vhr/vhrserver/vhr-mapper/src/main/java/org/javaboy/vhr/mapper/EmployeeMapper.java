@@ -9,6 +9,8 @@ import java.util.List;
 public interface EmployeeMapper {
     int deleteByPrimaryKey(String id);
 
+    Integer deleteEmps(@Param("ids") List<String> ids);
+
     int insert(Employee record);
 
     int insertSelective(Employee record);
@@ -19,9 +21,9 @@ public interface EmployeeMapper {
 
     int updateByPrimaryKey(Employee record);
 
-    List<Employee> getEmployeeByPage(@Param("page") Integer page, @Param("size") Integer size, @Param("emp") Employee employee,@Param("beginDateScope") Date[] beginDateScope, @Param("ageScope") Integer[] ageScope);
+    List<Employee> getEmployeeByPage(@Param("page") Integer page, @Param("size") Integer size, @Param("emp") Employee employee,@Param("beginDateScope") Date[] beginDateScope, @Param("ageScope") Integer[] ageScope, @Param("conversionTimeScope") Date[] conversionTimeScope, @Param("notWorkDateScope") Date[] notWorkDateScope);
 
-    Long getTotal(@Param("emp") Employee employee,@Param("beginDateScope") Date[] beginDateScope, @Param("ageScope") Integer[] ageScope);
+    Long getTotal(@Param("emp") Employee employee,@Param("beginDateScope") Date[] beginDateScope, @Param("ageScope") Integer[] ageScope, @Param("conversionTimeScope") Date[] conversionTimeScope, @Param("notWorkDateScope") Date[] notWorkDateScope);
 
     Integer maxWorkID();
 

@@ -33,11 +33,7 @@ public class Employee implements Serializable {
 
     private Integer departmentId;
 
-    private Integer jobLevelId;
-
     private Integer posId;
-
-    private String engageForm;
 
     private String tiptopDegree;
 
@@ -50,26 +46,14 @@ public class Employee implements Serializable {
 
     private String workState;
 
-    private String workID;
-
-    private Double contractTerm;
-
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
-    private Date conversionTime;
-
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
-    private Date notWorkDate;
-
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
-    private Date beginContract;
-
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
-    private Date endContract;
-
-    private Integer workAge;
+    private Double workAge;
     
     // New Fields
     private Integer age;
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+    private Date conversionTime;
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+    private Date notWorkDate;
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
     private Date idCardStartDate;
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
@@ -101,7 +85,6 @@ public class Employee implements Serializable {
     private Nation nation;
     private Politicsstatus politicsstatus;
     private Department department;
-    private JobLevel jobLevel;
     private Position position;
     private Salary salary;
 
@@ -134,14 +117,6 @@ public class Employee implements Serializable {
 
     public void setDepartment(Department department) {
         this.department = department;
-    }
-
-    public JobLevel getJobLevel() {
-        return jobLevel;
-    }
-
-    public void setJobLevel(JobLevel jobLevel) {
-        this.jobLevel = jobLevel;
     }
 
     public Position getPosition() {
@@ -256,28 +231,12 @@ public class Employee implements Serializable {
         this.departmentId = departmentId;
     }
 
-    public Integer getJobLevelId() {
-        return jobLevelId;
-    }
-
-    public void setJobLevelId(Integer jobLevelId) {
-        this.jobLevelId = jobLevelId;
-    }
-
     public Integer getPosId() {
         return posId;
     }
 
     public void setPosId(Integer posId) {
         this.posId = posId;
-    }
-
-    public String getEngageForm() {
-        return engageForm;
-    }
-
-    public void setEngageForm(String engageForm) {
-        this.engageForm = engageForm;
     }
 
     public String getTiptopDegree() {
@@ -320,22 +279,6 @@ public class Employee implements Serializable {
         this.workState = workState;
     }
 
-    public String getWorkID() {
-        return workID;
-    }
-
-    public void setWorkID(String workID) {
-        this.workID = workID;
-    }
-
-    public Double getContractTerm() {
-        return contractTerm;
-    }
-
-    public void setContractTerm(Double contractTerm) {
-        this.contractTerm = contractTerm;
-    }
-
     public Date getConversionTime() {
         return conversionTime;
     }
@@ -352,27 +295,11 @@ public class Employee implements Serializable {
         this.notWorkDate = notWorkDate;
     }
 
-    public Date getBeginContract() {
-        return beginContract;
-    }
-
-    public void setBeginContract(Date beginContract) {
-        this.beginContract = beginContract;
-    }
-
-    public Date getEndContract() {
-        return endContract;
-    }
-
-    public void setEndContract(Date endContract) {
-        this.endContract = endContract;
-    }
-
-    public Integer getWorkAge() {
+    public Double getWorkAge() {
         return workAge;
     }
 
-    public void setWorkAge(Integer workAge) {
+    public void setWorkAge(Double workAge) {
         this.workAge = workAge;
     }
 
@@ -592,20 +519,14 @@ public class Employee implements Serializable {
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
                 ", departmentId=" + departmentId +
-                ", jobLevelId=" + jobLevelId +
                 ", posId=" + posId +
-                ", engageForm='" + engageForm + '\'' +
                 ", tiptopDegree='" + tiptopDegree + '\'' +
                 ", specialty='" + specialty + '\'' +
                 ", school='" + school + '\'' +
                 ", beginDate=" + beginDate +
                 ", workState='" + workState + '\'' +
-                ", workID='" + workID + '\'' +
-                ", contractTerm=" + contractTerm +
                 ", conversionTime=" + conversionTime +
                 ", notWorkDate=" + notWorkDate +
-                ", beginContract=" + beginContract +
-                ", endContract=" + endContract +
                 ", workAge=" + workAge +
                 ", age=" + age +
                 ", idCardStartDate=" + idCardStartDate +
@@ -635,7 +556,6 @@ public class Employee implements Serializable {
                 ", nation=" + nation +
                 ", politicsstatus=" + politicsstatus +
                 ", department=" + department +
-                ", jobLevel=" + jobLevel +
                 ", position=" + position +
                 '}';
     }

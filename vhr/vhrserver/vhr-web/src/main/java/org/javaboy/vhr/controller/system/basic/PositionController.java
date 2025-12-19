@@ -1,6 +1,7 @@
 package org.javaboy.vhr.controller.system.basic;
 
 import org.javaboy.vhr.model.Position;
+import org.javaboy.vhr.model.RespPageBean;
 import org.javaboy.vhr.model.RespBean;
 import org.javaboy.vhr.service.PositionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ public class PositionController {
     @Autowired
     PositionService positionService;
     @GetMapping("/")
-    public List<Position> getAllPositions() {
-        return positionService.getAllPositions();
+    public RespPageBean getAllPositions(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size, String name) {
+        return positionService.getAllPositions(page, size, name);
     }
 
     @PostMapping("/")

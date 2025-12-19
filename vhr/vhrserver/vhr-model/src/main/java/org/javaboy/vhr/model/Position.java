@@ -38,6 +38,8 @@ public class Position implements Serializable {
     private Date createDate;
 
     private Boolean enabled;
+    
+    private String reportTo;
 
     public Integer getId() {
         return id;
@@ -69,5 +71,13 @@ public class Position implements Serializable {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getReportTo() {
+        return reportTo;
+    }
+
+    public void setReportTo(String reportTo) {
+        this.reportTo = reportTo;
     }
 }
