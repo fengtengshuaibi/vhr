@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javaboy.vhr.mapper.ContractMapper" >
+  <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.Contract" >
+    <id column="idCard" property="idCard" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="employmentType" property="employmentType" jdbcType="VARCHAR" />
+    <result column="contractType" property="contractType" jdbcType="VARCHAR" />
+    <result column="firstSignDate" property="firstSignDate" jdbcType="DATE" />
+    <result column="firstSignTerm" property="firstSignTerm" jdbcType="DOUBLE" />
+    <result column="secondSignDate" property="secondSignDate" jdbcType="DATE" />
+    <result column="secondSignTerm" property="secondSignTerm" jdbcType="DOUBLE" />
+    <result column="thirdSignDate" property="thirdSignDate" jdbcType="DATE" />
+    <result column="signCount" property="signCount" jdbcType="INTEGER" />
+    <result column="endDate" property="endDate" jdbcType="DATE" />
+    <result column="daysToExpiry" property="daysToExpiry" jdbcType="INTEGER" />
+    <result column="attachments" property="attachments" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    c.idCard, e.name, c.employmentType, c.contractType, c.firstSignDate, c.firstSignTerm, 
+    c.secondSignDate, c.secondSignTerm, c.thirdSignDate, c.signCount, c.endDate, c.attachments,
+    DATEDIFF(c.endDate, NOW()) as daysToExpiry
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from contract c
+    left join employee e on c.idCard = e.idCard
+    where c.idCard = #{idCard,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from contract
+    where idCard = #{idCard,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="org.javaboy.vhr.model.Contract" >
+    insert into contract (idCard, employmentType, contractType, 
+      firstSignDate, firstSignTerm, secondSignDate, 
+      secondSignTerm, thirdSignDate, signCount, 
+      endDate, attachments)
+    values (#{idCard,jdbcType=CHAR}, #{employmentType,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR}, 
+      #{firstSignDate,jdbcType=DATE}, #{firstSignTerm,jdbcType=DOUBLE}, #{secondSignDate,jdbcType=DATE}, 
+      #{secondSignTerm,jdbcType=DOUBLE}, #{thirdSignDate,jdbcType=DATE}, #{signCount,jdbcType=INTEGER}, 
+      #{endDate,jdbcType=DATE}, #{attachments,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Contract" >
+    insert into contract
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="idCard != null" >
+        idCard,
+      </if>
+      <if test="employmentType != null" >
+        employmentType,
+      </if>
+      <if test="contractType != null" >
+        contractType,
+      </if>
+      <if test="firstSignDate != null" >
+        firstSignDate,
+      </if>
+      <if test="firstSignTerm != null" >
+        firstSignTerm,
+      </if>
+      <if test="secondSignDate != null" >
+        secondSignDate,
+      </if>
+      <if test="secondSignTerm != null" >
+        secondSignTerm,
+      </if>
+      <if test="thirdSignDate != null" >
+        thirdSignDate,
+      </if>
+      <if test="signCount != null" >
+        signCount,
+      </if>
+      <if test="endDate != null" >
+        endDate,
+      </if>
+      <if test="attachments != null" >
+        attachments,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="idCard != null" >
+        #{idCard,jdbcType=CHAR},
+      </if>
+      <if test="employmentType != null" >
+        #{employmentType,jdbcType=VARCHAR},
+      </if>
+      <if test="contractType != null" >
+        #{contractType,jdbcType=VARCHAR},
+      </if>
+      <if test="firstSignDate != null" >
+        #{firstSignDate,jdbcType=DATE},
+      </if>
+      <if test="firstSignTerm != null" >
+        #{firstSignTerm,jdbcType=DOUBLE},
+      </if>
+      <if test="secondSignDate != null" >
+        #{secondSignDate,jdbcType=DATE},
+      </if>
+      <if test="secondSignTerm != null" >
+        #{secondSignTerm,jdbcType=DOUBLE},
+      </if>
+      <if test="thirdSignDate != null" >
+        #{thirdSignDate,jdbcType=DATE},
+      </if>
+      <if test="signCount != null" >
+        #{signCount,jdbcType=INTEGER},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=DATE},
+      </if>
+      <if test="attachments != null" >
+        #{attachments,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.Contract" >
+    update contract
+    <set >
+      <if test="employmentType != null" >
+        employmentType = #{employmentType,jdbcType=VARCHAR},
+      </if>
+      <if test="contractType != null" >
+        contractType = #{contractType,jdbcType=VARCHAR},
+      </if>
+      <if test="firstSignDate != null" >
+        firstSignDate = #{firstSignDate,jdbcType=DATE},
+      </if>
+      <if test="firstSignTerm != null" >
+        firstSignTerm = #{firstSignTerm,jdbcType=DOUBLE},
+      </if>
+      <if test="secondSignDate != null" >
+        secondSignDate = #{secondSignDate,jdbcType=DATE},
+      </if>
+      <if test="secondSignTerm != null" >
+        secondSignTerm = #{secondSignTerm,jdbcType=DOUBLE},
+      </if>
+      <if test="thirdSignDate != null" >
+        thirdSignDate = #{thirdSignDate,jdbcType=DATE},
+      </if>
+      <if test="signCount != null" >
+        signCount = #{signCount,jdbcType=INTEGER},
+      </if>
+      <if test="endDate != null" >
+        endDate = #{endDate,jdbcType=DATE},
+      </if>
+      <if test="attachments != null" >
+        attachments = #{attachments,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where idCard = #{idCard,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.javaboy.vhr.model.Contract" >
+    update contract
+    set employmentType = #{employmentType,jdbcType=VARCHAR},
+      contractType = #{contractType,jdbcType=VARCHAR},
+      firstSignDate = #{firstSignDate,jdbcType=DATE},
+      firstSignTerm = #{firstSignTerm,jdbcType=DOUBLE},
+      secondSignDate = #{secondSignDate,jdbcType=DATE},
+      secondSignTerm = #{secondSignTerm,jdbcType=DOUBLE},
+      thirdSignDate = #{thirdSignDate,jdbcType=DATE},
+      signCount = #{signCount,jdbcType=INTEGER},
+      endDate = #{endDate,jdbcType=DATE},
+      attachments = #{attachments,jdbcType=VARCHAR}
+    where idCard = #{idCard,jdbcType=CHAR}
+  </update>
+  <select id="getContractsByPage" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from contract c
+    left join employee e on c.idCard = e.idCard
+    <where>
+      <if test="contract.name != null and contract.name != ''">
+        and e.name like concat('%',#{contract.name},'%')
+      </if>
+      <if test="contract.contractType != null and contract.contractType != ''">
+        and c.contractType = #{contract.contractType}
+      </if>
+      <if test="contract.employmentType != null and contract.employmentType != ''">
+        and c.employmentType = #{contract.employmentType}
+      </if>
+      <if test="contract.signCount != null">
+        and c.signCount = #{contract.signCount}
+      </if>
+      <if test="daysToExpiry != null">
+        and DATEDIFF(c.endDate, NOW()) &lt;= #{daysToExpiry} and DATEDIFF(c.endDate, NOW()) >= 0
+      </if>
+    </where>
+    <if test="page != null and size != null">
+      limit #{page},#{size}
+    </if>
+  </select>
+  <select id="getTotal" resultType="java.lang.Long">
+    select count(*)
+    from contract c
+    left join employee e on c.idCard = e.idCard
+    <where>
+      <if test="contract.name != null and contract.name != ''">
+        and e.name like concat('%',#{contract.name},'%')
+      </if>
+      <if test="contract.contractType != null and contract.contractType != ''">
+        and c.contractType = #{contract.contractType}
+      </if>
+      <if test="contract.employmentType != null and contract.employmentType != ''">
+        and c.employmentType = #{contract.employmentType}
+      </if>
+      <if test="contract.signCount != null">
+        and c.signCount = #{contract.signCount}
+      </if>
+      <if test="daysToExpiry != null">
+        and DATEDIFF(c.endDate, NOW()) &lt;= #{daysToExpiry} and DATEDIFF(c.endDate, NOW()) >= 0
+      </if>
+    </where>
+  </select>
+  <insert id="addContracts">
+    insert into contract (idCard, employmentType, contractType, 
+      firstSignDate, firstSignTerm, secondSignDate, 
+      secondSignTerm, thirdSignDate, signCount, 
+      endDate)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.idCard,jdbcType=CHAR}, #{item.employmentType,jdbcType=VARCHAR}, #{item.contractType,jdbcType=VARCHAR}, 
+      #{item.firstSignDate,jdbcType=DATE}, #{item.firstSignTerm,jdbcType=DOUBLE}, #{item.secondSignDate,jdbcType=DATE}, 
+      #{item.secondSignTerm,jdbcType=DOUBLE}, #{item.thirdSignDate,jdbcType=DATE}, #{item.signCount,jdbcType=INTEGER}, 
+      #{item.endDate,jdbcType=DATE})
+    </foreach>
+  </insert>
+</mapper>

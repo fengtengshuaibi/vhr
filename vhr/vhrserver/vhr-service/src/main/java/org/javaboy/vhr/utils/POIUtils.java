@@ -19,13 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @作者 江南一点雨
- * @公众号 江南一点雨
- * @微信号 a_java_boy
- * @GitHub https://github.com/lenve
- * @博客 http://wangsong.blog.csdn.net
- * @网站 http://www.javaboy.org
- * @时间 2019-11-11 23:25
+ * @作者 小腾
+ * @GitHub https://github.com/fengtengshuaibi?tab=repositories * @时间 2019-11-11 23:25
  */
 public class POIUtils {
 
@@ -340,6 +335,170 @@ public class POIUtils {
                 }
             }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+            errors.add("文件读取失败");
+        }
+        resultMap.put("list", list);
+        resultMap.put("errors", errors);
+        return resultMap;
+    }
+
+    /**
+     * 合同数据导出
+     */
+    public static ResponseEntity<byte[]> contract2Excel(List<Contract> list) {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        workbook.createInformationProperties();
+        DocumentSummaryInformation docInfo = workbook.getDocumentSummaryInformation();
+        docInfo.setCategory("合同信息");
+        docInfo.setManager("javaboy");
+        docInfo.setCompany("www.javaboy.org");
+        SummaryInformation summInfo = workbook.getSummaryInformation();
+        summInfo.setTitle("合同信息表");
+        summInfo.setAuthor("javaboy");
+        summInfo.setComments("本文档由 javaboy 提供");
+        HSSFCellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        HSSFCellStyle dateCellStyle = workbook.createCellStyle();
+        dateCellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
+        HSSFSheet sheet = workbook.createSheet("合同信息表");
+        for (int i = 0; i < 15; i++) {
+            sheet.setColumnWidth(i, 15 * 256);
+        }
+        
+        HSSFRow r0 = sheet.createRow(0);
+        String[] headers = {
+            "姓名(必填)", 
+            "身份证号(必填, 长度18位)", 
+            "用工形式(必填, 选填: 全日制/非全日制)", 
+            "合同类型(必填, 选填: 固定期限/无固定期限)", 
+            "首次签订日期(选填, 格式: 2022-01-01)", 
+            "首次签订期限(选填, 单位: 年, 数字)", 
+            "第二次签订日期(选填, 格式: 2022-01-01)", 
+            "第二次签订期限(选填, 单位: 年, 数字)", 
+            "第三次签订日期(选填, 格式: 2022-01-01)", 
+            "签订次数(选填, 数字: 1/2/3)", 
+            "劳动合同截止日期(选填, 格式: 2022-01-01)"
+        };
+        
+        for (int i = 0; i < headers.length; i++) {
+            HSSFCell cell = r0.createCell(i);
+            cell.setCellStyle(headerStyle);
+            cell.setCellValue(headers[i]);
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            Contract c = list.get(i);
+            HSSFRow row = sheet.createRow(i + 1);
+            row.createCell(0).setCellValue(c.getName());
+            row.createCell(1).setCellValue(c.getIdCard());
+            row.createCell(2).setCellValue(c.getEmploymentType());
+            row.createCell(3).setCellValue(c.getContractType());
+            
+            HSSFCell cell4 = row.createCell(4); cell4.setCellStyle(dateCellStyle); cell4.setCellValue(c.getFirstSignDate());
+            if(c.getFirstSignTerm() != null) row.createCell(5).setCellValue(c.getFirstSignTerm());
+            
+            HSSFCell cell6 = row.createCell(6); cell6.setCellStyle(dateCellStyle); cell6.setCellValue(c.getSecondSignDate());
+            if(c.getSecondSignTerm() != null) row.createCell(7).setCellValue(c.getSecondSignTerm());
+            
+            HSSFCell cell8 = row.createCell(8); cell8.setCellStyle(dateCellStyle); cell8.setCellValue(c.getThirdSignDate());
+            if(c.getSignCount() != null) row.createCell(9).setCellValue(c.getSignCount());
+            
+            HSSFCell cell10 = row.createCell(10); cell10.setCellStyle(dateCellStyle); cell10.setCellValue(c.getEndDate());
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        HttpHeaders headers2 = new HttpHeaders();
+        try {
+            headers2.setContentDispositionFormData("attachment", new String("合同表.xls".getBytes("UTF-8"), "ISO-8859-1"));
+            headers2.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            workbook.write(baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<byte[]>(baos.toByteArray(), headers2, HttpStatus.CREATED);
+    }
+
+    /**
+     * Excel 解析成 合同数据集合
+     */
+    public static Map<String, Object> excel2Contract(MultipartFile file) {
+        Map<String, Object> resultMap = new HashMap<>();
+        List<Contract> list = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+        
+        Contract contract = null;
+        try {
+            Workbook workbook = WorkbookFactory.create(file.getInputStream());
+            int numberOfSheets = workbook.getNumberOfSheets();
+            for (int i = 0; i < numberOfSheets; i++) {
+                Sheet sheet = workbook.getSheetAt(i);
+                int physicalNumberOfRows = sheet.getPhysicalNumberOfRows();
+                for (int j = 0; j < physicalNumberOfRows; j++) {
+                    if (j == 0) continue; //跳过标题行
+                    Row row = sheet.getRow(j);
+                    if (row == null) continue;
+                    
+                    int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+                    contract = new Contract();
+                    boolean hasError = false;
+                    StringBuilder errorMsg = new StringBuilder("第 " + (j + 1) + " 行: ");
+                    
+                    for (int k = 0; k < physicalNumberOfCells; k++) {
+                        Cell cell = row.getCell(k);
+                        if (cell == null) continue;
+                        
+                        try {
+                            switch (cell.getCellType()) {
+                                case STRING:
+                                    String cellValue = cell.getStringCellValue();
+                                    switch (k) {
+                                        case 0: contract.setName(cellValue); break;
+                                        case 1: 
+                                            if (cellValue.length() > 18) throw new IllegalArgumentException("身份证超长");
+                                            contract.setIdCard(cellValue); 
+                                            break;
+                                        case 2: contract.setEmploymentType(cellValue); break;
+                                        case 3: contract.setContractType(cellValue); break;
+                                    }
+                                    break;
+                                case NUMERIC:
+                                    if (DateUtil.isCellDateFormatted(cell)) {
+                                        switch (k) {
+                                            case 4: contract.setFirstSignDate(cell.getDateCellValue()); break;
+                                            case 6: contract.setSecondSignDate(cell.getDateCellValue()); break;
+                                            case 8: contract.setThirdSignDate(cell.getDateCellValue()); break;
+                                            case 10: contract.setEndDate(cell.getDateCellValue()); break;
+                                        }
+                                    } else {
+                                        switch (k) {
+                                            case 2: contract.setEmploymentType(new java.text.DecimalFormat("#").format(cell.getNumericCellValue())); break;
+                                            case 3: contract.setContractType(new java.text.DecimalFormat("#").format(cell.getNumericCellValue())); break;
+                                            case 5: contract.setFirstSignTerm(cell.getNumericCellValue()); break;
+                                            case 7: contract.setSecondSignTerm(cell.getNumericCellValue()); break;
+                                            case 9: contract.setSignCount((int)cell.getNumericCellValue()); break;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            hasError = true;
+                            errorMsg.append("列").append(k + 1).append("错误: ").append(e.getMessage()).append("; ");
+                        }
+                    }
+                    if (hasError) {
+                        errors.add(errorMsg.toString());
+                    } else if (contract.getIdCard() == null || contract.getIdCard().isEmpty()) {
+                        errors.add("第 " + (j + 1) + " 行: 身份证号为空");
+                    } else {
+                        list.add(contract);
+                    }
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
             errors.add("文件读取失败");

@@ -434,12 +434,6 @@
                     </el-row>
                     <el-row>
                         <el-col :span="6">
-                            <el-form-item label="工号:" prop="workID">
-                                <el-input size="mini" style="width: 150px" prefix-icon="el-icon-edit"
-                                          v-model="emp.workID" placeholder="工号" disabled></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="5">
                             <el-form-item label="学历:" prop="tiptopDegree">
                                 <el-select v-model="emp.tiptopDegree" placeholder="学历" size="mini"
                                            style="width: 150px;">
@@ -464,9 +458,7 @@
                                           v-model="emp.specialty" placeholder="请输入专业名称" maxlength="32"></el-input>
                             </el-form-item>
                         </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="6">
+                        <el-col :span="5">
                             <el-form-item label="入职日期:" prop="beginDate">
                                 <el-date-picker
                                         v-model="emp.beginDate"
@@ -478,6 +470,8 @@
                                 </el-date-picker>
                             </el-form-item>
                         </el-col>
+                    </el-row>
+                    <el-row>
                         <el-col :span="6">
                             <el-form-item label="转正日期:" prop="conversionTime">
                                 <el-date-picker
@@ -894,7 +888,6 @@
                     school: [{required: true, message: '请输入毕业院校', trigger: 'blur'}],
                     beginDate: [{required: true, message: '请输入入职日期', trigger: 'blur'}],
                     workState: [{required: true, message: '请输入工作状态', trigger: 'blur'}],
-                    workID: [{required: true, message: '请输入工号', trigger: 'blur'}],
                     contractTerm: [{required: true, message: '请输入合同期限', trigger: 'blur'}],
                     conversionTime: [{required: true, message: '请输入转正日期', trigger: 'blur'}],
                     notworkDate: [{required: true, message: '请输入离职日期', trigger: 'blur'}],
