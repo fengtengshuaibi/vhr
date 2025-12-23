@@ -23,3 +23,6 @@ server:
 fastdfs:
   nginx:
     host: http://192.168.91.128/
+contract:
+  upload:
+    path: D:\projects\vhr\vhr\contract_files\

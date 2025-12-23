@@ -53,9 +53,11 @@
                             <el-checkbox v-model="showColumns.gender">性别</el-checkbox><br>
                             <el-checkbox v-model="showColumns.departmentId">所属部门</el-checkbox><br>
                             <el-checkbox v-model="showColumns.posId">职位</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.jobLevelId">职称</el-checkbox><br>
                             <el-checkbox v-model="showColumns.age">年龄</el-checkbox><br>
                             <el-checkbox v-model="showColumns.birthday">出生日期</el-checkbox><br>
                             <el-checkbox v-model="showColumns.nationId">民族</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.nativePlace">籍贯</el-checkbox><br>
                             <el-checkbox v-model="showColumns.idCard">身份证号码</el-checkbox><br>
                             <el-checkbox v-model="showColumns.idCardStartDate">身份证开始</el-checkbox><br>
                             <el-checkbox v-model="showColumns.idCardEndDate">身份证结束</el-checkbox><br>
@@ -63,6 +65,10 @@
                             <el-checkbox v-model="showColumns.probation">试用期</el-checkbox><br>
                             <el-checkbox v-model="showColumns.conversionTime">转正日期</el-checkbox><br>
                             <el-checkbox v-model="showColumns.conversionScore">转正评分</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.beginContract">合同起始日期</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.endContract">合同终止日期</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.contractTerm">合同期限</el-checkbox><br>
+                            <el-checkbox v-model="showColumns.engageForm">聘用形式</el-checkbox><br>
                             <el-checkbox v-model="showColumns.workAge">司龄(月)</el-checkbox><br>
                             <el-checkbox v-model="showColumns.workLocation">工作地点</el-checkbox><br>
                             <el-checkbox v-model="showColumns.politicId">政治面貌</el-checkbox><br>
@@ -242,9 +248,11 @@
                 <el-table-column v-if="showColumns.gender" prop="gender" label="性别" align="left" width="50"></el-table-column>
                 <el-table-column v-if="showColumns.departmentId" prop="department.name" width="100" align="left" label="所属部门"></el-table-column>
                 <el-table-column v-if="showColumns.posId" prop="position.name" width="100" label="职位"></el-table-column>
+                <el-table-column v-if="showColumns.jobLevelId" prop="jobLevel.name" width="100" label="职称"></el-table-column>
                 <el-table-column v-if="showColumns.age" prop="age" label="年龄" width="60"></el-table-column>
                 <el-table-column v-if="showColumns.birthday" prop="birthday" width="95" align="left" label="出生日期"></el-table-column>
                 <el-table-column v-if="showColumns.nationId" prop="nation.name" width="50" label="民族"></el-table-column>
+                <el-table-column v-if="showColumns.nativePlace" prop="nativePlace" width="100" label="籍贯"></el-table-column>
                 <el-table-column v-if="showColumns.idCard" prop="idCard" width="150" align="left" label="身份证号码"></el-table-column>
                 <el-table-column v-if="showColumns.idCardStartDate" prop="idCardStartDate" label="身份证开始" width="100"></el-table-column>
                 <el-table-column v-if="showColumns.idCardEndDate" prop="idCardEndDate" label="身份证结束" width="100"></el-table-column>
@@ -252,6 +260,10 @@
                 <el-table-column v-if="showColumns.probation" prop="probation" label="试用期" width="80"></el-table-column>
                 <el-table-column v-if="showColumns.conversionTime" prop="conversionTime" width="95" align="left" label="转正日期"></el-table-column>
                 <el-table-column v-if="showColumns.conversionScore" prop="conversionScore" label="转正评分" width="80"></el-table-column>
+                <el-table-column v-if="showColumns.beginContract" prop="beginContract" width="95" align="left" label="合同起始日期"></el-table-column>
+                <el-table-column v-if="showColumns.endContract" prop="endContract" width="95" align="left" label="合同终止日期"></el-table-column>
+                <el-table-column v-if="showColumns.contractTerm" prop="contractTerm" width="100" align="left" label="合同期限(年)"></el-table-column>
+                <el-table-column v-if="showColumns.engageForm" prop="engageForm" width="100" align="left" label="聘用形式"></el-table-column>
                 <el-table-column v-if="showColumns.workAge" prop="workAge" label="司龄(月)" width="60"></el-table-column>
                 <el-table-column v-if="showColumns.workLocation" prop="workLocation" label="工作地点" width="100"></el-table-column>
                 <el-table-column v-if="showColumns.politicId" prop="politicsstatus.name" label="政治面貌"></el-table-column>
@@ -377,9 +389,9 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="7">
-                            <el-form-item label="联系地址:" prop="address">
+                            <el-form-item label="现居住地址:" prop="address">
                                 <el-input size="mini" style="width: 200px" prefix-icon="el-icon-edit"
-                                          v-model="emp.address" placeholder="请输入联系地址" maxlength="64"></el-input>
+                                          v-model="emp.address" placeholder="请输入现居住地址" maxlength="64"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -426,9 +438,9 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="7">
-                            <el-form-item label="电话号码:" prop="phone">
+                            <el-form-item label="联系方式:" prop="phone">
                                 <el-input size="mini" style="width: 200px" prefix-icon="el-icon-phone"
-                                          v-model="emp.phone" placeholder="电话号码" maxlength="11"></el-input>
+                                          v-model="emp.phone" placeholder="联系方式" maxlength="11"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -453,9 +465,9 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="7">
-                            <el-form-item label="专业名称:" prop="specialty">
+                            <el-form-item label="专业:" prop="specialty">
                                 <el-input size="mini" style="width: 200px" prefix-icon="el-icon-edit"
-                                          v-model="emp.specialty" placeholder="请输入专业名称" maxlength="32"></el-input>
+                                          v-model="emp.specialty" placeholder="请输入专业" maxlength="32"></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="5">
@@ -506,6 +518,11 @@
                                         style="width: 150px;"
                                         placeholder="合同终止日期">
                                 </el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item label="合同期限:" prop="contractTerm">
+                                <el-input size="mini" style="width: 120px" type="number" v-model="emp.contractTerm" placeholder="合同期限(年)"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -681,6 +698,21 @@
                             </el-form-item>
                         </el-col>
                     </el-row>
+                    <el-row>
+                        <el-col :span="6">
+                            <el-form-item label="工作状态:" prop="workState">
+                                <el-select v-model="emp.workState" placeholder="工作状态" size="mini" style="width: 120px;">
+                                    <el-option label="在职" value="在职"></el-option>
+                                    <el-option label="离职" value="离职"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item label="离职日期:" prop="notWorkDate">
+                                <el-date-picker v-model="emp.notWorkDate" size="mini" type="date" value-format="yyyy-MM-dd" style="width: 120px;" placeholder="离职日期"></el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
                     <!-- New Fields End -->
                 </el-form>
             </div>
@@ -761,6 +793,7 @@
                     age: true,
                     birthday: true,
                     nationId: true,
+                    nativePlace: true,
                     idCard: true,
                     idCardStartDate: true,
                     idCardEndDate: true,
@@ -768,6 +801,9 @@
                     probation: true,
                     conversionTime: true,
                     conversionScore: true,
+                    beginContract: true,
+                    endContract: true,
+                    contractTerm: true,
                     workAge: true,
                     workLocation: true,
                     politicId: true,
@@ -786,6 +822,8 @@
                     school: true,
                     specialty: true,
                     certificate: true,
+                    jobLevelId: true,
+                    engageForm: true,
                     trainingHistory: true,
                     previousCompany: true,
                     previousPosition: true,
@@ -821,10 +859,9 @@
                     school: "深圳大学",
                     beginDate: "2017-12-31",
                     workState: "在职",
-                    workID: "00000057",
                     contractTerm: 2,
                     conversionTime: "2018-03-31",
-                    notworkDate: null,
+                    notWorkDate: null,
                     beginContract: "2017-12-31",
                     endContract: "2019-12-31",
                     workAge: null,
@@ -890,7 +927,7 @@
                     workState: [{required: true, message: '请输入工作状态', trigger: 'blur'}],
                     contractTerm: [{required: true, message: '请输入合同期限', trigger: 'blur'}],
                     conversionTime: [{required: true, message: '请输入转正日期', trigger: 'blur'}],
-                    notworkDate: [{required: true, message: '请输入离职日期', trigger: 'blur'}],
+                    notWorkDate: [{required: true, message: '请输入离职日期', trigger: 'blur'}],
                     beginContract: [{required: true, message: '请输入合同起始日期', trigger: 'blur'}],
                     endContract: [{required: true, message: '请输入合同结束日期', trigger: 'blur'}],
                     workAge: [{required: true, message: '请输入工龄', trigger: 'blur'}],
@@ -975,10 +1012,9 @@
                     specialty: "",
                     school: "",
                     beginDate: "",
-                    workID: "",
                     contractTerm: 2,
                     conversionTime: "",
-                    notworkDate: null,
+                    notWorkDate: null,
                     beginContract: "",
                     endContract: "",
                     workAge: null,
@@ -1083,13 +1119,6 @@
                     }
                 })
             },
-            getMaxWordID() {
-                this.getRequest("/employee/basic/maxWorkID").then(resp => {
-                    if (resp) {
-                        this.emp.workID = resp.obj;
-                    }
-                })
-            },
             initData() {
                 if (!window.sessionStorage.getItem("nations")) {
                     this.getRequest('/employee/basic/nations').then(resp => {
@@ -1144,7 +1173,6 @@
                 this.emptyEmp();
                 this.isEdit = false;
                 this.title = '添加员工';
-                this.getMaxWordID();
                 this.dialogVisible = true;
             },
             handleCheckAllChange(val) {

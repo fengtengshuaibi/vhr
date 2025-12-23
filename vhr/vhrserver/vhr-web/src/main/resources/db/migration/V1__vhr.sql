@@ -111,13 +111,14 @@ CREATE TABLE `department` (
 
 /*Data for the table `department` */
 
-insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('1','总裁办','-1','.1','1','1');
+insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('1','人事人','-1','.1','1','1');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('109','财务管理中心','1','.1.109','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('111','销售管理中心','1','.1.111','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('112','财务管理中心','1','.1.112','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('113','人力行政管理中心','1','.1.113','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('114','营销管理中心','1','.1.114','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('115','技术管理中心','1','.1.115','1','0');
+insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('116','总裁办','1','.1.116','1','0');
 /*Table structure for table `employee` */
 
 DROP TABLE IF EXISTS `employee`;

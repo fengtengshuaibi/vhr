@@ -4,6 +4,7 @@
             <el-input v-model="keywords" placeholder="通过用户名搜索用户..." prefix-icon="el-icon-search"
                       style="width: 400px;margin-right: 10px" @keydown.enter.native="doSearch"></el-input>
             <el-button icon="el-icon-search" type="primary" @click="doSearch">搜索</el-button>
+            <el-button icon="el-icon-plus" type="primary" @click="showAddHrView" v-if="isAdmin">添加用户</el-button>
         </div>
         <div class="hr-container">
             <el-card class="hr-card" v-for="(hr,index) in hrs" :key="index">
@@ -14,7 +15,7 @@
                 </div>
                 <div>
                     <div class="img-container">
-                        <img :src="hr.userface" :alt="hr.name" :title="hr.name" class="userface-img">
+                        <img :src="hr.userface" :alt="hr.name" :title="hr.name" class="userface-img" @error="imgError">
                     </div>
                     <div class="userinfo-container">
                         <div>用户名：{{hr.name}}</div>
@@ -57,12 +58,65 @@
                     </div>
                 </div>
             </el-card>
-
         </div>
+        <el-dialog
+                title="添加用户"
+                :visible.sync="dialogVisible"
+                width="30%">
+            <div>
+                <el-form :model="hr" status-icon :rules="rules" ref="hrForm" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="用户名" prop="name">
+                        <el-input v-model="hr.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号码" prop="phone">
+                        <el-input v-model="hr.phone"></el-input>
+                    </el-form-item>
+                    <el-form-item label="电话号码" prop="telephone">
+                        <el-input v-model="hr.telephone"></el-input>
+                    </el-form-item>
+                    <el-form-item label="地址" prop="address">
+                        <el-input v-model="hr.address"></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注" prop="remark">
+                        <el-input v-model="hr.remark"></el-input>
+                    </el-form-item>
+                    <el-form-item label="登录名" prop="username">
+                        <el-input v-model="hr.username"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="hr.password" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="是否启用" prop="enabled">
+                        <el-switch
+                                v-model="hr.enabled"
+                                active-text="启用"
+                                active-color="#13ce66"
+                                inactive-color="#ff4949"
+                                inactive-text="禁用">
+                        </el-switch>
+                    </el-form-item>
+                    <el-form-item label="角色">
+                        <el-select v-model="selectedRoles" multiple placeholder="请选择">
+                            <el-option
+                                    v-for="(r,indexk) in allroles"
+                                    :key="indexk"
+                                    :label="r.nameZh"
+                                    :value="r.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="doAddHr">确 定</el-button>
+  </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
+    import img from '../../assets/logo.png';
     export default {
         name: "SysHr",
         data() {
@@ -70,13 +124,90 @@
                 keywords: '',
                 hrs: [],
                 selectedRoles: [],
-                allroles: []
+                allroles: [],
+                dialogVisible: false,
+                hr: {
+                    name: '',
+                    phone: '',
+                    telephone: '',
+                    address: '',
+                    enabled: true,
+                    username: '',
+                    password: '',
+                    remark: '',
+                    userface: ''
+                },
+                rules: {
+                    name: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+                    phone: [{required: true, message: '请输入手机号码', trigger: 'blur'}],
+                    telephone: [{required: true, message: '请输入电话号码', trigger: 'blur'}],
+                    address: [{required: true, message: '请输入地址', trigger: 'blur'}],
+                    enabled: [{required: true, message: '请输入用户状态', trigger: 'blur'}],
+                    username: [{required: true, message: '请输入登录名', trigger: 'blur'}],
+                    password: [{required: true, message: '请输入密码', trigger: 'blur'}]
+                }
+            }
+        },
+        computed: {
+            isAdmin() {
+                let roles = this.$store.state.currentHr.roles;
+                let result = false;
+                roles.forEach(role => {
+                    if (role.name === 'ROLE_admin') {
+                        result = true;
+                    }
+                });
+                return result;
             }
         },
         mounted() {
             this.initHrs();
         },
         methods: {
+            imgError(e) {
+                e.target.src = img;
+            },
+            showAddHrView() {
+                this.dialogVisible = true;
+                this.initAllRoles();
+                this.hr = {
+                    name: '',
+                    phone: '',
+                    telephone: '',
+                    address: '',
+                    enabled: true,
+                    username: '',
+                    password: '',
+                    remark: '',
+                    userface: ''
+                };
+                this.selectedRoles = [];
+            },
+            doAddHr() {
+                if (this.selectedRoles.length == 0) {
+                    this.$message.error('请选择用户角色');
+                    return;
+                }
+                this.$refs['hrForm'].validate(valid => {
+                    if (valid) {
+                        this.postRequest("/system/hr/", this.hr).then(resp => {
+                            if (resp) {
+                                let hrid = resp.obj.id;
+                                let url = '/system/hr/role?hrid=' + hrid;
+                                this.selectedRoles.forEach(sr => {
+                                    url += '&rids=' + sr;
+                                });
+                                this.putRequest(url).then(resp => {
+                                    if (resp) {
+                                        this.dialogVisible = false;
+                                        this.initHrs();
+                                    }
+                                });
+                            }
+                        })
+                    }
+                })
+            },
             deleteHr(hr) {
                 this.$confirm('此操作将永久删除【'+hr.name+'】, 是否继续?', '提示', {
                     confirmButtonText: '确定',

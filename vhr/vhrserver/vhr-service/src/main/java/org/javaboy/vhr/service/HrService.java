@@ -49,6 +49,17 @@ public class HrService implements UserDetailsService {
         return hrRoleMapper.addRole(hrid, rids) == rids.length;
     }
 
+    public Integer addHr(Hr hr) {
+        Hr result = hrMapper.loadUserByUsername(hr.getUsername());
+        if (result != null) {
+            return -1;
+        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encode = encoder.encode(hr.getPassword());
+        hr.setPassword(encode);
+        return hrMapper.insertSelective(hr);
+    }
+
     public Integer deleteHrById(Integer id) {
         return hrMapper.deleteByPrimaryKey(id);
     }

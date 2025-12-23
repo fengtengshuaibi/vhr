@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +23,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/personnel/contract")
 public class ContractController {
+    @Value("${contract.upload.path}")
+    String uploadPath;
+
     @Autowired
     ContractService contractService;
 
@@ -90,8 +94,7 @@ public class ContractController {
             return RespBean.error("文件为空");
         }
         String fileName = file.getOriginalFilename();
-        String filePath = "D:\\projects\\vhr\\vhr\\contract_files\\";
-        File dest = new File(filePath + fileName);
+        File dest = new File(uploadPath + fileName);
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdirs();
         }
@@ -106,8 +109,7 @@ public class ContractController {
 
     @GetMapping("/download/{fileName:.+}")
     public ResponseEntity<byte[]> download(@PathVariable String fileName) {
-        String filePath = "D:\\projects\\vhr\\vhr\\contract_files\\";
-        File file = new File(filePath + fileName);
+        File file = new File(uploadPath + fileName);
         if (!file.exists()) {
             return null;
         }
