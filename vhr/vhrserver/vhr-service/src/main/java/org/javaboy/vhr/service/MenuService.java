@@ -1,6 +1,7 @@
 package org.javaboy.vhr.service;
 
 import org.javaboy.vhr.mapper.MenuMapper;
+import org.javaboy.vhr.mapper.MenuMaskingConfigMapper;
 import org.javaboy.vhr.mapper.MenuRoleMapper;
 import org.javaboy.vhr.model.Hr;
 import org.javaboy.vhr.model.Menu;
@@ -36,6 +37,28 @@ public class MenuService {
 
     public List<Menu> getAllMenus() {
         return menuMapper.getAllMenus();
+    }
+
+    public Integer updateMenu(Menu menu) {
+        return menuMapper.updateByPrimaryKeySelective(menu);
+    }
+
+    public Integer addMenu(Menu menu) {
+        menu.setEnabled(true);
+        return menuMapper.insertSelective(menu);
+    }
+
+    @Autowired
+    MenuMaskingConfigMapper menuMaskingConfigMapper;
+
+    @Transactional
+    public Integer deleteMenu(Integer id) {
+        // 先删除该菜单下的所有脱敏配置
+        menuMaskingConfigMapper.deleteByMenuId(id);
+        // 再删除菜单角色关联
+        menuRoleMapper.deleteByMid(id);
+        // 尝试删除菜单
+        return menuMapper.deleteByPrimaryKey(id);
     }
 
     public List<Integer> getMidsByRid(Integer rid) {

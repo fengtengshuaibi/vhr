@@ -10,6 +10,16 @@ public class OpLog {
     private String operate;
 
     private Integer hrid;
+    
+    private String hrName;
+    
+    public String getHrName() {
+        return hrName;
+    }
+
+    public void setHrName(String hrName) {
+        this.hrName = hrName;
+    }
 
     public Integer getId() {
         return id;

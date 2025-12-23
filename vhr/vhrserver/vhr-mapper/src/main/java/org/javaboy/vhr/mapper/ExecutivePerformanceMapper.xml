@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javaboy.vhr.mapper.ExecutivePerformanceMapper" >
+  <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.ExecutivePerformance" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="eid" property="eid" jdbcType="CHAR" />
+    <result column="year" property="year" jdbcType="INTEGER" />
+    <result column="quarter1" property="quarter1" jdbcType="DOUBLE" />
+    <result column="quarter2" property="quarter2" jdbcType="DOUBLE" />
+    <result column="quarter3" property="quarter3" jdbcType="DOUBLE" />
+    <result column="quarter4" property="quarter4" jdbcType="DOUBLE" />
+    <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="updateDate" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap id="AllExecutivePerformanceInfo" type="org.javaboy.vhr.model.ExecutivePerformance" extends="BaseResultMap">
+    <association property="employee" javaType="org.javaboy.vhr.model.Employee">
+        <result column="ename" property="name"/>
+    </association>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, eid, year, quarter1, quarter2, quarter3, quarter4, createDate, updateDate
+  </sql>
+
+  <select id="getExecutivePerformanceByPage" resultMap="AllExecutivePerformanceInfo">
+    select p.*, e.name as ename
+    from per_executive_performance p
+    left join employee e on p.eid = e.idCard
+    <where>
+        <if test="empName !=null and empName!=''">
+            and e.name like concat('%',#{empName},'%')
+        </if>
+        <if test="year != null">
+            and p.year = #{year}
+        </if>
+        <if test="beginDate !=null and endDate !=null">
+            and p.createDate between #{beginDate} and #{endDate}
+        </if>
+    </where>
+    <if test="page !=null and size !=null">
+        limit #{page},#{size}
+    </if>
+  </select>
+
+  <select id="getTotal" resultType="java.lang.Long">
+    select count(*) from per_executive_performance p
+    left join employee e on p.eid = e.idCard
+    <where>
+        <if test="empName !=null and empName!=''">
+            and e.name like concat('%',#{empName},'%')
+        </if>
+        <if test="year != null">
+            and p.year = #{year}
+        </if>
+        <if test="beginDate !=null and endDate !=null">
+            and p.createDate between #{beginDate} and #{endDate}
+        </if>
+    </where>
+  </select>
+  
+  <insert id="addExecutivePerformances">
+    insert into per_executive_performance (eid, year, quarter1, quarter2, quarter3, quarter4, createDate, updateDate)
+    values
+    <foreach collection="list" item="item" separator=",">
+        (#{item.eid}, #{item.year}, #{item.quarter1}, #{item.quarter2}, #{item.quarter3}, #{item.quarter4}, #{item.createDate}, #{item.updateDate})
+    </foreach>
+  </insert>
+  
+  <select id="getAllExecutivePerformances" resultMap="AllExecutivePerformanceInfo">
+    select p.*, e.name as ename
+    from per_executive_performance p
+    left join employee e on p.eid = e.idCard
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from per_executive_performance
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from per_executive_performance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.javaboy.vhr.model.ExecutivePerformance" >
+    insert into per_executive_performance (id, eid, year, quarter1, quarter2, quarter3, quarter4, createDate, updateDate)
+    values (#{id}, #{eid}, #{year}, #{quarter1}, #{quarter2}, #{quarter3}, #{quarter4}, #{createDate}, #{updateDate})
+  </insert>
+  <insert id="insertSelective" parameterType="org.javaboy.vhr.model.ExecutivePerformance" >
+    insert into per_executive_performance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="eid != null" > eid, </if>
+      <if test="year != null" > year, </if>
+      <if test="quarter1 != null" > quarter1, </if>
+      <if test="quarter2 != null" > quarter2, </if>
+      <if test="quarter3 != null" > quarter3, </if>
+      <if test="quarter4 != null" > quarter4, </if>
+      <if test="createDate != null" > createDate, </if>
+      <if test="updateDate != null" > updateDate, </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="eid != null" > #{eid}, </if>
+      <if test="year != null" > #{year}, </if>
+      <if test="quarter1 != null" > #{quarter1}, </if>
+      <if test="quarter2 != null" > #{quarter2}, </if>
+      <if test="quarter3 != null" > #{quarter3}, </if>
+      <if test="quarter4 != null" > #{quarter4}, </if>
+      <if test="createDate != null" > #{createDate}, </if>
+      <if test="updateDate != null" > #{updateDate}, </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.ExecutivePerformance" >
+    update per_executive_performance
+    <set >
+      <if test="eid != null" > eid = #{eid}, </if>
+      <if test="year != null" > year = #{year}, </if>
+      <if test="quarter1 != null" > quarter1 = #{quarter1}, </if>
+      <if test="quarter2 != null" > quarter2 = #{quarter2}, </if>
+      <if test="quarter3 != null" > quarter3 = #{quarter3}, </if>
+      <if test="quarter4 != null" > quarter4 = #{quarter4}, </if>
+      <if test="updateDate != null" > updateDate = #{updateDate}, </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.javaboy.vhr.model.ExecutivePerformance" >
+    update per_executive_performance
+    set eid = #{eid}, year = #{year}, quarter1 = #{quarter1}, quarter2 = #{quarter2}, quarter3 = #{quarter3}, quarter4 = #{quarter4}, updateDate = #{updateDate}
+    where id = #{id}
+  </update>
+</mapper>

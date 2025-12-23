@@ -4,14 +4,17 @@
             <el-header class="homeHeader">
                 <div class="title">微人事</div>
                 <div>
-                    <el-button icon="el-icon-bell" type="text" style="margin-right: 8px;color: #000000;" size="normal" @click="goChat"></el-button>
+                    <el-button icon="el-icon-bell" type="text" style="margin-right: 8px;color: #000000;" size="normal" @click="toggleChat"></el-button>
                     <el-dropdown class="userInfo" @command="commandHandler">
   <span class="el-dropdown-link">
-    {{user.name}}<i><img :src="user.userface" alt="" @error="imgError"></i>
+    {{user.name}}
+    <span v-if="user.roles && user.roles.length > 0">
+        <el-color-picker v-model="themeColor" @change="themeChange" size="mini" style="margin-left: 10px; margin-right: 5px; vertical-align: middle;"></el-color-picker>
+    </span>
+    <i><img :src="user.userface" alt="" @error="imgError"></i>
   </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="userinfo">个人中心</el-dropdown-item>
-                            <el-dropdown-item command="setting">设置</el-dropdown-item>
                             <el-dropdown-item command="logout" divided>注销登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
@@ -43,16 +46,29 @@
                 </el-main>
             </el-container>
         </el-container>
+        
+        <el-dialog
+                title="即时聊天"
+                :visible.sync="chatVisible"
+                width="60%"
+                :close-on-click-modal="false"
+                custom-class="chat-dialog">
+            <friend-chat v-if="chatVisible"></friend-chat>
+        </el-dialog>
     </div>
 </template>
 
 <script>
     import img from '../assets/logo.png';
+    import FriendChat from './chat/FriendChat';
     export default {
         name: "Home",
+        components: {FriendChat},
         data() {
             return {
                 // user: JSON.parse(window.sessionStorage.getItem("user"))
+                themeColor: '#409eff',
+                chatVisible: false
             }
         },
         computed: {
@@ -63,12 +79,49 @@
                 return this.$store.state.currentHr;
             }
         },
+        mounted() {
+            let theme = localStorage.getItem('themeColor');
+            if (theme) {
+                this.themeColor = theme;
+                this.themeChange(theme);
+            }
+        },
         methods: {
+            themeChange(val) {
+                this.themeColor = val;
+                localStorage.setItem('themeColor', val);
+                document.getElementsByClassName('homeHeader')[0].style.backgroundColor = val;
+                
+                // Inject style for other elements
+                let styleTag = document.getElementById('dynamic-theme-style');
+                if (!styleTag) {
+                    styleTag = document.createElement('style');
+                    styleTag.id = 'dynamic-theme-style';
+                    document.head.appendChild(styleTag);
+                }
+                
+                styleTag.innerHTML = `
+                    .el-button--primary { background-color: ${val} !important; border-color: ${val} !important; }
+                    .el-button--primary:hover { opacity: 0.8; }
+                    .el-pagination.is-background .el-pager li:not(.disabled).active { background-color: ${val} !important; }
+                    .el-radio-button__orig-radio:checked+.el-radio-button__inner { background-color: ${val} !important; border-color: ${val} !important; box-shadow: -1px 0 0 0 ${val} !important; }
+                    .el-switch.is-checked .el-switch__core { border-color: ${val} !important; background-color: ${val} !important; }
+                    .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner { background-color: ${val} !important; border-color: ${val} !important; }
+                    .el-checkbox__input.is-checked+.el-checkbox__label { color: ${val} !important; }
+                    .el-tag { color: ${val} !important; }
+                    .el-tag--success { color: #67c23a !important; }
+                    .el-tag--danger { color: #f56c6c !important; }
+                    .el-tag--warning { color: #e6a23c !important; }
+                    .el-tag--info { color: #909399 !important; }
+                    .homeWelcome { color: ${val} !important; }
+                    .el-submenu__title i { color: ${val} !important; }
+                `;
+            },
             imgError(e) {
                 e.target.src = img;
             },
-            goChat() {
-                this.$router.push("/chat");
+            toggleChat() {
+                this.chatVisible = !this.chatVisible;
             },
             commandHandler(cmd) {
                 if (cmd == 'logout') {
@@ -137,5 +190,10 @@
     .el-dropdown-link {
         display: flex;
         align-items: center;
+    }
+    
+    .chat-dialog .el-dialog__body {
+        padding: 0;
+        height: 600px;
     }
 </style>

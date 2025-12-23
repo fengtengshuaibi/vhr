@@ -98,8 +98,10 @@ public class EmpBasicController {
     }
 
     @GetMapping("/simple")
-    public List<Employee> getAllSimpleEmployees() {
-        return (List<Employee>) employeeService.getEmployeeByPage(null, null, new Employee(), null, null, null, null).getData();
+    public List<Employee> getAllSimpleEmployees(@RequestParam(required = false) String name) {
+        Employee employee = new Employee();
+        employee.setName(name);
+        return (List<Employee>) employeeService.getEmployeeByPage(null, null, employee, null, null, null, null).getData();
     }
 
     @GetMapping("/export")

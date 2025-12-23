@@ -38,24 +38,25 @@
 
 <style lang="scss" scoped>
     #app {
-        margin: 20px auto;
-        width: 800px;
-        height: 600px;
+        width: 100%;
+        height: 100%;
         overflow: hidden;
-        border-radius: 10px;
-        .sidebar, .main {
-            height: 100%;
-        }
+        border-radius: 0;
+        margin: 0;
+        display: flex;
         .sidebar {
-            float: left;
-            color: #f4f4f4;
-            background-color: #2e3238;
             width: 200px;
+            height: 100%;
+            background-color: #2e3238;
+            color: #f4f4f4;
+            flex-shrink: 0;
         }
         .main {
+            flex: 1;
+            height: 100%;
+            background-color: #eee;
             position: relative;
             overflow: hidden;
-            background-color: #eee;
         }
     }
 </style>

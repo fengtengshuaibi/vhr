@@ -81,8 +81,8 @@
       keepAlive, requireAuth, parentId, 
       enabled)
     values (#{id,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, 
-      #{component,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{iconcls,jdbcType=VARCHAR}, 
-      #{keepalive,jdbcType=BIT}, #{requireauth,jdbcType=BIT}, #{parentid,jdbcType=INTEGER}, 
+      #{component,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{iconCls,jdbcType=VARCHAR}, 
+      #{meta.keepAlive,jdbcType=BIT}, #{meta.requireAuth,jdbcType=BIT}, #{parentId,jdbcType=INTEGER}, 
       #{enabled,jdbcType=BIT})
   </insert>
   <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Menu" >
@@ -103,16 +103,16 @@
       <if test="name != null" >
         name,
       </if>
-      <if test="iconcls != null" >
+      <if test="iconCls != null" >
         iconCls,
       </if>
-      <if test="keepalive != null" >
+      <if test="meta != null and meta.keepAlive != null" >
         keepAlive,
       </if>
-      <if test="requireauth != null" >
+      <if test="meta != null and meta.requireAuth != null" >
         requireAuth,
       </if>
-      <if test="parentid != null" >
+      <if test="parentId != null" >
         parentId,
       </if>
       <if test="enabled != null" >
@@ -135,17 +135,17 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="iconcls != null" >
-        #{iconcls,jdbcType=VARCHAR},
+      <if test="iconCls != null" >
+        #{iconCls,jdbcType=VARCHAR},
       </if>
-      <if test="keepalive != null" >
-        #{keepalive,jdbcType=BIT},
+      <if test="meta != null and meta.keepAlive != null" >
+        #{meta.keepAlive,jdbcType=BIT},
       </if>
-      <if test="requireauth != null" >
-        #{requireauth,jdbcType=BIT},
+      <if test="meta != null and meta.requireAuth != null" >
+        #{meta.requireAuth,jdbcType=BIT},
       </if>
-      <if test="parentid != null" >
-        #{parentid,jdbcType=INTEGER},
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
       </if>
       <if test="enabled != null" >
         #{enabled,jdbcType=BIT},
@@ -167,17 +167,17 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="iconcls != null" >
-        iconCls = #{iconcls,jdbcType=VARCHAR},
+      <if test="iconCls != null" >
+        iconCls = #{iconCls,jdbcType=VARCHAR},
       </if>
-      <if test="keepalive != null" >
-        keepAlive = #{keepalive,jdbcType=BIT},
+      <if test="meta != null and meta.keepAlive != null" >
+        keepAlive = #{meta.keepAlive,jdbcType=BIT},
       </if>
-      <if test="requireauth != null" >
-        requireAuth = #{requireauth,jdbcType=BIT},
+      <if test="meta != null and meta.requireAuth != null" >
+        requireAuth = #{meta.requireAuth,jdbcType=BIT},
       </if>
-      <if test="parentid != null" >
-        parentId = #{parentid,jdbcType=INTEGER},
+      <if test="parentId != null" >
+        parentId = #{parentId,jdbcType=INTEGER},
       </if>
       <if test="enabled != null" >
         enabled = #{enabled,jdbcType=BIT},
@@ -191,10 +191,10 @@
       path = #{path,jdbcType=VARCHAR},
       component = #{component,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
-      iconCls = #{iconcls,jdbcType=VARCHAR},
-      keepAlive = #{keepalive,jdbcType=BIT},
-      requireAuth = #{requireauth,jdbcType=BIT},
-      parentId = #{parentid,jdbcType=INTEGER},
+      iconCls = #{iconCls,jdbcType=VARCHAR},
+      keepAlive = #{meta.keepAlive,jdbcType=BIT},
+      requireAuth = #{meta.requireAuth,jdbcType=BIT},
+      parentId = #{parentId,jdbcType=INTEGER},
       enabled = #{enabled,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javaboy.vhr.mapper.MenuMaskingConfigMapper" >
+  <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.MenuMaskingConfig" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="menu_id" property="menuId" jdbcType="INTEGER" />
+    <result column="field_name" property="fieldName" jdbcType="VARCHAR" />
+    <result column="masking_type" property="maskingType" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, menu_id, field_name, masking_type, enabled
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from menu_masking_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from menu_masking_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.javaboy.vhr.model.MenuMaskingConfig" >
+    insert into menu_masking_config (id, menu_id, field_name, 
+      masking_type, enabled)
+    values (#{id,jdbcType=INTEGER}, #{menuId,jdbcType=INTEGER}, #{fieldName,jdbcType=VARCHAR}, 
+      #{maskingType,jdbcType=VARCHAR}, #{enabled,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="org.javaboy.vhr.model.MenuMaskingConfig" >
+    insert into menu_masking_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="menuId != null" >
+        menu_id,
+      </if>
+      <if test="fieldName != null" >
+        field_name,
+      </if>
+      <if test="maskingType != null" >
+        masking_type,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="fieldName != null" >
+        #{fieldName,jdbcType=VARCHAR},
+      </if>
+      <if test="maskingType != null" >
+        #{maskingType,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.MenuMaskingConfig" >
+    update menu_masking_config
+    <set >
+      <if test="menuId != null" >
+        menu_id = #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="fieldName != null" >
+        field_name = #{fieldName,jdbcType=VARCHAR},
+      </if>
+      <if test="maskingType != null" >
+        masking_type = #{maskingType,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.javaboy.vhr.model.MenuMaskingConfig" >
+    update menu_masking_config
+    set menu_id = #{menuId,jdbcType=INTEGER},
+      field_name = #{fieldName,jdbcType=VARCHAR},
+      masking_type = #{maskingType,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getConfigsByMenuId" resultMap="BaseResultMap">
+    select * from menu_masking_config where menu_id = #{menuId}
+  </select>
+  <delete id="deleteByMenuId">
+    delete from menu_masking_config where menu_id = #{menuId}
+  </delete>
+</mapper>

@@ -12,6 +12,9 @@
   <delete id="deleteByRid">
     delete from menu_role where rid=#{rid}
   </delete>
+  <delete id="deleteByMid">
+    delete from menu_role where mid=#{mid}
+  </delete>
   <insert id="insertRecord">
     insert into menu_role (mid,rid) values
     <foreach collection="mids" separator="," item="mid">

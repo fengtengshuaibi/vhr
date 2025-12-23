@@ -7,7 +7,9 @@ export const initMenu = (router, store) => {
     getRequest("/system/config/menu").then(data => {
         if (data) {
             let fmtRoutes = formatRoutes(data);
-            router.addRoutes(fmtRoutes);
+            fmtRoutes.forEach(route => {
+                router.addRoute(route);
+            });
             store.commit('initRoutes', fmtRoutes);
             store.dispatch('connect');
         }

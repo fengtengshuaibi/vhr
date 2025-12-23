@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javaboy.vhr.mapper.EmployeePerformanceMapper" >
+  <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.EmployeePerformance" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="eid" property="eid" jdbcType="CHAR" />
+    <result column="year" property="year" jdbcType="INTEGER" />
+    <result column="month1" property="month1" jdbcType="DOUBLE" />
+    <result column="month2" property="month2" jdbcType="DOUBLE" />
+    <result column="month3" property="month3" jdbcType="DOUBLE" />
+    <result column="month4" property="month4" jdbcType="DOUBLE" />
+    <result column="month5" property="month5" jdbcType="DOUBLE" />
+    <result column="month6" property="month6" jdbcType="DOUBLE" />
+    <result column="month7" property="month7" jdbcType="DOUBLE" />
+    <result column="month8" property="month8" jdbcType="DOUBLE" />
+    <result column="month9" property="month9" jdbcType="DOUBLE" />
+    <result column="month10" property="month10" jdbcType="DOUBLE" />
+    <result column="month11" property="month11" jdbcType="DOUBLE" />
+    <result column="month12" property="month12" jdbcType="DOUBLE" />
+    <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="updateDate" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap id="AllEmployeePerformanceInfo" type="org.javaboy.vhr.model.EmployeePerformance" extends="BaseResultMap">
+    <association property="employee" javaType="org.javaboy.vhr.model.Employee">
+        <result column="ename" property="name"/>
+    </association>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, eid, year, month1, month2, month3, month4, month5, month6, month7, month8, month9, month10, month11, month12, createDate, updateDate
+  </sql>
+
+  <select id="getEmployeePerformanceByPage" resultMap="AllEmployeePerformanceInfo">
+    select p.*, e.name as ename
+    from per_employee_performance p
+    left join employee e on p.eid = e.idCard
+    <where>
+        <if test="empName !=null and empName!=''">
+            and e.name like concat('%',#{empName},'%')
+        </if>
+        <if test="year != null">
+            and p.year = #{year}
+        </if>
+        <if test="beginDate !=null and endDate !=null">
+            and p.createDate between #{beginDate} and #{endDate}
+        </if>
+    </where>
+    <if test="page !=null and size !=null">
+        limit #{page},#{size}
+    </if>
+  </select>
+
+  <select id="getTotal" resultType="java.lang.Long">
+    select count(*) from per_employee_performance p
+    left join employee e on p.eid = e.idCard
+    <where>
+        <if test="empName !=null and empName!=''">
+            and e.name like concat('%',#{empName},'%')
+        </if>
+        <if test="year != null">
+            and p.year = #{year}
+        </if>
+        <if test="beginDate !=null and endDate !=null">
+            and p.createDate between #{beginDate} and #{endDate}
+        </if>
+    </where>
+  </select>
+  
+  <insert id="addEmployeePerformances">
+    insert into per_employee_performance (eid, year, month1, month2, month3, month4, month5, month6, month7, month8, month9, month10, month11, month12, createDate, updateDate)
+    values
+    <foreach collection="list" item="item" separator=",">
+        (#{item.eid}, #{item.year}, #{item.month1}, #{item.month2}, #{item.month3}, #{item.month4}, #{item.month5}, #{item.month6}, #{item.month7}, #{item.month8}, #{item.month9}, #{item.month10}, #{item.month11}, #{item.month12}, #{item.createDate}, #{item.updateDate})
+    </foreach>
+  </insert>
+  
+  <select id="getAllEmployeePerformances" resultMap="AllEmployeePerformanceInfo">
+    select p.*, e.name as ename
+    from per_employee_performance p
+    left join employee e on p.eid = e.idCard
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from per_employee_performance
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from per_employee_performance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.javaboy.vhr.model.EmployeePerformance" >
+    insert into per_employee_performance (id, eid, year, month1, month2, month3, month4, month5, month6, month7, month8, month9, month10, month11, month12, createDate, updateDate)
+    values (#{id}, #{eid}, #{year}, #{month1}, #{month2}, #{month3}, #{month4}, #{month5}, #{month6}, #{month7}, #{month8}, #{month9}, #{month10}, #{month11}, #{month12}, #{createDate}, #{updateDate})
+  </insert>
+  <insert id="insertSelective" parameterType="org.javaboy.vhr.model.EmployeePerformance" >
+    insert into per_employee_performance
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="eid != null" > eid, </if>
+      <if test="year != null" > year, </if>
+      <if test="month1 != null" > month1, </if>
+      <if test="month2 != null" > month2, </if>
+      <if test="month3 != null" > month3, </if>
+      <if test="month4 != null" > month4, </if>
+      <if test="month5 != null" > month5, </if>
+      <if test="month6 != null" > month6, </if>
+      <if test="month7 != null" > month7, </if>
+      <if test="month8 != null" > month8, </if>
+      <if test="month9 != null" > month9, </if>
+      <if test="month10 != null" > month10, </if>
+      <if test="month11 != null" > month11, </if>
+      <if test="month12 != null" > month12, </if>
+      <if test="createDate != null" > createDate, </if>
+      <if test="updateDate != null" > updateDate, </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="eid != null" > #{eid}, </if>
+      <if test="year != null" > #{year}, </if>
+      <if test="month1 != null" > #{month1}, </if>
+      <if test="month2 != null" > #{month2}, </if>
+      <if test="month3 != null" > #{month3}, </if>
+      <if test="month4 != null" > #{month4}, </if>
+      <if test="month5 != null" > #{month5}, </if>
+      <if test="month6 != null" > #{month6}, </if>
+      <if test="month7 != null" > #{month7}, </if>
+      <if test="month8 != null" > #{month8}, </if>
+      <if test="month9 != null" > #{month9}, </if>
+      <if test="month10 != null" > #{month10}, </if>
+      <if test="month11 != null" > #{month11}, </if>
+      <if test="month12 != null" > #{month12}, </if>
+      <if test="createDate != null" > #{createDate}, </if>
+      <if test="updateDate != null" > #{updateDate}, </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.EmployeePerformance" >
+    update per_employee_performance
+    <set >
+      <if test="eid != null" > eid = #{eid}, </if>
+      <if test="year != null" > year = #{year}, </if>
+      <if test="month1 != null" > month1 = #{month1}, </if>
+      <if test="month2 != null" > month2 = #{month2}, </if>
+      <if test="month3 != null" > month3 = #{month3}, </if>
+      <if test="month4 != null" > month4 = #{month4}, </if>
+      <if test="month5 != null" > month5 = #{month5}, </if>
+      <if test="month6 != null" > month6 = #{month6}, </if>
+      <if test="month7 != null" > month7 = #{month7}, </if>
+      <if test="month8 != null" > month8 = #{month8}, </if>
+      <if test="month9 != null" > month9 = #{month9}, </if>
+      <if test="month10 != null" > month10 = #{month10}, </if>
+      <if test="month11 != null" > month11 = #{month11}, </if>
+      <if test="month12 != null" > month12 = #{month12}, </if>
+      <if test="updateDate != null" > updateDate = #{updateDate}, </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.javaboy.vhr.model.EmployeePerformance" >
+    update per_employee_performance
+    set eid = #{eid}, year = #{year}, month1 = #{month1}, month2 = #{month2}, month3 = #{month3}, month4 = #{month4}, month5 = #{month5}, month6 = #{month6}, month7 = #{month7}, month8 = #{month8}, month9 = #{month9}, month10 = #{month10}, month11 = #{month11}, month12 = #{month12}, updateDate = #{updateDate}
+    where id = #{id}
+  </update>
+</mapper>

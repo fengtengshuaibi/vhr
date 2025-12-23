@@ -1,6 +1,7 @@
 package org.javaboy.vhr.mapper;
 
 import org.javaboy.vhr.model.OpLog;
+import java.util.List;
 
 public interface OpLogMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +15,6 @@ public interface OpLogMapper {
     int updateByPrimaryKeySelective(OpLog record);
 
     int updateByPrimaryKey(OpLog record);
+
+    List<OpLog> getAllOpLogs();
 }

@@ -20,7 +20,7 @@ DROP TABLE IF EXISTS `adjustsalary`;
 
 CREATE TABLE `adjustsalary` (
                                 `id` int(11) NOT NULL AUTO_INCREMENT,
-                                `eid` char(18) DEFAULT NULL,
+                                `eid` char(18) DEFAULT NULL COMMENT '员工ID',
                                 `asDate` date DEFAULT NULL COMMENT '调薪日期',
                                 `beforeSalary` int(11) DEFAULT NULL COMMENT '调前薪资',
                                 `afterSalary` int(11) DEFAULT NULL COMMENT '调后薪资',
@@ -29,7 +29,7 @@ CREATE TABLE `adjustsalary` (
                                 PRIMARY KEY (`id`),
                                 KEY `pid` (`eid`),
                                 CONSTRAINT `adjustsalary_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工调薪表';
 
 /*Data for the table `adjustsalary` */
 
@@ -39,7 +39,7 @@ DROP TABLE IF EXISTS `appraise`;
 
 CREATE TABLE `appraise` (
                             `id` int(11) NOT NULL AUTO_INCREMENT,
-                            `eid` char(18) DEFAULT NULL,
+                            `eid` char(18) DEFAULT NULL COMMENT '员工ID',
                             `appDate` date DEFAULT NULL COMMENT '考评日期',
                             `appResult` varchar(32) DEFAULT NULL COMMENT '考评结果',
                             `appContent` varchar(255) DEFAULT NULL COMMENT '考评内容',
@@ -47,20 +47,20 @@ CREATE TABLE `appraise` (
                             PRIMARY KEY (`id`),
                             KEY `pid` (`eid`),
                             CONSTRAINT `appraise_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工考评表';
 DROP TABLE IF EXISTS `mail_send_log`;
 
 CREATE TABLE `mail_send_log` (
-                                 `msgId` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-                                 `empId` char(18) DEFAULT NULL,
+                                 `msgId` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '消息ID',
+                                 `empId` char(18) DEFAULT NULL COMMENT '员工ID',
                                  `status` int(11) DEFAULT '0' COMMENT '0发送中，1发送成功，2发送失败',
-                                 `routeKey` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-                                 `exchange` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+                                 `routeKey` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '路由键',
+                                 `exchange` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '交换机',
                                  `count` int(11) DEFAULT NULL COMMENT '重试次数',
                                  `tryTime` date DEFAULT NULL COMMENT '第一次重试时间',
-                                 `createTime` date DEFAULT NULL,
-                                 `updateTime` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+                                 `createTime` date DEFAULT NULL COMMENT '创建时间',
+                                 `updateTime` date DEFAULT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='邮件发送日志表';
 /*Data for the table `appraise` */
 
 /*Table structure for table `company` */
@@ -73,7 +73,7 @@ CREATE TABLE `company` (
                            `departmentIds` varchar(255) DEFAULT NULL COMMENT '部门ID集合',
                            `posIds` varchar(255) DEFAULT NULL COMMENT '职位ID集合',
                            PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公司表';
 
 /*Table structure for table `contract` */
 
@@ -93,7 +93,7 @@ CREATE TABLE `contract` (
                             `attachments` varchar(1024) DEFAULT NULL COMMENT '附件名称，逗号分割',
                             PRIMARY KEY (`idCard`),
                             CONSTRAINT `contract_ibfk_1` FOREIGN KEY (`idCard`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='合同表';
 
 /*Table structure for table `department` */
 
@@ -102,22 +102,23 @@ DROP TABLE IF EXISTS `department`;
 CREATE TABLE `department` (
                               `id` int(11) NOT NULL AUTO_INCREMENT,
                               `name` varchar(32) DEFAULT NULL COMMENT '部门名称',
-                              `parentId` int(11) DEFAULT NULL,
-                              `depPath` varchar(255) DEFAULT NULL,
-                              `enabled` tinyint(1) DEFAULT '1',
-                              `isParent` tinyint(1) DEFAULT '0',
+                              `parentId` int(11) DEFAULT NULL COMMENT '父部门ID',
+                              `depPath` varchar(255) DEFAULT NULL COMMENT '部门路径',
+                              `enabled` tinyint(1) DEFAULT '1' COMMENT '是否启用',
+                              `isParent` tinyint(1) DEFAULT '0' COMMENT '是否为父部门',
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8 COMMENT='部门表';
 
 /*Data for the table `department` */
 
-insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('1','总裁办','-1','.1','1','1');
+insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('1','人事人','-1','.1','1','1');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('109','财务管理中心','1','.1.109','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('111','销售管理中心','1','.1.111','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('112','财务管理中心','1','.1.112','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('113','人力行政管理中心','1','.1.113','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('114','营销管理中心','1','.1.114','1','0');
 insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('115','技术管理中心','1','.1.115','1','0');
+insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isParent`) values('116','总裁办','1','.1.116','1','0');
 /*Table structure for table `employee` */
 
 DROP TABLE IF EXISTS `employee`;
@@ -178,7 +179,7 @@ CREATE TABLE `employee` (
                             CONSTRAINT `employee_ibfk_3` FOREIGN KEY (`posId`) REFERENCES `position` (`id`),
                             CONSTRAINT `employee_ibfk_4` FOREIGN KEY (`nationId`) REFERENCES `nation` (`id`),
                             CONSTRAINT `employee_ibfk_5` FOREIGN KEY (`politicId`) REFERENCES `politicsstatus` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工表';
 insert into `employee` (`name`, `gender`, `birthday`, `idCard`, `wedlock`, `nationId`, `nativePlace`, `politicId`, `email`, `phone`, `address`, `departmentId`, `posId`, `tiptopDegree`, `specialty`, `school`, `beginDate`, `workState`, `conversionTime`, `notWorkDate`, `workAge`, `age`, `idCardStartDate`, `idCardEndDate`, `hukouType`, `hukouLocation`, `emergencyContact`, `emergencyContactPhone`, `fertilityStatus`, `childrenInfo`, `graduationDate`, `certificate`, `trainingHistory`, `previousCompany`, `previousPosition`, `previousStartEnd`, `pastPerformance`, `previousResignationReason`, `reference`, `referencePhone`, `assessmentResult`, `probation`, `conversionScore`, `workLocation`, `rewardsPunishments`, `resignationReason`) values('郝茗','女','1989-02-25','110102198902250026','未婚','1',NULL,'14','jeney9051@hotmail.com','13810555666','北京市朝阳区','1','1','硕士','国际财务管理','英国SURREY大学',NULL,NULL,NULL,NULL,'8.0','36',NULL,NULL,'本市城镇','北京市西城区西便门外大街西里新10楼5门102号','徐萍','13901182286',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'3',NULL,'北京',NULL,NULL);
 insert into `employee` (`name`, `gender`, `birthday`, `idCard`, `wedlock`, `nationId`, `nativePlace`, `politicId`, `email`, `phone`, `address`, `departmentId`, `posId`, `tiptopDegree`, `specialty`, `school`, `beginDate`, `workState`, `conversionTime`, `notWorkDate`, `workAge`, `age`, `idCardStartDate`, `idCardEndDate`, `hukouType`, `hukouLocation`, `emergencyContact`, `emergencyContactPhone`, `fertilityStatus`, `childrenInfo`, `graduationDate`, `certificate`, `trainingHistory`, `previousCompany`, `previousPosition`, `previousStartEnd`, `pastPerformance`, `previousResignationReason`, `reference`, `referencePhone`, `assessmentResult`, `probation`, `conversionScore`, `workLocation`, `rewardsPunishments`, `resignationReason`) values('刘梦曦','女','1988-04-26','110103198804261828','离异','1',NULL,'14','cheesemolly@163.com','13911861845','北京市朝阳区富力又一城A2-1-2001','1','1','本科','音乐编辑','中国传媒大学南广学院',NULL,NULL,NULL,NULL,'4.2','37',NULL,NULL,'本市城镇','北京市朝阳区黄厂南里1号院10号楼1单元2001号','孙女士','13801094266',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'6',NULL,'北京',NULL,NULL);
 insert into `employee` (`name`, `gender`, `birthday`, `idCard`, `wedlock`, `nationId`, `nativePlace`, `politicId`, `email`, `phone`, `address`, `departmentId`, `posId`, `tiptopDegree`, `specialty`, `school`, `beginDate`, `workState`, `conversionTime`, `notWorkDate`, `workAge`, `age`, `idCardStartDate`, `idCardEndDate`, `hukouType`, `hukouLocation`, `emergencyContact`, `emergencyContactPhone`, `fertilityStatus`, `childrenInfo`, `graduationDate`, `certificate`, `trainingHistory`, `previousCompany`, `previousPosition`, `previousStartEnd`, `pastPerformance`, `previousResignationReason`, `reference`, `referencePhone`, `assessmentResult`, `probation`, `conversionScore`, `workLocation`, `rewardsPunishments`, `resignationReason`) values('窦晓晔','女','1982-06-24','110105198206249469','离异','1',NULL,'14','douqian@sina.com','13651322008','北京市朝阳区西坝河东里83楼1103号','1','1','大专','会计学','北京工业大学',NULL,NULL,NULL,NULL,'5.5','43',NULL,NULL,'本市城镇','北京市朝阳区西坝河东里83楼1103号','姚莉莉','13683598940',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'6',NULL,'北京',NULL,NULL);
@@ -264,7 +265,7 @@ CREATE TABLE `employeeec` (
                               PRIMARY KEY (`id`),
                               KEY `pid` (`eid`),
                               CONSTRAINT `employeeec_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工奖惩表';
 
 /*Data for the table `employeeec` */
 
@@ -283,7 +284,7 @@ CREATE TABLE `employeeremove` (
                                   PRIMARY KEY (`id`),
                                   KEY `pid` (`eid`),
                                   CONSTRAINT `employeeremove_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工调动表';
 
 /*Data for the table `employeeremove` */
 
@@ -300,7 +301,7 @@ CREATE TABLE `employeetrain` (
                                  PRIMARY KEY (`id`),
                                  KEY `pid` (`eid`),
                                  CONSTRAINT `employeetrain_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工培训表';
 
 /*Data for the table `employeetrain` */
 
@@ -317,7 +318,7 @@ CREATE TABLE `empsalary` (
                              KEY `empsalary_ibfk_2` (`sid`),
                              CONSTRAINT `empsalary_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE,
                              CONSTRAINT `empsalary_ibfk_2` FOREIGN KEY (`sid`) REFERENCES `salary` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 COMMENT='员工薪资表';
 
 /*Data for the table `empsalary` */
 
@@ -339,11 +340,11 @@ CREATE TABLE `hr` (
                       `userface` varchar(255) DEFAULT NULL,
                       `remark` varchar(255) DEFAULT NULL,
                       PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='操作员表';
 
 /*Data for the table `hr` */
 
-insert  into `hr`(`id`,`name`,`phone`,`telephone`,`address`,`enabled`,`username`,`password`,`userface`,`remark`) values (3,'系统管理员','18568887789','029-82881234','深圳南山',1,'admin','$2a$10$ySG2lkvjFHY5O0./CPIE1OI8VJsuKYEzOYzqIa7AJR6sEgSzUFOAm','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL),(5,'李白','18568123489','029-82123434','海口美兰',1,'libai','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1514093920321&di=913e88c23f382933ef430024afd9128a&imgtype=0&src=http%3A%2F%2Fp.3761.com%2Fpic%2F9771429316733.jpg',NULL),(10,'韩愈','18568123666','029-82111555','广州番禺',1,'hanyu','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1517070040185&di=be0375e0c3db6c311b837b28c208f318&imgtype=0&src=http%3A%2F%2Fimg2.soyoung.com%2Fpost%2F20150213%2F6%2F20150213141918532.jpg',NULL),(11,'柳宗元','18568123377','029-82111333','广州天河',1,'liuzongyuan','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1515233756&di=0856d923a0a37a87fd26604a2c871370&imgtype=jpg&er=1&src=http%3A%2F%2Fwww.qqzhi.com%2Fuploadpic%2F2014-09-27%2F041716704.jpg',NULL),(12,'曾巩','18568128888','029-82111222','广州越秀',1,'zenggong','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1517070040185&di=be0375e0c3db6c311b837b28c208f318&imgtype=0&src=http%3A%2F%2Fimg2.soyoung.com%2Fpost%2F20150213%2F6%2F20150213141918532.jpg',NULL);
+insert  into `hr`(`id`,`name`,`phone`,`telephone`,`address`,`enabled`,`username`,`password`,`userface`,`remark`) values (3,'系统管理员','18568887789','029-82881234','深圳南山',1,'admin','$2a$10$ySG2lkvjFHY5O0./CPIE1OI8VJsuKYEzOYzqIa7AJR6sEgSzUFOAm','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL),(5,'李白','18568123489','029-82123434','海口美兰',1,'libai','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL),(10,'韩愈','18568123666','029-82111555','广州番禺',1,'hanyu','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL),(11,'柳宗元','18568123377','029-82111333','广州天河',1,'liuzongyuan','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL),(12,'曾巩','18568128888','029-82111222','广州越秀',1,'zenggong','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL);
 
 /*Table structure for table `hr_role` */
 
@@ -358,7 +359,7 @@ CREATE TABLE `hr_role` (
                            KEY `hr_role_ibfk_1` (`hrid`),
                            CONSTRAINT `hr_role_ibfk_1` FOREIGN KEY (`hrid`) REFERENCES `hr` (`id`) ON DELETE CASCADE,
                            CONSTRAINT `hr_role_ibfk_2` FOREIGN KEY (`rid`) REFERENCES `role` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8 COMMENT='操作员角色关联表';
 
 /*Data for the table `hr_role` */
 
@@ -375,7 +376,7 @@ CREATE TABLE `joblevel` (
                             `createDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
                             `enabled` tinyint(1) DEFAULT '1',
                             PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='职称表';
 
 /*Data for the table `joblevel` */
 
@@ -388,7 +389,8 @@ insert into `joblevel` (`id`, `name`, `titleLevel`, `createDate`, `enabled`) val
 insert into `joblevel` (`id`, `name`, `titleLevel`, `createDate`, `enabled`) values('16','高级工程师','副高级','2018-01-14 16:19:14','1');
 insert into `joblevel` (`id`, `name`, `titleLevel`, `createDate`, `enabled`) values('17','骨灰级工程师','正高级','2018-01-14 16:19:24','1');
 insert into `joblevel` (`id`, `name`, `titleLevel`, `createDate`, `enabled`) values('18','高级讲师','副高级','2025-12-18 17:03:47','1');
-insert into `joblevel` (`id`, `name`, `titleLevel`, `createDate`, `enabled`) values('19','暂无',NULL,'2025-12-18 17:03:47','1');/*Table structure for table `menu` */
+insert into `joblevel` (`id`, `name`, `titleLevel`, `createDate`, `enabled`) values('19','暂无',NULL,'2025-12-18 17:03:47','1');
+/*Table structure for table `menu` */
 DROP TABLE IF EXISTS `menu`;
 
 CREATE TABLE `menu` (
@@ -405,11 +407,15 @@ CREATE TABLE `menu` (
                         PRIMARY KEY (`id`),
                         KEY `parentId` (`parentId`),
                         CONSTRAINT `menu_ibfk_1` FOREIGN KEY (`parentId`) REFERENCES `menu` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COMMENT='菜单表';
 
 /*Data for the table `menu` */
 
-insert  into `menu`(`id`,`url`,`path`,`component`,`name`,`iconCls`,`keepAlive`,`requireAuth`,`parentId`,`enabled`) values (1,'/',NULL,NULL,'所有',NULL,NULL,NULL,NULL,1),(2,'/','/home','Home','员工资料','fa fa-user-circle-o',NULL,1,1,1),(3,'/','/home','Home','人事管理','fa fa-address-card-o',NULL,1,1,1),(4,'/','/home','Home','薪资管理','fa fa-money',NULL,1,1,1),(5,'/','/home','Home','统计管理','fa fa-bar-chart',NULL,1,1,1),(6,'/','/home','Home','系统管理','fa fa-windows',NULL,1,1,1),(7,'/employee/basic/**','/emp/basic','EmpBasic','基本资料',NULL,NULL,1,2,1),(8,'/employee/advanced/**','/emp/adv','EmpAdv','高级资料',NULL,NULL,1,2,1),(9,'/personnel/emp/**','/per/emp','PerEmp','员工资料',NULL,NULL,1,3,1),(10,'/personnel/ec/**','/per/ec','PerEc','员工奖惩',NULL,NULL,1,3,1),(11,'/personnel/train/**','/per/train','PerTrain','员工培训',NULL,NULL,1,3,1),(12,'/personnel/salary/**','/per/salary','PerSalary','员工调薪',NULL,NULL,1,3,1),(13,'/personnel/remove/**','/per/mv','PerMv','员工调动',NULL,NULL,1,3,1),(14,'/salary/sob/**','/sal/sob','SalSob','工资账套管理',NULL,NULL,1,4,1),(15,'/salary/sobcfg/**','/sal/sobcfg','SalSobCfg','员工账套设置',NULL,NULL,1,4,1),(16,'/salary/table/**','/sal/table','SalTable','工资表管理',NULL,NULL,1,4,1),(17,'/salary/month/**','/sal/month','SalMonth','月末处理',NULL,NULL,1,4,1),(18,'/salary/search/**','/sal/search','SalSearch','工资表查询',NULL,NULL,1,4,1),(19,'/statistics/all/**','/sta/all','StaAll','综合信息统计',NULL,NULL,1,5,1),(20,'/statistics/score/**','/sta/score','StaScore','员工积分统计',NULL,NULL,1,5,1),(21,'/statistics/personnel/**','/sta/pers','StaPers','人事信息统计',NULL,NULL,1,5,1),(22,'/statistics/recored/**','/sta/record','StaRecord','人事记录统计',NULL,NULL,1,5,1),(23,'/system/basic/**','/sys/basic','SysBasic','基础信息设置',NULL,NULL,1,6,1),(24,'/system/cfg/**','/sys/cfg','SysCfg','系统管理',NULL,NULL,1,6,1),(25,'/system/log/**','/sys/log','SysLog','操作日志管理',NULL,NULL,1,6,1),(26,'/system/hr/**','/sys/hr','SysHr','操作员管理',NULL,NULL,1,6,1),(27,'/system/data/**','/sys/data','SysData','备份恢复数据库',NULL,NULL,1,6,1),(28,'/system/init/**','/sys/init','SysInit','初始化数据库',NULL,NULL,1,6,1),(29,'/personnel/contract/**', '/per/contract', 'PerContract', '合同管理', NULL, NULL, 1, 3, 1);
+insert  into `menu`(`id`,`url`,`path`,`component`,`name`,`iconCls`,`keepAlive`,`requireAuth`,`parentId`,`enabled`) values (1,'/',NULL,NULL,'所有',NULL,NULL,NULL,NULL,1),(2,'/','/home','Home','员工资料','fa fa-user-circle-o',NULL,1,1,1),(3,'/','/home','Home','人事管理','fa fa-address-card-o',NULL,1,1,1),(4,'/','/home','Home','薪资管理','fa fa-money',NULL,1,1,1),(5,'/','/home','Home','统计管理','fa fa-bar-chart',NULL,1,1,1),(6,'/','/home','Home','系统管理','fa fa-windows',NULL,1,1,1),(7,'/employee/basic/**','/emp/basic','EmpBasic','基本资料',NULL,NULL,1,2,1),(8,'/employee/advanced/**','/emp/adv','EmpAdv','高级资料',NULL,NULL,1,2,1),(9,'/personnel/emp/**','/per/emp','PerEmp','员工资料',NULL,NULL,1,3,1),(10,'/personnel/ec/**','/per/ec','PerEc','员工奖惩',NULL,NULL,1,3,1),(11,'/personnel/train/**','/per/train','PerTrain','员工培训',NULL,NULL,1,3,1),(12,'/personnel/salary/**','/per/salary','PerSalary','员工调薪',NULL,NULL,1,3,1),(13,'/personnel/remove/**','/per/mv','PerMv','员工调动',NULL,NULL,1,3,1),(14,'/salary/sob/**','/sal/sob','SalSob','工资账套管理',NULL,NULL,1,4,1),(15,'/salary/sobcfg/**','/sal/sobcfg','SalSobCfg','员工账套设置',NULL,NULL,1,4,1),(16,'/salary/table/**','/sal/table','SalTable','工资表管理',NULL,NULL,1,4,1),(17,'/salary/month/**','/sal/month','SalMonth','月末处理',NULL,NULL,1,4,1),(18,'/salary/search/**','/sal/search','SalSearch','工资表查询',NULL,NULL,1,4,1),(19,'/statistics/all/**','/sta/all','StaAll','综合信息统计',NULL,NULL,1,5,1),(20,'/statistics/score/**','/sta/score','StaScore','员工积分统计',NULL,NULL,1,5,1),(21,'/statistics/personnel/**','/sta/pers','StaPers','人事信息统计',NULL,NULL,1,5,1),(22,'/statistics/recored/**','/sta/record','StaRecord','人事记录统计',NULL,NULL,1,5,1),(23,'/system/basic/**','/sys/basic','SysBasic','基础信息设置',NULL,NULL,1,6,1),(24,'/system/cfg/**','/sys/cfg','SysCfg','系统管理',NULL,NULL,1,6,1),(25,'/system/log/**','/sys/log','SysLog','操作日志管理',NULL,NULL,1,6,1),(26,'/system/hr/**','/sys/hr','SysHr','操作员管理',NULL,NULL,1,6,1),(27,'/system/data/**','/sys/data','SysData','备份恢复数据库',NULL,NULL,1,6,1),(28,'/system/init/**','/sys/init','SysInit','初始化数据库',NULL,NULL,1,6,1),(29,'/personnel/contract/**', '/per/contract', 'PerContract', '合同管理', NULL, NULL, 1, 3, 1),
+                                                                                                                          (30, '/personnel/performance/**', '/per/per', 'PerPerformance', '绩效管理', NULL, NULL, 1, 3, 1),
+                                                                                                                          (31, '/personnel/score/**', '/per/score', 'PerScore', '内部管理评分', NULL, NULL, 1, 3, 1),
+                                                                                                                          (32, '/statistics/performance/**', '/sta/performance', 'StaPerformance', '普通员工绩效统计', NULL, NULL, 1, 5, 1),
+                                                                                                                          (33, '/statistics/executive/**', '/sta/executive', 'StaExecutive', '高管绩效统计', NULL, NULL, 1, 5, 1);
 /*Table structure for table `menu_role` */
 
 DROP TABLE IF EXISTS `menu_role`;
@@ -423,7 +429,7 @@ CREATE TABLE `menu_role` (
                              KEY `rid` (`rid`),
                              CONSTRAINT `menu_role_ibfk_1` FOREIGN KEY (`mid`) REFERENCES `menu` (`id`),
                              CONSTRAINT `menu_role_ibfk_2` FOREIGN KEY (`rid`) REFERENCES `role` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=283 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=283 DEFAULT CHARSET=utf8 COMMENT='菜单角色关联表';
 
 /*Data for the table `menu_role` */
 
@@ -496,7 +502,7 @@ CREATE TABLE `msgcontent` (
                               `createDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                               `idCard` char(18) DEFAULT NULL,
                               PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COMMENT='消息内容表';
 
 /*Data for the table `msgcontent` */
 
@@ -510,7 +516,7 @@ CREATE TABLE `nation` (
                           `id` int(11) NOT NULL AUTO_INCREMENT,
                           `name` varchar(32) DEFAULT NULL,
                           PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8 COMMENT='民族表';
 
 /*Data for the table `nation` */
 
@@ -528,7 +534,7 @@ CREATE TABLE `oplog` (
                          PRIMARY KEY (`id`),
                          KEY `hrid` (`hrid`),
                          CONSTRAINT `oplog_ibfk_1` FOREIGN KEY (`hrid`) REFERENCES `hr` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='操作日志表';
 
 /*Data for the table `oplog` */
 
@@ -540,7 +546,7 @@ CREATE TABLE `politicsstatus` (
                                   `id` int(11) NOT NULL AUTO_INCREMENT,
                                   `name` varchar(32) DEFAULT NULL,
                                   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='政治面貌表';
 
 /*Data for the table `politicsstatus` */
 
@@ -571,7 +577,7 @@ CREATE TABLE `position` (
                             `reportTo` char(18) DEFAULT NULL COMMENT '汇报上级身份证',
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 COMMENT='职位表';
 
 /*Data for the table `position` */
 
@@ -620,7 +626,7 @@ CREATE TABLE `role` (
                         `name` varchar(64) DEFAULT NULL,
                         `nameZh` varchar(64) DEFAULT NULL COMMENT '角色名称',
                         PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='角色表';
 
 /*Data for the table `role` */
 
@@ -646,7 +652,7 @@ CREATE TABLE `salary` (
                           `accumulationFundPer` float DEFAULT NULL COMMENT '公积金比率',
                           `name` varchar(32) DEFAULT NULL,
                           PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='工资账套表';
 
 /*Data for the table `salary` */
 
@@ -664,10 +670,47 @@ CREATE TABLE `sysmsg` (
                           `state` int(11) DEFAULT '0' COMMENT '0 未读 1 已读',
                           PRIMARY KEY (`id`),
                           KEY `hrid` (`hrid`),
-                          KEY `sysmsg_ibfk_1` (`mid`),
                           CONSTRAINT `sysmsg_ibfk_1` FOREIGN KEY (`mid`) REFERENCES `msgcontent` (`id`),
                           CONSTRAINT `sysmsg_ibfk_2` FOREIGN KEY (`hrid`) REFERENCES `hr` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8 COMMENT='系统消息表';
+
+/*Table structure for table `employee_performance` */
+DROP TABLE IF EXISTS `employee_performance`;
+CREATE TABLE `employee_performance` (
+                                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                                        `eid` char(18) DEFAULT NULL COMMENT '员工ID',
+                                        `year` int(11) DEFAULT NULL COMMENT '年份',
+                                        `m1` decimal(10,2) DEFAULT NULL COMMENT '1月绩效',
+                                        `m2` decimal(10,2) DEFAULT NULL COMMENT '2月绩效',
+                                        `m3` decimal(10,2) DEFAULT NULL COMMENT '3月绩效',
+                                        `m4` decimal(10,2) DEFAULT NULL COMMENT '4月绩效',
+                                        `m5` decimal(10,2) DEFAULT NULL COMMENT '5月绩效',
+                                        `m6` decimal(10,2) DEFAULT NULL COMMENT '6月绩效',
+                                        `m7` decimal(10,2) DEFAULT NULL COMMENT '7月绩效',
+                                        `m8` decimal(10,2) DEFAULT NULL COMMENT '8月绩效',
+                                        `m9` decimal(10,2) DEFAULT NULL COMMENT '9月绩效',
+                                        `m10` decimal(10,2) DEFAULT NULL COMMENT '10月绩效',
+                                        `m11` decimal(10,2) DEFAULT NULL COMMENT '11月绩效',
+                                        `m12` decimal(10,2) DEFAULT NULL COMMENT '12月绩效',
+                                        PRIMARY KEY (`id`),
+                                        UNIQUE KEY `idx_eid_year` (`eid`,`year`),
+                                        CONSTRAINT `fk_ep_eid` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工绩效表';
+
+/*Table structure for table `executive_performance` */
+DROP TABLE IF EXISTS `executive_performance`;
+CREATE TABLE `executive_performance` (
+                                         `id` int(11) NOT NULL AUTO_INCREMENT,
+                                         `eid` char(18) DEFAULT NULL COMMENT '员工ID',
+                                         `year` int(11) DEFAULT NULL COMMENT '年份',
+                                         `q1` decimal(10,2) DEFAULT NULL COMMENT '第一季度绩效',
+                                         `q2` decimal(10,2) DEFAULT NULL COMMENT '第二季度绩效',
+                                         `q3` decimal(10,2) DEFAULT NULL COMMENT '第三季度绩效',
+                                         `q4` decimal(10,2) DEFAULT NULL COMMENT '第四季度绩效',
+                                         PRIMARY KEY (`id`),
+                                         UNIQUE KEY `idx_ep_eid_year` (`eid`,`year`),
+                                         CONSTRAINT `fk_exp_eid` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='高管绩效表';
 
 /*Data for the table `sysmsg` */
 
@@ -726,3 +769,16 @@ DELIMITER ;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+DROP TABLE IF EXISTS `menu_masking_config`;
+CREATE TABLE `menu_masking_config` (
+                                       `id` int(11) NOT NULL AUTO_INCREMENT,
+                                       `menu_id` int(11) DEFAULT NULL,
+                                       `field_name` varchar(64) DEFAULT NULL,
+                                       `masking_type` varchar(32) DEFAULT NULL COMMENT 'NAME, IDCARD, ALL',
+                                       `enabled` tinyint(1) DEFAULT '1',
+                                       PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单数据脱敏配置表';
+
+UPDATE `menu` SET `name`='菜单管理' WHERE `id`=24;
+
+

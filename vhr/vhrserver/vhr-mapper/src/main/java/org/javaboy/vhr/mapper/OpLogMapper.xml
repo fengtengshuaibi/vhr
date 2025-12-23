@@ -6,6 +6,7 @@
     <result column="addDate" property="adddate" jdbcType="DATE" />
     <result column="operate" property="operate" jdbcType="VARCHAR" />
     <result column="hrid" property="hrid" jdbcType="INTEGER" />
+    <result column="hrName" property="hrName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, addDate, operate, hrid
@@ -79,4 +80,7 @@
       hrid = #{hrid,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="getAllOpLogs" resultMap="BaseResultMap">
+    select ol.*, h.name as hrName from oplog ol left join hr h on ol.hrid = h.id order by ol.addDate desc
+  </select>
 </mapper>
