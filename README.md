@@ -1,15 +1,4 @@
-#### vhr 是一个脚手架，如需业务完整的项目，请移步这里->[TienChin](https://github.com/lenve/tienchin)
-#### 本项目已使用 SpringBoot3+Vue3 重构，地址：[https://github.com/lenve/vhr2.0](https://github.com/lenve/vhr2.0)
-
-## 项目介绍
-
-微人事是一个前后端分离的人力资源管理系统，项目采用 SpringBoot+Vue 开发，项目加入常见的企业级应用所涉及到的技术点，例如 Redis、RabbitMQ 等。
-
-
-- 项目地址：[https://github.com/lenve/vhr](https://github.com/lenve/vhr) 
-- [项目部署视频教程（旧版）](https://mp.weixin.qq.com/s/qN01Le434FWom0c3jqiQmA)
-- [项目部署视频教程（新版）](https://mp.weixin.qq.com/s/dcJv6BIVFPnokI8nBf4IrQ)
-- [项目其他相关资料](./README_zh.md)
+#### vhr 
 
 ### 项目技术栈
 
