@@ -42,7 +42,7 @@ public class TrainingService {
                 if (emps != null) {
                     for (Employee e : emps) {
                         EmployeeCourse ec = new EmployeeCourse();
-                        ec.setEmployeeId(e.getId());
+                        ec.setEmployeeId(e.getIdCard());
                         ec.setCourseId(course.getId());
                         ec.setStatus("Learning");
                         ec.setCreateDate(new Date());
@@ -59,13 +59,13 @@ public class TrainingService {
         return courseMapper.getAllCourses(keywords);
     }
     
-    public List<EmployeeCourse> getMyCourses(Integer employeeId) {
+    public List<EmployeeCourse> getMyCourses(String employeeId) {
         // Get courses from employee_course table
         return employeeCourseMapper.getEmployeeCourses(employeeId, null);
     }
     
     @Transactional
-    public boolean addElectiveCourse(Integer employeeId, Integer courseId) {
+    public boolean addElectiveCourse(String employeeId, Integer courseId) {
         // Check if exists
         EmployeeCourse exist = employeeCourseMapper.getEmployeeCourse(employeeId, courseId);
         if (exist != null) return false;
@@ -153,11 +153,11 @@ public class TrainingService {
         return employeeCourseMapper.getTop10ByScore();
     }
     
-    public Double getTotalHours(Integer eid) {
+    public Double getTotalHours(String eid) {
         return employeeCourseMapper.getTotalStudyHours(eid);
     }
     
-    public Integer getTotalScore(Integer eid) {
+    public Integer getTotalScore(String eid) {
         return employeeCourseMapper.getTotalExamScore(eid);
     }
 }

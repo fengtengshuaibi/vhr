@@ -10,11 +10,11 @@ public interface EmployeeCourseMapper {
     EmployeeCourse selectByPrimaryKey(Integer id);
     int updateByPrimaryKeySelective(EmployeeCourse record);
     int updateByPrimaryKey(EmployeeCourse record);
-    EmployeeCourse getEmployeeCourse(@Param("employeeId") Integer employeeId, @Param("courseId") Integer courseId);
-    List<EmployeeCourse> getEmployeeCourses(@Param("employeeId") Integer employeeId, @Param("type") String type);
+    EmployeeCourse getEmployeeCourse(@Param("employeeId") String employeeId, @Param("courseId") Integer courseId);
+    List<EmployeeCourse> getEmployeeCourses(@Param("employeeId") String employeeId, @Param("type") String type);
     List<EmployeeCourse> getTrainingStats(@Param("keywords") String keywords);
     List<EmployeeCourse> getTop10ByScore();
-    Double getTotalStudyHours(Integer employeeId);
-    Integer getTotalExamScore(Integer employeeId);
-    Integer getCompletedCourseCount(Integer employeeId);
+    Double getTotalStudyHours(String employeeId);
+    Integer getTotalExamScore(String employeeId);
+    Integer getCompletedCourseCount(String employeeId);
 }

@@ -11,8 +11,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${vhr.video.path}")
     String videoPath;
 
+    @Value("${vhr.upload.path}")
+    String uploadPath;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/video/**").addResourceLocations("file:" + videoPath);
+        registry.addResourceHandler("/img/upload/**").addResourceLocations("file:" + uploadPath);
     }
 }

@@ -31,5 +31,5 @@ public interface HrMapper {
 
     Integer updateUserface(@Param("url") String url, @Param("id") Integer id);
 
-    Hr getHrByEmployeeId(Integer employeeId);
+    Hr getHrByEmployeeId(String employeeId);
 }

@@ -3,7 +3,7 @@
 <mapper namespace="org.javaboy.vhr.mapper.EmployeeCourseMapper">
     <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.EmployeeCourse">
         <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="employee_id" property="employeeId" jdbcType="INTEGER"/>
+        <result column="employee_id" property="employeeId" jdbcType="CHAR"/>
         <result column="course_id" property="courseId" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
         <result column="video_progress" property="videoProgress" jdbcType="INTEGER"/>
@@ -52,7 +52,7 @@
     <select id="getTrainingStats" resultMap="EmployeeCourseWithDetails">
         select ec.*, e.id as eid, e.name as ename, c.id as cid, c.name as cname
         from employee_course ec
-        left join employee e on ec.employee_id = e.id
+        left join employee e on ec.employee_id = e.idCard
         left join course c on ec.course_id = c.id
         where 1=1
         <if test="keywords != null and keywords != ''">
@@ -63,7 +63,7 @@
     <select id="getTop10ByScore" resultMap="EmployeeCourseWithDetails">
         select ec.*, e.id as eid, e.name as ename
         from employee_course ec
-        left join employee e on ec.employee_id = e.id
+        left join employee e on ec.employee_id = e.idCard
         order by ec.exam_score desc
         limit 10
     </select>

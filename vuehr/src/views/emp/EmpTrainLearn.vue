@@ -70,7 +70,7 @@
                     <div class="course-info">
                         <h3 class="course-title" :title="ec.course.name">{{ec.course.name}}</h3>
                         <div class="course-meta">
-                            <span><i class="el-icon-time"></i> {{ec.course.hours || 0}} 学时</span>
+                            <span><i class="el-icon-time"></i> {{formatDuration(ec.course.duration)}}</span>
                             <span><i class="el-icon-s-flag"></i> {{ec.course.hasExam ? '有考试' : '无考试'}}</span>
                         </div>
                         <div class="course-progress">
@@ -219,8 +219,11 @@
                 this.playbackRate = 1.0;
                 this.$nextTick(() => {
                     let v = document.getElementById("videoPlayer");
-                    if (v && ec.videoProgress) {
-                        v.currentTime = ec.videoProgress;
+                    if (v) {
+                        v.load(); // Reload video source
+                        if (ec.videoProgress) {
+                            v.currentTime = ec.videoProgress;
+                        }
                     }
                 });
             },
@@ -309,6 +312,13 @@
                 if (ec.isVideoFinished && !ec.course.hasExam) return 100;
                 if (ec.isVideoFinished) return 60; // Video done, exam pending
                 return 10; // Started
+            },
+            formatDuration(hours) {
+                if (!hours) return '00:00';
+                let h = Math.floor(hours);
+                let m = Math.round((hours - h) * 60);
+                if (m === 60) { h++; m = 0; }
+                return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
             }
         }
     }

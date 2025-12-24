@@ -12,7 +12,7 @@
         <result column="password" property="password" jdbcType="VARCHAR"/>
         <result column="userface" property="userface" jdbcType="VARCHAR"/>
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
-        <result column="employee_id" property="employeeId" jdbcType="INTEGER"/>
+        <result column="employee_id" property="employeeId" jdbcType="CHAR"/>
     </resultMap>
     <resultMap id="HrWithRoles" type="org.javaboy.vhr.model.Hr" extends="BaseResultMap">
         <collection property="roles" ofType="org.javaboy.vhr.model.Role">
@@ -39,9 +39,18 @@
     <select id="getHrRolesById" resultType="org.javaboy.vhr.model.Role">
     select r.* from role r,hr_role hrr where hrr.`rid`=r.`id` and hrr.`hrid`=#{id}
   </select>
-    <select id="loadUserByUsername" resultMap="BaseResultMap">
+    <resultMap id="HrWithEmployee" type="org.javaboy.vhr.model.Hr" extends="BaseResultMap">
+        <association property="employee" javaType="org.javaboy.vhr.model.Employee">
+            <id column="eid" property="id"/>
+            <result column="ename" property="name"/>
+            <result column="eidCard" property="idCard"/>
+            <result column="ephone" property="phone"/>
+            <result column="eaddress" property="address"/>
+        </association>
+    </resultMap>
+    <select id="loadUserByUsername" resultMap="HrWithEmployee">
         select hr.*, e.id as eid, e.name as ename, e.idCard as eidCard, e.phone as ephone, e.address as eaddress 
-        from hr left join employee e on hr.employee_id = e.id 
+        from hr left join employee e on hr.employee_id = e.idCard 
         where hr.username=#{username}
     </select>
     <select id="getHrByEmployeeId" resultMap="BaseResultMap">
@@ -65,7 +74,7 @@
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{phone,jdbcType=CHAR}, 
       #{telephone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{enabled,jdbcType=BIT}, 
       #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{userface,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{employeeId,jdbcType=INTEGER})
+      #{remark,jdbcType=VARCHAR}, #{employeeId,jdbcType=CHAR})
   </insert>
     <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Hr" useGeneratedKeys="true" keyProperty="id">
         insert into hr
@@ -136,7 +145,7 @@
                 #{remark,jdbcType=VARCHAR},
             </if>
             <if test="employeeId != null">
-                #{employeeId,jdbcType=INTEGER},
+                #{employeeId,jdbcType=CHAR},
             </if>
         </trim>
     </insert>
@@ -171,7 +180,7 @@
                 remark = #{remark,jdbcType=VARCHAR},
             </if>
             <if test="employeeId != null">
-                employee_id = #{employeeId,jdbcType=INTEGER},
+                employee_id = #{employeeId,jdbcType=CHAR},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -193,7 +202,7 @@
       password = #{password,jdbcType=VARCHAR},
       userface = #{userface,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      employee_id = #{employeeId,jdbcType=INTEGER}
+      employee_id = #{employeeId,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -21,9 +21,9 @@
                     <span class="value">{{ hr.employee ? hr.employee.name : '未绑定' }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="label">用户姓名：</span>
+                    <span class="label">用户昵称：</span>
                     <span class="value">{{ hr.name }}</span>
-                    <el-button type="text" icon="el-icon-edit" @click="showUpdateHrInfoView" style="margin-left: 10px; padding: 0;">修改</el-button>
+                    <el-button type="text" icon="el-icon-edit" @click="updateNickname" style="margin-left: 10px; padding: 0;">修改</el-button>
                 </div>
                 <div class="info-row">
                     <span class="label">手机号码：</span>
@@ -62,10 +62,9 @@
                                 <el-option
                                     v-for="item in employeeList"
                                     :key="item.id"
-                                    :label="item.name + ' (' + item.workID + ')'"
-                                    :value="item.id">
+                                    :label="item.name"
+                                    :value="item.idCard">
                                     <span style="float: left">{{ item.name }}</span>
-                                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.workID }}</span>
                                 </el-option>
                              </el-select>
                         </el-form-item>
@@ -73,7 +72,6 @@
                         <div v-if="selectedEmp" class="emp-preview">
                             <div class="preview-title">确认绑定以下信息：</div>
                             <div class="preview-item"><span>姓名：</span>{{selectedEmp.name}}</div>
-                            <div class="preview-item"><span>工号：</span>{{selectedEmp.workID}}</div>
                             <div class="preview-item"><span>身份证：</span>{{selectedEmp.idCard | maskIdCard}}</div>
                             <div class="preview-item"><span>手机号：</span>{{selectedEmp.phone | maskPhone}}</div>
                             <div class="preview-item"><span>地址：</span>{{selectedEmp.address}}</div>
@@ -89,9 +87,26 @@
 
                 <div style="display: flex;justify-content: center;margin-top: 20px;">
                     <el-button type="danger" size="small" @click="showUpdatePasswdView">修改密码</el-button>
+                    <el-button type="primary" size="small" style="margin-left: 10px" @click="showUpdateHrInfoView" v-if="hr.employeeId">修改实名信息</el-button>
                 </div>
             </div>
         </el-card>
+
+        <!-- Modify Nickname Dialog -->
+        <el-dialog
+            title="修改用户昵称"
+            :visible.sync="nicknameDialogVisible"
+            width="400px">
+            <el-form :model="nicknameForm" :rules="nicknameRules" ref="nicknameForm" label-width="80px" size="small">
+                <el-form-item label="用户昵称" prop="name">
+                    <el-input v-model="nicknameForm.name"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="nicknameDialogVisible = false" size="small">取 消</el-button>
+                <el-button type="primary" @click="submitNickname" size="small">确 定</el-button>
+            </span>
+        </el-dialog>
 
         <!-- Modify Info Dialog -->
         <el-dialog
@@ -100,13 +115,25 @@
                 width="400px">
             <el-form :model="hr2" label-width="80px" size="small">
                 <el-form-item label="用户姓名">
-                    <el-input v-model="hr2.name"></el-input>
+                    <el-select v-model="hr2.employeeId" filterable remote placeholder="请输入员工姓名搜索"
+                               :remote-method="remoteMethod" :loading="loadingEmp"
+                               @change="handleUpdateEmpChange"
+                               style="width: 100%">
+                        <el-option
+                                v-for="item in employeeList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.idCard">
+                            <span style="float: left">{{ item.name }}</span>
+                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.idCard }}</span>
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="手机号码">
-                    <el-input v-model="hr2.phone"></el-input>
+                    <el-input v-model="hr2.phone" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="居住地址">
-                    <el-input v-model="hr2.address"></el-input>
+                    <el-input v-model="hr2.address" disabled></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -194,7 +221,10 @@
                 },
                 employeeList: [],
                 loadingEmp: false,
-                selectedEmp: null
+                selectedEmp: null,
+                nicknameDialogVisible: false,
+                nicknameForm: { name: '' },
+                nicknameRules: { name: [{required: true, message: '请输入昵称', trigger: 'blur'}] }
             }
         },
         filters: {
@@ -225,9 +255,42 @@
                     }
                 })
             },
+            updateNickname() {
+                this.nicknameForm.name = this.hr.name;
+                this.nicknameDialogVisible = true;
+            },
+            submitNickname() {
+                this.$refs.nicknameForm.validate(valid => {
+                    if (valid) {
+                         let hr = Object.assign({}, this.hr);
+                         hr.name = this.nicknameForm.name;
+                         this.putRequest("/hr/info", hr).then(resp => {
+                             if (resp) {
+                                 this.nicknameDialogVisible = false;
+                                 this.initHr();
+                             }
+                         })
+                    }
+                })
+            },
             showUpdateHrInfoView() {
                 this.hr2 = Object.assign({}, this.hr);
+                if (this.hr.employee) {
+                    this.hr2.phone = this.hr.employee.phone;
+                    this.hr2.address = this.hr.employee.address;
+                    this.employeeList = [this.hr.employee];
+                } else {
+                    this.employeeList = [];
+                }
                 this.dialogVisible = true;
+            },
+            handleUpdateEmpChange(val) {
+                let emp = this.employeeList.find(e => e.idCard === val);
+                if (emp) {
+                    this.hr2.phone = emp.phone;
+                    this.hr2.address = emp.address;
+                    this.hr2.employeeId = emp.idCard;
+                }
             },
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
@@ -276,12 +339,12 @@
                 }
             },
             handleEmpChange(val) {
-                this.selectedEmp = this.employeeList.find(e => e.id === val);
+                this.selectedEmp = this.employeeList.find(e => e.idCard === val);
             },
             submitBind() {
                 this.$refs.bindForm.validate(valid => {
                     if (valid) {
-                        this.postRequest("/hr/bind", { employeeId: this.bindForm.employeeId }).then(resp => {
+                        this.postRequest("/hr/bind", { idCard: this.bindForm.employeeId }).then(resp => {
                             if (resp) {
                                 this.initHr();
                             }

@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class EmployeeCourse implements Serializable {
     private Integer id;
-    private Integer employeeId;
+    private String employeeId;
     private Integer courseId;
     private String status;
     private Integer videoProgress;
@@ -22,8 +22,8 @@ public class EmployeeCourse implements Serializable {
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
-    public Integer getEmployeeId() { return employeeId; }
-    public void setEmployeeId(Integer employeeId) { this.employeeId = employeeId; }
+    public String getEmployeeId() { return employeeId; }
+    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
     public Integer getCourseId() { return courseId; }
     public void setCourseId(Integer courseId) { this.courseId = courseId; }
     public String getStatus() { return status; }

@@ -15,14 +15,14 @@ public class EmpTrainingController {
     @Autowired
     TrainingService trainingService;
     
-    private Integer getCurrentEmployeeId() {
+    private String getCurrentEmployeeId() {
         Hr hr = (Hr) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return hr.getEmployeeId();
     }
 
     @GetMapping("/list")
     public List<EmployeeCourse> getMyCourses() {
-        Integer eid = getCurrentEmployeeId();
+        String eid = getCurrentEmployeeId();
         if (eid == null) return null;
         return trainingService.getMyCourses(eid);
     }
@@ -34,7 +34,7 @@ public class EmpTrainingController {
 
     @PostMapping("/add")
     public RespBean addCourse(Integer courseId) {
-        Integer eid = getCurrentEmployeeId();
+        String eid = getCurrentEmployeeId();
         if (eid == null) return RespBean.error("未绑定员工档案，无法添加");
         if (trainingService.addElectiveCourse(eid, courseId)) {
             return RespBean.ok("添加成功");
@@ -71,7 +71,7 @@ public class EmpTrainingController {
 
     @GetMapping("/info")
     public Map<String, Object> getInfo() {
-        Integer eid = getCurrentEmployeeId();
+        String eid = getCurrentEmployeeId();
         Map<String, Object> map = new HashMap<>();
         if (eid != null) {
             map.put("totalHours", trainingService.getTotalHours(eid));

@@ -79,9 +79,6 @@
     previousStartEnd, pastPerformance, previousResignationReason, reference, referencePhone, 
     assessmentResult, probation, conversionScore, workLocation, rewardsPunishments, resignationReason
   </sql>
-    <select id="maxWorkID" resultType="java.lang.Integer">
-    select max(workID) from employee
-  </select>
     <resultMap id="EmployeeWithSalary" type="org.javaboy.vhr.model.Employee" extends="BaseResultMap">
         <association property="salary" javaType="org.javaboy.vhr.model.Salary">
             <id column="sid" property="id" jdbcType="INTEGER"/>

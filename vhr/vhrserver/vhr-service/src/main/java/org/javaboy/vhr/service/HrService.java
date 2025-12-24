@@ -95,11 +95,14 @@ public class HrService implements UserDetailsService {
 
     @Transactional
     public int bindEmployee(Integer hrid, String idCard) {
-        Employee employee = employeeMapper.selectByPrimaryKey(idCard);
-        if (employee == null) {
+        Employee empQuery = new Employee();
+        empQuery.setIdCard(idCard);
+        List<Employee> employees = employeeMapper.getEmployeeByPage(null, null, empQuery, null, null, null, null);
+        if (employees == null || employees.isEmpty()) {
             return 0; // Employee not found
         }
-        Integer employeeId = employee.getId();
+        Employee employee = employees.get(0);
+        String employeeId = employee.getIdCard();
 
         // Check if employee is already bound to another HR
         Hr existingHr = hrMapper.getHrByEmployeeId(employeeId);

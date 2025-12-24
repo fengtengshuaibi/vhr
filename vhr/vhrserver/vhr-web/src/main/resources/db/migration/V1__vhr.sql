@@ -341,7 +341,7 @@ CREATE TABLE `hr` (
                       `password` varchar(255) DEFAULT NULL COMMENT '密码',
                       `userface` varchar(255) DEFAULT NULL,
                       `remark` varchar(255) DEFAULT NULL,
-                      `employee_id` int(11) DEFAULT NULL,
+                      `employee_id` CHAR(18) DEFAULT NULL COMMENT '员工身份证号',
                       PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='操作员表';
 
@@ -803,7 +803,7 @@ CREATE TABLE `course_question` (
 
 CREATE TABLE `employee_course` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `employee_id` int(11) DEFAULT NULL COMMENT '员工ID',
+  `employee_id` char(18) DEFAULT NULL COMMENT '员工身份证号',
   `course_id` int(11) DEFAULT NULL COMMENT '课程ID',
   `status` varchar(20) DEFAULT 'Learning' COMMENT '学习状态(Learning/Finished)',
   `video_progress` int(11) DEFAULT 0 COMMENT '视频观看进度(秒)',

@@ -35,7 +35,9 @@ public class HrInfoController {
     @PutMapping("/hr/info")
     public RespBean updateHr(@RequestBody Hr hr, Authentication authentication) {
         if (hrService.updateHr(hr) == 1) {
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(hr, authentication.getCredentials(), authentication.getAuthorities()));
+            Hr currentHr = (Hr) authentication.getPrincipal();
+            Hr updatedHr = (Hr) hrService.loadUserByUsername(currentHr.getUsername());
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(updatedHr, authentication.getCredentials(), authentication.getAuthorities()));
             return RespBean.ok("更新成功!");
         }
         return RespBean.error("更新失败!");
@@ -52,12 +54,35 @@ public class HrInfoController {
         return RespBean.error("更新失败!");
     }
 
+    @Value("${vhr.upload.path}")
+    String uploadPath;
+
     @PostMapping("/hr/userface")
-    public RespBean updateHrUserface(MultipartFile file, Integer id,Authentication authentication) {
-        String fileId = FastDFSUtils.upload(file);
-        String url = nginxHost + fileId;
+    public RespBean updateHrUserface(MultipartFile file, Integer id, Authentication authentication) {
+        Hr hr = (Hr) authentication.getPrincipal();
+        String employeeId = hr.getEmployeeId();
+        
+        if (employeeId == null || employeeId.trim().isEmpty()) {
+            return RespBean.error("请先完成实名绑定，才能上传头像!");
+        }
+
+        String fileName = file.getOriginalFilename();
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        String newFileName = employeeId + suffix;
+        
+        java.io.File dest = new java.io.File(uploadPath + newFileName);
+        if (!dest.getParentFile().exists()) {
+            dest.getParentFile().mkdirs();
+        }
+        try {
+            file.transferTo(dest);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            return RespBean.error("上传失败!");
+        }
+        
+        String url = "/img/upload/" + newFileName + "?t=" + System.currentTimeMillis();
         if (hrService.updateUserface(url, id) == 1) {
-            Hr hr = (Hr) authentication.getPrincipal();
             hr.setUserface(url);
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(hr, authentication.getCredentials(), authentication.getAuthorities()));
             return RespBean.ok("更新成功!", url);

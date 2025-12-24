@@ -26,6 +26,8 @@ fastdfs:
   nginx:
     host: http://192.168.91.128/
 vhr:
+  upload:
+    path: D:\projects\vhr\vhr\upload\
   video:
     path: D:\projects\vhr\vhr\video_files\
 contract:

@@ -22,7 +22,7 @@
                         <div style="margin-top: 10px; color: #999; font-size: 12px;">
                             <div>分类: {{c.category}}</div>
                             <div>类型: {{c.type}}</div>
-                            <div>时长: {{c.duration || 0}} 小时</div>
+                            <div>时长: {{formatDuration(c.duration)}}</div>
                             <div>考试: {{c.hasExam ? '有' : '无'}}</div>
                         </div>
                     </div>
@@ -258,6 +258,13 @@
                     this.previewUrl = '/video/' + c.videoUrl;
                 }
                 this.previewVisible = true;
+            },
+            formatDuration(hours) {
+                if (!hours) return '00:00';
+                let h = Math.floor(hours);
+                let m = Math.round((hours - h) * 60);
+                if (m === 60) { h++; m = 0; }
+                return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
             }
         }
     }

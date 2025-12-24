@@ -31,7 +31,7 @@ public class Hr implements UserDetails {
 
     private String remark;
 
-    private Integer employeeId;
+    private String employeeId;
     private Employee employee;
     private List<Role> roles;
 
@@ -56,11 +56,11 @@ public class Hr implements UserDetails {
         return Objects.hash(username);
     }
 
-    public Integer getEmployeeId() {
+    public String getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(Integer employeeId) {
+    public void setEmployeeId(String employeeId) {
         this.employeeId = employeeId;
     }
 
