@@ -1,4 +1,4 @@
-/*
+﻿/*
 SQLyog Ultimate v12.08 (32 bit)
 MySQL - 8.0.18 : Database - vhr
 *********************************************************************
@@ -124,6 +124,7 @@ insert into `department` (`id`, `name`, `parentId`, `depPath`, `enabled`, `isPar
 DROP TABLE IF EXISTS `employee`;
 
 CREATE TABLE `employee` (
+                            `id` int(11) NOT NULL AUTO_INCREMENT,
                             `name` varchar(10) DEFAULT NULL COMMENT '员工姓名',
                             `gender` char(4) DEFAULT NULL COMMENT '性别',
                             `birthday` date DEFAULT NULL COMMENT '出生日期',
@@ -171,6 +172,7 @@ CREATE TABLE `employee` (
                             `rewardsPunishments` text COMMENT '奖惩记录',
                             `resignationReason` varchar(255) DEFAULT NULL COMMENT '离职原因',
                             PRIMARY KEY (`idCard`),
+                            UNIQUE KEY `id` (`id`),
                             KEY `departmentId` (`departmentId`),
                             KEY `dutyId` (`posId`),
                             KEY `nationId` (`nationId`),
@@ -339,6 +341,7 @@ CREATE TABLE `hr` (
                       `password` varchar(255) DEFAULT NULL COMMENT '密码',
                       `userface` varchar(255) DEFAULT NULL,
                       `remark` varchar(255) DEFAULT NULL,
+                      `employee_id` int(11) DEFAULT NULL,
                       PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='操作员表';
 
@@ -411,11 +414,45 @@ CREATE TABLE `menu` (
 
 /*Data for the table `menu` */
 
-insert  into `menu`(`id`,`url`,`path`,`component`,`name`,`iconCls`,`keepAlive`,`requireAuth`,`parentId`,`enabled`) values (1,'/',NULL,NULL,'所有',NULL,NULL,NULL,NULL,1),(2,'/','/home','Home','员工资料','fa fa-user-circle-o',NULL,1,1,1),(3,'/','/home','Home','人事管理','fa fa-address-card-o',NULL,1,1,1),(4,'/','/home','Home','薪资管理','fa fa-money',NULL,1,1,1),(5,'/','/home','Home','统计管理','fa fa-bar-chart',NULL,1,1,1),(6,'/','/home','Home','系统管理','fa fa-windows',NULL,1,1,1),(7,'/employee/basic/**','/emp/basic','EmpBasic','基本资料',NULL,NULL,1,2,1),(8,'/employee/advanced/**','/emp/adv','EmpAdv','高级资料',NULL,NULL,1,2,1),(9,'/personnel/emp/**','/per/emp','PerEmp','员工资料',NULL,NULL,1,3,1),(10,'/personnel/ec/**','/per/ec','PerEc','员工奖惩',NULL,NULL,1,3,1),(11,'/personnel/train/**','/per/train','PerTrain','员工培训',NULL,NULL,1,3,1),(12,'/personnel/salary/**','/per/salary','PerSalary','员工调薪',NULL,NULL,1,3,1),(13,'/personnel/remove/**','/per/mv','PerMv','员工调动',NULL,NULL,1,3,1),(14,'/salary/sob/**','/sal/sob','SalSob','工资账套管理',NULL,NULL,1,4,1),(15,'/salary/sobcfg/**','/sal/sobcfg','SalSobCfg','员工账套设置',NULL,NULL,1,4,1),(16,'/salary/table/**','/sal/table','SalTable','工资表管理',NULL,NULL,1,4,1),(17,'/salary/month/**','/sal/month','SalMonth','月末处理',NULL,NULL,1,4,1),(18,'/salary/search/**','/sal/search','SalSearch','工资表查询',NULL,NULL,1,4,1),(19,'/statistics/all/**','/sta/all','StaAll','综合信息统计',NULL,NULL,1,5,1),(20,'/statistics/score/**','/sta/score','StaScore','员工积分统计',NULL,NULL,1,5,1),(21,'/statistics/personnel/**','/sta/pers','StaPers','人事信息统计',NULL,NULL,1,5,1),(22,'/statistics/recored/**','/sta/record','StaRecord','人事记录统计',NULL,NULL,1,5,1),(23,'/system/basic/**','/sys/basic','SysBasic','基础信息设置',NULL,NULL,1,6,1),(24,'/system/cfg/**','/sys/cfg','SysCfg','系统管理',NULL,NULL,1,6,1),(25,'/system/log/**','/sys/log','SysLog','操作日志管理',NULL,NULL,1,6,1),(26,'/system/hr/**','/sys/hr','SysHr','操作员管理',NULL,NULL,1,6,1),(27,'/system/data/**','/sys/data','SysData','备份恢复数据库',NULL,NULL,1,6,1),(28,'/system/init/**','/sys/init','SysInit','初始化数据库',NULL,NULL,1,6,1),(29,'/personnel/contract/**', '/per/contract', 'PerContract', '合同管理', NULL, NULL, 1, 3, 1),
+INSERT INTO `menu` (`id`, `url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`) VALUES
+(1, '/', NULL, NULL, '所有', NULL, NULL, NULL, NULL, 1),
+(2, '/', '/home', 'Home', '员工资料', 'fa fa-user-circle-o', NULL, 1, 1, 1),
+(3, '/', '/home', 'Home', '人事管理', 'fa fa-address-card-o', NULL, 1, 1, 1),
+(4, '/', '/home', 'Home', '薪资管理', 'fa fa-money', NULL, 1, 1, 1),
+(5, '/', '/home', 'Home', '统计管理', 'fa fa-bar-chart', NULL, 1, 1, 1),
+(6, '/', '/home', 'Home', '系统管理', 'fa fa-windows', NULL, 1, 1, 1),
+(7, '/employee/basic/**', '/emp/basic', 'EmpBasic', '基本资料', NULL, NULL, 1, 2, 1),
+(8, '/employee/advanced/**', '/emp/adv', 'EmpAdv', '高级资料', NULL, NULL, 1, 2, 1),
+(9, '/personnel/emp/**', '/per/emp', 'PerEmp', '员工花名册', NULL, NULL, 1, 3, 1),
+(10, '/personnel/ec/**', '/per/ec', 'PerEc', '员工奖惩', NULL, NULL, 1, 3, 1),
+(11, '/train/**', '/train', 'Home', '培训管理', 'fa fa-graduation-cap', NULL, 1, 1, 1),
+(12, '/personnel/salary/**', '/per/salary', 'PerSalary', '员工调薪', NULL, NULL, 1, 3, 1),
+(13, '/personnel/remove/**', '/per/mv', 'PerMv', '员工调动', NULL, NULL, 1, 3, 1),
+(14, '/salary/sob/**', '/sal/sob', 'SalSob', '工资账套管理', NULL, NULL, 1, 4, 1),
+(15, '/salary/sobcfg/**', '/sal/sobcfg', 'SalSobCfg', '员工账套设置', NULL, NULL, 1, 4, 1),
+(16, '/salary/table/**', '/sal/table', 'SalTable', '工资表管理', NULL, NULL, 1, 4, 1),
+(17, '/salary/month/**', '/sal/month', 'SalMonth', '月末处理', NULL, NULL, 1, 4, 1),
+(18, '/salary/search/**', '/sal/search', 'SalSearch', '工资表查询', NULL, NULL, 1, 4, 1),
+(19, '/statistics/all/**', '/sta/all', 'StaAll', '综合信息统计', NULL, NULL, 1, 5, 1),
+(20, '/statistics/score/**', '/sta/score', 'StaScore', '员工积分统计', NULL, NULL, 1, 5, 1),
+(21, '/statistics/personnel/**', '/sta/pers', 'StaPers', '人事信息统计', NULL, NULL, 1, 5, 1),
+(22, '/statistics/recored/**', '/sta/record', 'StaRecord', '人事记录统计', NULL, NULL, 1, 5, 1),
+(23, '/system/basic/**', '/sys/basic', 'SysBasic', '基础信息设置', NULL, NULL, 1, 6, 1),
+(24, '/system/cfg/**', '/sys/cfg', 'SysCfg', '菜单管理', NULL, NULL, 1, 6, 1),
+(25, '/system/log/**', '/sys/log', 'SysLog', '操作日志管理', NULL, NULL, 1, 6, 1),
+(26, '/system/hr/**', '/sys/hr', 'SysHr', '操作员管理', NULL, NULL, 1, 6, 1),
+(27, '/system/data/**', '/sys/data', 'SysData', '备份恢复数据库', NULL, NULL, 1, 6, 1),
+(28, '/system/init/**', '/sys/init', 'SysInit', '初始化数据库', NULL, NULL, 1, 6, 1),
+(29, '/personnel/train/**', '/per/train', 'PerTrain', '员工培训', NULL, NULL, 1, 3, 1),
 (30, '/personnel/performance/**', '/per/per', 'PerPerformance', '绩效管理', NULL, NULL, 1, 3, 1),
 (31, '/personnel/score/**', '/per/score', 'PerScore', '内部管理评分', NULL, NULL, 1, 3, 1),
 (32, '/statistics/performance/**', '/sta/performance', 'StaPerformance', '普通员工绩效统计', NULL, NULL, 1, 5, 1),
-(33, '/statistics/executive/**', '/sta/executive', 'StaExecutive', '高管绩效统计', NULL, NULL, 1, 5, 1);
+(33, '/statistics/executive/**', '/sta/executive', 'StaExecutive', '高管绩效统计', NULL, NULL, 1, 5, 1),
+(34, '/train/course/**', '/train/course', 'PerTrainAdd', '课程库', NULL, NULL, 1, 11, 1),
+(35, '/train/stats/**', '/train/stats', 'PerTrainStats', '培训统计', NULL, NULL, 1, 11, 1),
+(36, '/', '/home', 'Home', '在线学习', 'fa fa-graduation-cap', NULL, 1, 1, 1),
+(37, '/emp/train/learn/**', '/emp/train/learn', 'EmpTrainLearn', '课程学习', NULL, NULL, 1, 36, 1),
+(38, '/emp/train/find/**', '/emp/train/find', 'EmpTrainFind', '课程查找', NULL, NULL, 1, 36, 1);
 /*Table structure for table `menu_role` */
 
 DROP TABLE IF EXISTS `menu_role`;
@@ -433,68 +470,14 @@ CREATE TABLE `menu_role` (
 
 /*Data for the table `menu_role` */
 
-insert into `menu_role` (`id`, `mid`, `rid`) values('161','7','3');
-insert into `menu_role` (`id`, `mid`, `rid`) values('162','7','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('163','9','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('164','10','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('165','11','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('166','12','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('167','13','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('168','14','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('169','15','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('170','16','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('171','17','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('172','18','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('173','19','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('174','20','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('175','21','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('176','22','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('177','23','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('178','25','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('179','26','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('180','27','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('181','28','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('182','24','6');
-insert into `menu_role` (`id`, `mid`, `rid`) values('247','7','4');
-insert into `menu_role` (`id`, `mid`, `rid`) values('248','8','4');
-insert into `menu_role` (`id`, `mid`, `rid`) values('249','11','4');
-insert into `menu_role` (`id`, `mid`, `rid`) values('250','7','2');
-insert into `menu_role` (`id`, `mid`, `rid`) values('251','8','2');
-insert into `menu_role` (`id`, `mid`, `rid`) values('252','9','2');
-insert into `menu_role` (`id`, `mid`, `rid`) values('253','10','2');
-insert into `menu_role` (`id`, `mid`, `rid`) values('254','12','2');
-insert into `menu_role` (`id`, `mid`, `rid`) values('255','13','2');
-insert into `menu_role` (`id`, `mid`, `rid`) values('256','7','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('257','8','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('258','9','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('259','10','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('260','11','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('261','12','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('262','13','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('263','14','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('264','15','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('265','16','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('266','17','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('267','18','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('268','19','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('269','20','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('270','21','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('271','22','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('272','23','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('273','24','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('274','25','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('275','26','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('276','27','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('277','28','1');
-insert into `menu_role` (`id`, `mid`, `rid`) values('280','7','14');
-insert into `menu_role` (`id`, `mid`, `rid`) values('281','8','14');
-insert into `menu_role` (`id`, `mid`, `rid`) values('282','9','14');
-insert into `menu_role` (`id`, `mid`, `rid`) values('283','29','6');
-insert into `menu_role` (`mid`, `rid`) values('30','6');
-insert into `menu_role` (`mid`, `rid`) values('31','6');
-insert into `menu_role` (`mid`, `rid`) values('32','6');
-insert into `menu_role` (`mid`, `rid`) values('33','6');
-
+INSERT INTO `menu_role` (`mid`, `rid`) VALUES
+(7,3),(7,6),(9,6),(10,6),(12,6),(13,6),(14,6),(15,6),(16,6),(17,6),(18,6),(19,6),(20,6),(21,6),(22,6),(23,6),(25,6),(26,6),(27,6),(28,6),(24,6),
+(7,4),(8,4),(7,2),(8,2),(9,2),(10,2),(12,2),(13,2),(7,1),(8,1),(9,1),(10,1),(12,1),(13,1),(14,1),(15,1),(16,1),(17,1),(18,1),(19,1),(20,1),(21,1),(22,1),(23,1),(24,1),(25,1),(26,1),(27,1),(28,1),
+(7,14),(8,14),(9,14),(29,6),(30,6),(31,6),(32,6),(33,6),
+(34, 1), (34, 6),
+(35, 1), (35, 6),
+(37, 1), (37, 6),
+(38, 1), (38, 6);
 /*Table structure for table `msgcontent` */
 
 DROP TABLE IF EXISTS `msgcontent`;
@@ -788,5 +771,53 @@ CREATE TABLE `menu_masking_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单数据脱敏配置表';
 
 UPDATE `menu` SET `name`='菜单管理' WHERE `id`=24;
+
+CREATE TABLE `course` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '课程ID',
+  `name` varchar(255) DEFAULT NULL COMMENT '课程名称',
+  `description` varchar(500) DEFAULT NULL COMMENT '课程描述',
+  `cover_url` varchar(255) DEFAULT NULL COMMENT '封面图片URL',
+  `video_url` varchar(255) DEFAULT NULL COMMENT '视频文件URL',
+  `category` varchar(50) DEFAULT NULL COMMENT '课程分类',
+  `type` varchar(20) DEFAULT NULL COMMENT '课程类型(必修/选修)',
+  `department_id` int(11) DEFAULT NULL COMMENT '所属部门ID(仅必修课)',
+  `has_exam` tinyint(1) DEFAULT 0 COMMENT '是否有考试(0:无, 1:有)',
+  `exam_limit` int(11) DEFAULT 0 COMMENT '考试次数限制',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `status` int(11) DEFAULT 1 COMMENT '状态(1:启用)',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='课程表';
+
+CREATE TABLE `course_question` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '题目ID',
+  `course_id` int(11) DEFAULT NULL COMMENT '关联课程ID',
+  `type` varchar(20) DEFAULT NULL COMMENT '题目类型(单选/多选/填空)',
+  `content` varchar(500) DEFAULT NULL COMMENT '题目内容',
+  `options` text COMMENT '选项JSON',
+  `correct_answer` varchar(255) DEFAULT NULL COMMENT '正确答案',
+  `score` int(11) DEFAULT 0 COMMENT '分值',
+  PRIMARY KEY (`id`),
+  KEY `fk_course_question_course` (`course_id`),
+  CONSTRAINT `fk_course_question_course` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='课程题库表';
+
+CREATE TABLE `employee_course` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `employee_id` int(11) DEFAULT NULL COMMENT '员工ID',
+  `course_id` int(11) DEFAULT NULL COMMENT '课程ID',
+  `status` varchar(20) DEFAULT 'Learning' COMMENT '学习状态(Learning/Finished)',
+  `video_progress` int(11) DEFAULT 0 COMMENT '视频观看进度(秒)',
+  `is_video_finished` tinyint(1) DEFAULT 0 COMMENT '视频是否看完(0:否, 1:是)',
+  `study_hours` double(5,1) DEFAULT 0.0 COMMENT '学习时长(小时)',
+  `exam_score` int(11) DEFAULT NULL COMMENT '考试得分',
+  `exam_attempts` int(11) DEFAULT 0 COMMENT '已考次数',
+  `is_passed` tinyint(1) DEFAULT 0 COMMENT '是否通过(0:否, 1:是)',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `fk_emp_course_emp` (`employee_id`),
+  KEY `fk_emp_course_course` (`course_id`),
+  CONSTRAINT `fk_emp_course_course` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工选课/学习记录表';
 
 

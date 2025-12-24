@@ -66,7 +66,7 @@ public class ExecutivePerformanceService {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("高管绩效表");
         HSSFRow header = sheet.createRow(0);
-        String[] headers = {"员工姓名(必填)", "身份证号(必填,18位)", "年份(必填,数字)", "第一季度(数值,最多2位小数)", "第二季度(数值,最多2位小数)", "第三季度(数值,最多2位小数)", "第四季度(数值,最多2位小数)"};
+        String[] headers = {"员工姓名", "身份证号", "年份", "第一季度", "第二季度", "第三季度", "第四季度"};
         for (int i = 0; i < headers.length; i++) {
             header.createCell(i).setCellValue(headers[i]);
         }

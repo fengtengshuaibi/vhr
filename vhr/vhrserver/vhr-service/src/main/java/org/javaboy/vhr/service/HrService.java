@@ -1,7 +1,9 @@
 package org.javaboy.vhr.service;
 
+import org.javaboy.vhr.mapper.EmployeeMapper;
 import org.javaboy.vhr.mapper.HrMapper;
 import org.javaboy.vhr.mapper.HrRoleMapper;
+import org.javaboy.vhr.model.Employee;
 import org.javaboy.vhr.model.Hr;
 import org.javaboy.vhr.utils.HrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class HrService implements UserDetailsService {
     HrMapper hrMapper;
     @Autowired
     HrRoleMapper hrRoleMapper;
+    @Autowired
+    EmployeeMapper employeeMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -87,5 +91,31 @@ public class HrService implements UserDetailsService {
 
     public Integer updateUserface(String url, Integer id) {
         return hrMapper.updateUserface(url, id);
+    }
+
+    @Transactional
+    public int bindEmployee(Integer hrid, String idCard) {
+        Employee employee = employeeMapper.selectByPrimaryKey(idCard);
+        if (employee == null) {
+            return 0; // Employee not found
+        }
+        Integer employeeId = employee.getId();
+
+        // Check if employee is already bound to another HR
+        Hr existingHr = hrMapper.getHrByEmployeeId(employeeId);
+        if (existingHr != null) {
+            return -1; // Duplicate binding
+        }
+
+        Hr hr = hrMapper.selectByPrimaryKey(hrid);
+        if (hr == null) {
+            return 0;
+        }
+        hr.setEmployeeId(employeeId);
+        // Sync info
+        hr.setPhone(employee.getPhone());
+        hr.setAddress(employee.getAddress());
+        
+        return hrMapper.updateByPrimaryKeySelective(hr);
     }
 }

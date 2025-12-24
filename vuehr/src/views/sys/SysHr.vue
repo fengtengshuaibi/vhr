@@ -65,6 +65,25 @@
                 width="30%">
             <div>
                 <el-form :model="hr" status-icon :rules="rules" ref="hrForm" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="关联员工">
+                        <el-select
+                            v-model="hr.employeeId"
+                            filterable
+                            remote
+                            reserve-keyword
+                            placeholder="请输入员工名"
+                            :remote-method="remoteMethod"
+                            :loading="loading"
+                            @change="handleEmpSelect"
+                            style="width: 100%">
+                            <el-option
+                                v-for="item in employees"
+                                :key="item.id"
+                                :label="item.name + ' (' + item.workID + ')'"
+                                :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="用户名" prop="name">
                         <el-input v-model="hr.name"></el-input>
                     </el-form-item>
@@ -135,8 +154,11 @@
                     username: '',
                     password: '',
                     remark: '',
-                    userface: ''
+                    userface: '',
+                    employeeId: null
                 },
+                employees: [],
+                loading: false,
                 rules: {
                     name: [{required: true, message: '请输入用户名', trigger: 'blur'}],
                     phone: [{required: true, message: '请输入手机号码', trigger: 'blur'}],
@@ -167,6 +189,30 @@
             imgError(e) {
                 e.target.src = img;
             },
+            remoteMethod(query) {
+                if (query !== '') {
+                    this.loading = true;
+                    this.getRequest('/employee/basic/?page=1&size=20&name=' + query).then(resp => {
+                        this.loading = false;
+                        if (resp && resp.data) {
+                            this.employees = resp.data;
+                        }
+                    });
+                } else {
+                    this.employees = [];
+                }
+            },
+            handleEmpSelect(val) {
+                let emp = this.employees.find(e => e.id === val);
+                if (emp) {
+                    this.hr.name = emp.name;
+                    this.hr.phone = emp.phone;
+                    this.hr.telephone = emp.phone;
+                    this.hr.address = emp.address;
+                    // Optional: set username to ID Card or something unique if needed
+                    // this.hr.username = emp.idCard; 
+                }
+            },
             showAddHrView() {
                 this.dialogVisible = true;
                 this.initAllRoles();
@@ -179,9 +225,11 @@
                     username: '',
                     password: '',
                     remark: '',
-                    userface: ''
+                    userface: '',
+                    employeeId: null
                 };
                 this.selectedRoles = [];
+                this.employees = [];
             },
             doAddHr() {
                 if (this.selectedRoles.length == 0) {

@@ -30,7 +30,18 @@ public class Hr implements UserDetails {
     private String userface;
 
     private String remark;
+
+    private Integer employeeId;
+    private Employee employee;
     private List<Role> roles;
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -43,6 +54,14 @@ public class Hr implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hash(username);
+    }
+
+    public Integer getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Integer employeeId) {
+        this.employeeId = employeeId;
     }
 
     public List<Role> getRoles() {

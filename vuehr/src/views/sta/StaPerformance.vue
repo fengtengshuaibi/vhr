@@ -35,7 +35,7 @@
       </div>
     </div>
     <div style="margin-top: 10px">
-      <el-table :data="performances" border v-loading="loading" element-loading-text="正在加载..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="width: 100%">
+      <el-table :data="performances" border v-loading="loading" element-loading-text="正在加载..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="width: 100%" height="calc(100vh - 160px)">
         <el-table-column prop="employee.name" fixed align="left" label="姓名" width="90" sortable></el-table-column>
         <el-table-column prop="eid" label="身份证号" width="150" sortable></el-table-column>
         <el-table-column prop="year" label="年份" width="80" sortable></el-table-column>
@@ -56,7 +56,7 @@
                 {{ calculateTotal(scope.row) }}
             </template>
         </el-table-column>
-        <el-table-column label="平均" width="80" sortable :sort-method="sortByAvg">
+        <el-table-column label="平均" sortable :sort-method="sortByAvg">
             <template slot-scope="scope">
                 {{ calculateAvg(scope.row) }}
             </template>

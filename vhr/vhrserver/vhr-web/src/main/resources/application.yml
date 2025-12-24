@@ -16,6 +16,8 @@ spring:
     password: pass1234
   cache:
     cache-names: menus_cache
+  flyway:
+    enabled: true
 server:
   port: 8081
   compression:
@@ -23,6 +25,9 @@ server:
 fastdfs:
   nginx:
     host: http://192.168.91.128/
+vhr:
+  video:
+    path: D:\projects\vhr\vhr\video_files\
 contract:
   upload:
     path: D:\projects\vhr\vhr\contract_files\

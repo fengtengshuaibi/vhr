@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Employee implements Serializable {
-    // private Integer id;
+    private Integer id;
 
     private String name;
 
@@ -127,13 +127,13 @@ public class Employee implements Serializable {
         this.position = position;
     }
 
-    /*public Integer getId() {
+    public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }*/
+    }
 
     public String getName() {
         return name;
@@ -506,7 +506,7 @@ public class Employee implements Serializable {
     @Override
     public String toString() {
         return "Employee{" +
-                // "id=" + id +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", birthday=" + birthday +

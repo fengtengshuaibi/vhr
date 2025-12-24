@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javaboy.vhr.mapper.EmployeeCourseMapper">
+    <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.EmployeeCourse">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="employee_id" property="employeeId" jdbcType="INTEGER"/>
+        <result column="course_id" property="courseId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="video_progress" property="videoProgress" jdbcType="INTEGER"/>
+        <result column="is_video_finished" property="isVideoFinished" jdbcType="BIT"/>
+        <result column="study_hours" property="studyHours" jdbcType="DOUBLE"/>
+        <result column="exam_score" property="examScore" jdbcType="INTEGER"/>
+        <result column="exam_attempts" property="examAttempts" jdbcType="INTEGER"/>
+        <result column="is_passed" property="isPassed" jdbcType="BIT"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <resultMap id="EmployeeCourseWithDetails" type="org.javaboy.vhr.model.EmployeeCourse" extends="BaseResultMap">
+        <association property="course" javaType="org.javaboy.vhr.model.Course">
+            <id column="cid" property="id"/>
+            <result column="cname" property="name"/>
+            <result column="ccover" property="coverUrl"/>
+            <result column="ctype" property="type"/>
+            <result column="chasExam" property="hasExam"/>
+        </association>
+        <association property="employee" javaType="org.javaboy.vhr.model.Employee">
+            <id column="eid" property="id"/>
+            <result column="ename" property="name"/>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, employee_id, course_id, status, video_progress, is_video_finished, study_hours, exam_score, exam_attempts, is_passed, create_date, update_date
+    </sql>
+
+    <select id="getEmployeeCourse" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from employee_course 
+        where employee_id = #{employeeId} and course_id = #{courseId}
+    </select>
+
+    <select id="getEmployeeCourses" resultMap="EmployeeCourseWithDetails">
+        select ec.*, c.id as cid, c.name as cname, c.cover_url as ccover, c.type as ctype, c.has_exam as chasExam
+        from employee_course ec
+        left join course c on ec.course_id = c.id
+        where ec.employee_id = #{employeeId}
+        <if test="type != null">
+            and c.type = #{type}
+        </if>
+    </select>
+    
+    <select id="getTrainingStats" resultMap="EmployeeCourseWithDetails">
+        select ec.*, e.id as eid, e.name as ename, c.id as cid, c.name as cname
+        from employee_course ec
+        left join employee e on ec.employee_id = e.id
+        left join course c on ec.course_id = c.id
+        where 1=1
+        <if test="keywords != null and keywords != ''">
+            and e.name like concat('%', #{keywords}, '%')
+        </if>
+    </select>
+    
+    <select id="getTop10ByScore" resultMap="EmployeeCourseWithDetails">
+        select ec.*, e.id as eid, e.name as ename
+        from employee_course ec
+        left join employee e on ec.employee_id = e.id
+        order by ec.exam_score desc
+        limit 10
+    </select>
+
+    <select id="getTotalStudyHours" resultType="java.lang.Double">
+        select sum(study_hours) from employee_course where employee_id = #{employeeId}
+    </select>
+    
+    <select id="getTotalExamScore" resultType="java.lang.Integer">
+        select sum(exam_score) from employee_course where employee_id = #{employeeId}
+    </select>
+
+    <select id="getCompletedCourseCount" resultType="java.lang.Integer">
+        select count(*) from employee_course where employee_id = #{employeeId} and status = 'Finished'
+    </select>
+    
+    <insert id="insertSelective" parameterType="org.javaboy.vhr.model.EmployeeCourse" useGeneratedKeys="true" keyProperty="id">
+        insert into employee_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null">employee_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="status != null">status,</if>
+            <if test="videoProgress != null">video_progress,</if>
+            <if test="isVideoFinished != null">is_video_finished,</if>
+            <if test="studyHours != null">study_hours,</if>
+            <if test="examScore != null">exam_score,</if>
+            <if test="examAttempts != null">exam_attempts,</if>
+            <if test="isPassed != null">is_passed,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updateDate != null">update_date,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="employeeId != null">#{employeeId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="videoProgress != null">#{videoProgress},</if>
+            <if test="isVideoFinished != null">#{isVideoFinished},</if>
+            <if test="studyHours != null">#{studyHours},</if>
+            <if test="examScore != null">#{examScore},</if>
+            <if test="examAttempts != null">#{examAttempts},</if>
+            <if test="isPassed != null">#{isPassed},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+        </trim>
+    </insert>
+    
+    <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.EmployeeCourse">
+        update employee_course
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="videoProgress != null">video_progress = #{videoProgress},</if>
+            <if test="isVideoFinished != null">is_video_finished = #{isVideoFinished},</if>
+            <if test="studyHours != null">study_hours = #{studyHours},</if>
+            <if test="examScore != null">exam_score = #{examScore},</if>
+            <if test="examAttempts != null">exam_attempts = #{examAttempts},</if>
+            <if test="isPassed != null">is_passed = #{isPassed},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

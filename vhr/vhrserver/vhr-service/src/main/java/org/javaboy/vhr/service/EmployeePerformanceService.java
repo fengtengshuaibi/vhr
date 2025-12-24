@@ -66,7 +66,7 @@ public class EmployeePerformanceService {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("员工绩效表");
         HSSFRow header = sheet.createRow(0);
-        String[] headers = {"员工姓名(必填)", "身份证号(必填,18位)", "年份(必填,数字)", "1月(数值,最多2位小数)", "2月(数值,最多2位小数)", "3月(数值,最多2位小数)", "4月(数值,最多2位小数)", "5月(数值,最多2位小数)", "6月(数值,最多2位小数)", "7月(数值,最多2位小数)", "8月(数值,最多2位小数)", "9月(数值,最多2位小数)", "10月(数值,最多2位小数)", "11月(数值,最多2位小数)", "12月(数值,最多2位小数)"};
+        String[] headers = {"员工姓名", "身份证号", "年份", "1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"};
         for (int i = 0; i < headers.length; i++) {
             header.createCell(i).setCellValue(headers[i]);
         }

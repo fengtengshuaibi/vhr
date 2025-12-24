@@ -34,4 +34,6 @@ public interface EmployeeMapper {
     List<Employee> getEmployeeByPageWithSalary(@Param("page") Integer page, @Param("size") Integer size);
 
     Integer updateEmployeeSalaryById(@Param("eid") Integer eid, @Param("sid") Integer sid);
+
+    Employee selectByEid(Integer id);
 }

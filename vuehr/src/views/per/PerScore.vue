@@ -1,16 +1,16 @@
 <template>
   <div>
     <div>
-      <div style="display: flex;justify-content: space-between">
-        <div>
+      <div style="display: flex;justify-content: space-between;flex-wrap: wrap;">
+        <div style="margin-bottom: 10px;display: flex;align-items: center;flex-wrap: wrap;">
           <el-input placeholder="请输入员工名进行搜索..." prefix-icon="el-icon-search"
                     clearable
                     @clear="initScores"
-                    style="width: 300px;margin-right: 10px" v-model="keyword"
+                    style="width: 300px;margin-right: 10px;margin-bottom: 5px;" v-model="keyword"
                     @keydown.enter.native="initScores" :disabled="showAdvanceSearchView"></el-input>
           <el-input placeholder="请输入年份" prefix-icon="el-icon-date"
                     clearable
-                    style="width: 150px;margin-right: 10px" v-model="year"
+                    style="width: 150px;margin-right: 10px;margin-bottom: 5px;" v-model="year"
                     @keydown.enter.native="initScores"></el-input>
           <el-date-picker
             v-model="dateScope"
@@ -20,14 +20,14 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd"
-            style="margin-right: 10px"
+            style="margin-right: 10px;margin-bottom: 5px;"
           >
           </el-date-picker>
-          <el-button icon="el-icon-search" type="primary" @click="initScores" :disabled="showAdvanceSearchView">
+          <el-button icon="el-icon-search" type="primary" @click="initScores" :disabled="showAdvanceSearchView" style="margin-bottom: 5px;">
             搜索
           </el-button>
         </div>
-        <div>
+        <div style="margin-bottom: 10px;display: flex;align-items: center;flex-wrap: wrap;">
           <el-upload
               :show-file-list="false"
               :before-upload="beforeUpload"

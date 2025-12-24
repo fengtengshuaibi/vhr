@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javaboy.vhr.mapper.CourseMapper">
+    <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.Course">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="cover_url" property="coverUrl" jdbcType="VARCHAR"/>
+        <result column="video_url" property="videoUrl" jdbcType="VARCHAR"/>
+        <result column="category" property="category" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="department_id" property="departmentId" jdbcType="INTEGER"/>
+        <result column="has_exam" property="hasExam" jdbcType="BIT"/>
+        <result column="exam_limit" property="examLimit" jdbcType="INTEGER"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, name, description, cover_url, video_url, category, type, department_id, has_exam, exam_limit, create_date, status
+    </sql>
+    <select id="getAllCourses" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from course
+        where 1=1
+        <if test="keywords!=null and keywords!=''">
+            and name like concat('%',#{keywords},'%')
+        </if>
+        order by create_date desc
+    </select>
+    <select id="getCoursesByTypeAndDept" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from course
+        where 1=1
+        <if test="type!=null and type!=''">
+            and type = #{type}
+        </if>
+        <if test="departmentId!=null">
+            and (department_id = #{departmentId} or department_id is null)
+        </if>
+        order by create_date desc
+    </select>
+    <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Course" useGeneratedKeys="true" keyProperty="id">
+        insert into course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="description != null">description,</if>
+            <if test="coverUrl != null">cover_url,</if>
+            <if test="videoUrl != null">video_url,</if>
+            <if test="category != null">category,</if>
+            <if test="type != null">type,</if>
+            <if test="departmentId != null">department_id,</if>
+            <if test="hasExam != null">has_exam,</if>
+            <if test="examLimit != null">exam_limit,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="description != null">#{description},</if>
+            <if test="coverUrl != null">#{coverUrl},</if>
+            <if test="videoUrl != null">#{videoUrl},</if>
+            <if test="category != null">#{category},</if>
+            <if test="type != null">#{type},</if>
+            <if test="departmentId != null">#{departmentId},</if>
+            <if test="hasExam != null">#{hasExam},</if>
+            <if test="examLimit != null">#{examLimit},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.Course">
+        update course
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="coverUrl != null">cover_url = #{coverUrl},</if>
+            <if test="videoUrl != null">video_url = #{videoUrl},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="departmentId != null">department_id = #{departmentId},</if>
+            <if test="hasExam != null">has_exam = #{hasExam},</if>
+            <if test="examLimit != null">exam_limit = #{examLimit},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from course where id = #{id}
+    </select>
+</mapper>

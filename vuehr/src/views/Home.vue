@@ -23,15 +23,31 @@
             <el-container>
                 <el-aside width="200px">
                     <el-menu router unique-opened>
-                        <el-submenu :index="index+''" v-for="(item,index) in routes" v-if="!item.hidden" :key="index">
-                            <template slot="title">
-                                <i style="color: #409eff;margin-right: 5px" :class="item.iconCls"></i>
-                                <span>{{item.name}}</span>
-                            </template>
-                            <el-menu-item :index="child.path" v-for="(child,indexj) in item.children" :key="indexj">
-                                {{child.name}}
-                            </el-menu-item>
-                        </el-submenu>
+                        <!-- Top Level -->
+                        <div v-for="(item,index) in routes" :key="index">
+                             <!-- Submenu (Level 1) -->
+                            <el-submenu :index="index+''" v-if="!item.hidden">
+                                <template slot="title">
+                                    <i style="color: #409eff;margin-right: 5px" :class="item.iconCls"></i>
+                                    <span>{{item.name}}</span>
+                                </template>
+                                <!-- Level 2 -->
+                                <div v-for="(child,indexj) in item.children" :key="indexj">
+                                    <!-- If Level 2 has children (Level 3) -->
+                                    <el-submenu :index="child.path" v-if="child.children && child.children.length > 0">
+                                        <template slot="title">{{child.name}}</template>
+                                        <!-- Level 3 Items -->
+                                        <el-menu-item :index="grand.path" v-for="(grand,indexk) in child.children" :key="indexk">
+                                            {{grand.name}}
+                                        </el-menu-item>
+                                    </el-submenu>
+                                    <!-- Else Normal Item -->
+                                    <el-menu-item :index="child.path" v-else>
+                                        {{child.name}}
+                                    </el-menu-item>
+                                </div>
+                            </el-submenu>
+                        </div>
                     </el-menu>
                 </el-aside>
                 <el-main>

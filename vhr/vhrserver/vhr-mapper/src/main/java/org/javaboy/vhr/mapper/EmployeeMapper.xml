@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.javaboy.vhr.mapper.EmployeeMapper">
     <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.Employee">
-        <!-- <id column="id" property="id" jdbcType="INTEGER"/> -->
-        <id column="idCard" property="idCard" jdbcType="CHAR"/>
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="idCard" property="idCard" jdbcType="CHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="gender" property="gender" jdbcType="CHAR"/>
         <result column="birthday" property="birthday" jdbcType="DATE"/>
@@ -70,7 +70,7 @@
         </association>
     </resultMap>
     <sql id="Base_Column_List">
-    name, gender, birthday, idCard, wedlock, nationId, nativePlace, politicId, email, 
+    id, name, gender, birthday, idCard, wedlock, nationId, nativePlace, politicId, email, 
     phone, address, departmentId, posId, tiptopDegree, specialty, 
     school, beginDate, workState, conversionTime, notWorkDate, 
     workAge, age, idCardStartDate, idCardEndDate, hukouType, 
@@ -119,6 +119,9 @@
     <insert id="updateEmployeeSalaryById">
         REPLACE INTO empsalary (eid,sid) VALUES(#{eid},#{sid})
     </insert>
+    <select id="selectByEid" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from employee where id = #{id}
+    </select>
     <select id="getEmployeeById" resultMap="AllEmployeeInfo">
         select e.*,p.`id` as pid,p.`name` as pname,n.`id` as nid,n.`name` as nname,d.`id` as did,d.`name` as
         dname,pos.`id` as posid,pos.`name` as posname from employee e,nation

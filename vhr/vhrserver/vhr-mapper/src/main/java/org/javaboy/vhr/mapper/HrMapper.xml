@@ -12,6 +12,7 @@
         <result column="password" property="password" jdbcType="VARCHAR"/>
         <result column="userface" property="userface" jdbcType="VARCHAR"/>
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="employee_id" property="employeeId" jdbcType="INTEGER"/>
     </resultMap>
     <resultMap id="HrWithRoles" type="org.javaboy.vhr.model.Hr" extends="BaseResultMap">
         <collection property="roles" ofType="org.javaboy.vhr.model.Role">
@@ -21,14 +22,14 @@
         </collection>
     </resultMap>
     <sql id="Base_Column_List">
-    id, name, phone, telephone, address, enabled, username, password, userface, remark
+    id, name, phone, telephone, address, enabled, username, password, userface, remark, employee_id
   </sql>
     <select id="getAllHrsExceptCurrentHr" resultMap="BaseResultMap">
         select * from hr where id !=#{id};
     </select>
     <select id="getAllHrs" resultMap="HrWithRoles">
         select hr.id, hr.name, hr.phone, hr.telephone, hr.address, hr.enabled, hr.username, hr.userface,
-        hr.remark,r.`id` as rid,r.`name` as rname,r.`nameZh` as rnameZh from hr left join hr_role hrr on
+        hr.remark, hr.employee_id, r.`id` as rid,r.`name` as rname,r.`nameZh` as rnameZh from hr left join hr_role hrr on
         hr.`id`=hrr.`hrid` left join role r on hrr.`rid`=r.`id` where hr.`id`!=#{hrid}
         <if test="keywords!=null">
             and hr.name like concat('%',#{keywords},'%')
@@ -39,8 +40,13 @@
     select r.* from role r,hr_role hrr where hrr.`rid`=r.`id` and hrr.`hrid`=#{id}
   </select>
     <select id="loadUserByUsername" resultMap="BaseResultMap">
-    select * from hr where username=#{username}
-  </select>
+        select hr.*, e.id as eid, e.name as ename, e.idCard as eidCard, e.phone as ephone, e.address as eaddress 
+        from hr left join employee e on hr.employee_id = e.id 
+        where hr.username=#{username}
+    </select>
+    <select id="getHrByEmployeeId" resultMap="BaseResultMap">
+        select * from hr where employee_id = #{employeeId}
+    </select>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
@@ -55,11 +61,11 @@
     insert into hr (id, name, phone, 
       telephone, address, enabled, 
       username, password, userface, 
-      remark)
+      remark, employee_id)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{phone,jdbcType=CHAR}, 
       #{telephone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{enabled,jdbcType=BIT}, 
       #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{userface,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR})
+      #{remark,jdbcType=VARCHAR}, #{employeeId,jdbcType=INTEGER})
   </insert>
     <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Hr" useGeneratedKeys="true" keyProperty="id">
         insert into hr
@@ -94,6 +100,9 @@
             <if test="remark != null">
                 remark,
             </if>
+            <if test="employeeId != null">
+                employee_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -125,6 +134,9 @@
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeId != null">
+                #{employeeId,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -158,6 +170,9 @@
             <if test="remark != null">
                 remark = #{remark,jdbcType=VARCHAR},
             </if>
+            <if test="employeeId != null">
+                employee_id = #{employeeId,jdbcType=INTEGER},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -177,7 +192,8 @@
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       userface = #{userface,jdbcType=VARCHAR},
-      remark = #{remark,jdbcType=VARCHAR}
+      remark = #{remark,jdbcType=VARCHAR},
+      employee_id = #{employeeId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

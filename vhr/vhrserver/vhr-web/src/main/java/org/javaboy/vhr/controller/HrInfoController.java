@@ -65,4 +65,19 @@ public class HrInfoController {
         return RespBean.error("更新失败!");
     }
 
+    @PostMapping("/hr/bind")
+    public RespBean bindEmployee(@RequestBody Map<String, Object> info, Authentication authentication) {
+        String idCard = (String) info.get("idCard");
+        Hr currentHr = (Hr) authentication.getPrincipal();
+        int result = hrService.bindEmployee(currentHr.getId(), idCard);
+        if (result == 1) {
+            // Refresh user info
+            Hr updatedHr = (Hr) hrService.loadUserByUsername(currentHr.getUsername());
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(updatedHr, authentication.getCredentials(), authentication.getAuthorities()));
+            return RespBean.ok("绑定成功!", updatedHr);
+        } else if (result == -1) {
+            return RespBean.error("该员工已被其他账号绑定!");
+        }
+        return RespBean.error("绑定失败!");
+    }
 }
