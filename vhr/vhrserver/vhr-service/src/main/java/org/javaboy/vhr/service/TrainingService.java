@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TrainingService {
@@ -58,10 +59,62 @@ public class TrainingService {
     public List<Course> getAllCourses(String keywords) {
         return courseMapper.getAllCourses(keywords);
     }
+
+    public Course getCourseById(Integer id) {
+        return courseMapper.selectByPrimaryKey(id);
+    }
+
+    public boolean deleteCourse(Integer id) {
+        return courseMapper.deleteByPrimaryKey(id) > 0;
+    }
+
+    public boolean deleteCourses(Integer[] ids) {
+        if (ids == null || ids.length == 0) return false;
+        return courseMapper.deleteByIds(ids) > 0;
+    }
+
+    @Transactional
+    public boolean updateCourse(Course course) {
+        int result = courseMapper.updateByPrimaryKeySelective(course);
+        if (result > 0) {
+            // Update Questions
+            courseQuestionMapper.deleteByCourseId(course.getId());
+            if (course.getHasExam() != null && course.getHasExam() && course.getQuestions() != null) {
+                for (CourseQuestion q : course.getQuestions()) {
+                    q.setCourseId(course.getId());
+                    q.setId(null); // Force insert as new
+                    courseQuestionMapper.insertSelective(q);
+                }
+            }
+            
+            // Handle Compulsory Assignment
+            if ("必修".equals(course.getType()) && course.getDepartmentId() != null) {
+                Employee emp = new Employee();
+                emp.setDepartmentId(course.getDepartmentId());
+                List<Employee> emps = employeeMapper.getEmployeeByPage(null, null, emp, null, null, null, null);
+                if (emps != null) {
+                    for (Employee e : emps) {
+                        EmployeeCourse exist = employeeCourseMapper.getEmployeeCourse(e.getIdCard(), course.getId());
+                        if (exist == null) {
+                            EmployeeCourse ec = new EmployeeCourse();
+                            ec.setEmployeeId(e.getIdCard());
+                            ec.setCourseId(course.getId());
+                            ec.setStatus("Learning");
+                            ec.setCreateDate(new Date());
+                            employeeCourseMapper.insertSelective(ec);
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
     
-    public List<EmployeeCourse> getMyCourses(String employeeId) {
+    public List<EmployeeCourse> getMyCourses(String employeeId, String type, String status) {
         // Get courses from employee_course table
-        return employeeCourseMapper.getEmployeeCourses(employeeId, null);
+        // Correct order: employeeId, status, type
+        return employeeCourseMapper.getEmployeeCourses(employeeId, status, type);
     }
     
     @Transactional
@@ -83,17 +136,24 @@ public class TrainingService {
         EmployeeCourse ec = new EmployeeCourse();
         ec.setId(ecId);
         ec.setVideoProgress(videoProgress);
+        
+        EmployeeCourse current = employeeCourseMapper.selectByPrimaryKey(ecId);
+        if (current == null) return;
+        boolean alreadyFinished = "Finished".equals(current.getStatus());
+
         ec.setIsVideoFinished(finished);
         if (hours != null) {
             ec.setStudyHours(hours);
         }
-        if (finished) {
+        if (finished && !alreadyFinished) {
             // If no exam, mark as Passed
-            EmployeeCourse current = employeeCourseMapper.selectByPrimaryKey(ecId);
-            Course c = courseMapper.selectByPrimaryKey(current.getCourseId());
-            if (!c.getHasExam()) {
-                ec.setIsPassed(true);
-                ec.setStatus("Finished");
+            if (current != null) {
+                Course c = courseMapper.selectByPrimaryKey(current.getCourseId());
+                if (c != null && (c.getHasExam() == null || !c.getHasExam())) {
+                    ec.setIsPassed(true);
+                    ec.setStatus("Finished");
+                    ec.setExamScore(c.getCredit() != null ? c.getCredit() : 0);
+                }
             }
         }
         ec.setUpdateDate(new Date());
@@ -119,8 +179,22 @@ public class TrainingService {
         for (CourseQuestion ans : answers) {
             for (CourseQuestion correct : correctQuestions) {
                 if (ans.getId().equals(correct.getId())) {
-                    if (ans.getCorrectAnswer() != null && ans.getCorrectAnswer().equals(correct.getCorrectAnswer())) {
-                        score += correct.getScore();
+                    if ("填空".equals(correct.getType())) {
+                        if (correct.getCorrectAnswer() != null && !correct.getCorrectAnswer().trim().isEmpty()) {
+                            // Standard answer exists
+                            if (ans.getCorrectAnswer() != null && ans.getCorrectAnswer().equals(correct.getCorrectAnswer())) {
+                                score += correct.getScore();
+                            }
+                        } else {
+                            // No standard answer, score if not empty
+                            if (ans.getCorrectAnswer() != null && !ans.getCorrectAnswer().trim().isEmpty()) {
+                                score += correct.getScore();
+                            }
+                        }
+                    } else {
+                        if (ans.getCorrectAnswer() != null && ans.getCorrectAnswer().equals(correct.getCorrectAnswer())) {
+                            score += correct.getScore();
+                        }
                     }
                 }
             }
@@ -145,7 +219,7 @@ public class TrainingService {
         return score;
     }
     
-    public List<EmployeeCourse> getTrainingStats(String keywords) {
+    public List<Map<String, Object>> getTrainingStats(String keywords) {
         return employeeCourseMapper.getTrainingStats(keywords);
     }
 
@@ -159,5 +233,9 @@ public class TrainingService {
     
     public Integer getTotalScore(String eid) {
         return employeeCourseMapper.getTotalExamScore(eid);
+    }
+
+    public Integer getCompletedCount(String eid) {
+        return employeeCourseMapper.getCompletedCourseCount(eid);
     }
 }

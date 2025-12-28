@@ -21,7 +21,10 @@
             <id column="cid" property="id"/>
             <result column="cname" property="name"/>
             <result column="ccover" property="coverUrl"/>
+            <result column="cvideo" property="videoUrl"/>
             <result column="ctype" property="type"/>
+            <result column="cduration" property="duration"/>
+            <result column="ccredit" property="credit"/>
             <result column="chasExam" property="hasExam"/>
         </association>
         <association property="employee" javaType="org.javaboy.vhr.model.Employee">
@@ -39,32 +42,51 @@
         where employee_id = #{employeeId} and course_id = #{courseId}
     </select>
 
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from employee_course
+        where id = #{id}
+    </select>
+
     <select id="getEmployeeCourses" resultMap="EmployeeCourseWithDetails">
-        select ec.*, c.id as cid, c.name as cname, c.cover_url as ccover, c.type as ctype, c.has_exam as chasExam
+        select ec.*, c.id as cid, c.name as cname, c.cover_url as ccover, c.video_url as cvideo, c.type as ctype, c.duration as cduration, c.credit as ccredit, c.has_exam as chasExam
         from employee_course ec
         left join course c on ec.course_id = c.id
         where ec.employee_id = #{employeeId}
         <if test="type != null">
             and c.type = #{type}
         </if>
+        <if test="status != null and status != ''">
+            <choose>
+                <when test="status == 'Learning'">
+                    and (ec.status is null or ec.status != 'Finished')
+                </when>
+                <otherwise>
+                    and ec.status = #{status}
+                </otherwise>
+            </choose>
+        </if>
     </select>
     
-    <select id="getTrainingStats" resultMap="EmployeeCourseWithDetails">
-        select ec.*, e.id as eid, e.name as ename, c.id as cid, c.name as cname
-        from employee_course ec
-        left join employee e on ec.employee_id = e.idCard
-        left join course c on ec.course_id = c.id
+    <select id="getTrainingStats" resultType="java.util.HashMap">
+        select e.name, 
+               count(case when ec.status = 'Finished' then 1 end) as finishedCount,
+               IFNULL(SUM(ec.study_hours),0) as totalHours,
+               IFNULL(SUM(ec.exam_score),0) as totalScore
+        from employee e
+        left join employee_course ec on e.idCard = ec.employee_id
         where 1=1
         <if test="keywords != null and keywords != ''">
             and e.name like concat('%', #{keywords}, '%')
         </if>
+        group by e.id, e.name
     </select>
     
     <select id="getTop10ByScore" resultMap="EmployeeCourseWithDetails">
-        select ec.*, e.id as eid, e.name as ename
-        from employee_course ec
-        left join employee e on ec.employee_id = e.idCard
-        order by ec.exam_score desc
+        select e.id as eid, e.name as ename, IFNULL(SUM(ec.exam_score), 0) as exam_score
+        from employee e
+        left join employee_course ec on e.idCard = ec.employee_id
+        group by e.id, e.name
+        order by exam_score desc
         limit 10
     </select>
 
@@ -77,7 +99,10 @@
     </select>
 
     <select id="getCompletedCourseCount" resultType="java.lang.Integer">
-        select count(*) from employee_course where employee_id = #{employeeId} and status = 'Finished'
+        select count(ec.id)
+        from employee_course ec
+        join course c on ec.course_id = c.id
+        where ec.employee_id = #{employeeId} and ec.status = 'Finished'
     </select>
     
     <insert id="insertSelective" parameterType="org.javaboy.vhr.model.EmployeeCourse" useGeneratedKeys="true" keyProperty="id">

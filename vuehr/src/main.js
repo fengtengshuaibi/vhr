@@ -49,7 +49,13 @@ import {
     RadioGroup,
     CollapseItem,
     Switch,
-    ColorPicker
+    ColorPicker,
+    InputNumber,
+    RadioButton,
+    CheckboxGroup,
+    Progress,
+    Empty,
+    Divider
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
@@ -99,6 +105,12 @@ Vue.use(Select);
 Vue.use(Form);
 Vue.use(Tag);
 Vue.use(ColorPicker);
+Vue.use(InputNumber);
+Vue.use(RadioButton);
+Vue.use(CheckboxGroup);
+Vue.use(Progress);
+Vue.use(Empty);
+Vue.use(Divider);
 Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$confirm = MessageBox.confirm
 Vue.prototype.$message = Message

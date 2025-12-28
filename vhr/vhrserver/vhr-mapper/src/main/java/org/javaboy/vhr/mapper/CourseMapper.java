@@ -12,4 +12,5 @@ public interface CourseMapper {
     int updateByPrimaryKey(Course record);
     List<Course> getAllCourses(@Param("keywords") String keywords);
     List<Course> getCoursesByTypeAndDept(@Param("type") String type, @Param("departmentId") Integer departmentId);
+    int deleteByIds(@Param("ids") Integer[] ids);
 }

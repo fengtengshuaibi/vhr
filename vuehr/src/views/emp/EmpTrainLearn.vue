@@ -10,11 +10,11 @@
                         </div>
                         <div class="info-content">
                             <div class="info-item">
-                                <div class="info-value">{{info.completedCount || 0}}</div>
+                                <div class="info-value">{{info.finishedCount || 0}}</div>
                                 <div class="info-label">已修课程</div>
                             </div>
                             <div class="info-item">
-                                <div class="info-value">{{info.totalHours || 0}}</div>
+                                <div class="info-value">{{formatTotalHours(info.totalHours)}}</div>
                                 <div class="info-label">累计学时(h)</div>
                             </div>
                             <div class="info-item">
@@ -46,7 +46,7 @@
 
         <!-- Course Tabs -->
         <div class="course-section">
-            <el-tabs v-model="activeTab" type="card">
+            <el-tabs v-model="activeTab" type="card" @tab-click="initData">
                 <el-tab-pane label="我的选修课" name="选修">
                     <span slot="label"><i class="el-icon-reading"></i> 我的选修课</span>
                 </el-tab-pane>
@@ -55,26 +55,34 @@
                 </el-tab-pane>
             </el-tabs>
 
-            <div v-if="filteredCourses.length === 0" class="empty-state">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <el-radio-group v-model="filterStatus" size="small" @change="initData">
+                    <el-radio-button label="">全部</el-radio-button>
+                    <el-radio-button label="Learning">学习中</el-radio-button>
+                    <el-radio-button label="Finished">已完成</el-radio-button>
+                </el-radio-group>
+            </div>
+
+            <div v-if="myCourses.length === 0" class="empty-state">
                 <el-empty description="暂无课程"></el-empty>
             </div>
 
             <div class="course-grid" v-else>
-                <el-card v-for="ec in filteredCourses" :key="ec.id" class="course-card" :body-style="{ padding: '0px' }" shadow="hover" @click.native="startLearn(ec)">
+                <el-card v-for="ec in myCourses" :key="ec.id" class="course-card" :body-style="{ padding: '0px' }" shadow="hover" @click.native="startLearn(ec)">
                     <div class="course-cover-wrapper">
-                        <img :src="ec.course.coverUrl || 'https://via.placeholder.com/300x150?text=No+Image'" class="course-cover">
+                        <img :src="(ec.course && ec.course.coverUrl) ? ec.course.coverUrl : 'https://via.placeholder.com/300x150?text=No+Image'" class="course-cover">
                         <div class="course-status-badge" :class="ec.status">
                             {{ec.status === 'Finished' ? '已完成' : '学习中'}}
                         </div>
                     </div>
                     <div class="course-info">
-                        <h3 class="course-title" :title="ec.course.name">{{ec.course.name}}</h3>
-                        <div class="course-meta">
+                        <h3 class="course-title" :title="ec.course ? ec.course.name : ''">{{ec.course ? ec.course.name : '课程信息缺失'}}</h3>
+                        <div class="course-meta" v-if="ec.course">
                             <span><i class="el-icon-time"></i> {{formatDuration(ec.course.duration)}}</span>
                             <span><i class="el-icon-s-flag"></i> {{ec.course.hasExam ? '有考试' : '无考试'}}</span>
                         </div>
                         <div class="course-progress">
-                            <el-progress :percentage="calcProgress(ec)" :status="ec.status === 'Finished' ? 'success' : ''"></el-progress>
+                            <el-progress :percentage="calcProgress(ec)" :status="ec.status === 'Finished' ? 'success' : null"></el-progress>
                         </div>
                     </div>
                 </el-card>
@@ -82,11 +90,16 @@
         </div>
 
         <!-- Learning Dialog -->
-        <el-dialog :title="currentEc ? currentEc.course.name : '课程学习'" :visible.sync="learnVisible" width="80%" top="5vh" :before-close="handleClose" custom-class="learn-dialog">
+        <el-dialog :title="currentEc ? currentEc.course.name : '课程学习'" :visible.sync="learnVisible" width="80%" top="5vh" :before-close="handleClose" custom-class="learn-dialog" destroy-on-close>
             <div v-if="currentEc" class="learn-content">
                 <div class="video-section">
-                    <video id="videoPlayer" width="100%" height="450px" controls controlsList="nodownload" @timeupdate="onTimeUpdate" @ended="onVideoEnded" style="background: #000; border-radius: 4px;">
-                        <source :src="videoUrl(currentEc.course.videoUrl)" type="video/mp4">
+                    <video id="videoPlayer" width="100%" height="450px" controls controlsList="nodownload" 
+                        @timeupdate="onTimeUpdate" 
+                        @ended="onVideoEnded" 
+                        @seeking="onSeeking"
+                        @loadedmetadata="onLoadedMetadata"
+                        style="background: #000; border-radius: 4px;">
+                        <source :src="currentEc.course ? videoUrl(currentEc.course.videoUrl) : ''" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                     <div class="video-controls">
@@ -173,6 +186,7 @@
         data() {
             return {
                 activeTab: '选修',
+                filterStatus: '',
                 myCourses: [],
                 info: {},
                 learnVisible: false,
@@ -183,13 +197,8 @@
                 examVisible: false,
                 questions: [],
                 answers: [],
-                playbackRate: 1.0
-            }
-        },
-        computed: {
-            filteredCourses() {
-                if (!this.myCourses) return [];
-                return this.myCourses.filter(ec => ec.course && ec.course.type === this.activeTab);
+                playbackRate: 1.0,
+                maxWatchedTime: 0
             }
         },
         mounted() {
@@ -201,7 +210,27 @@
         },
         methods: {
             initData() {
-                this.getRequest("/emp/train/list").then(resp => { if(resp) this.myCourses = resp; });
+                let url = "/emp/train/list?type=" + this.activeTab;
+                if (this.filterStatus) {
+                    url += "&status=" + this.filterStatus;
+                }
+                this.getRequest(url).then(resp => { 
+                    if(resp) {
+                        this.myCourses = resp;
+                        if (this.currentEc) {
+                            let updated = this.myCourses.find(ec => ec.id === this.currentEc.id);
+                            if (updated) {
+                                this.currentEc = updated;
+                                this.videoFinished = updated.isVideoFinished;
+                                this.examPassed = updated.isPassed;
+                                this.learnStep = updated.isPassed ? 3 : (updated.isVideoFinished ? 1 : 0);
+                                if (updated.status === 'Finished' && !updated.course.hasExam) {
+                                    this.learnStep = 3;
+                                }
+                            }
+                        }
+                    }
+                });
                 this.getRequest("/emp/train/info").then(resp => { if(resp) this.info = resp; });
             },
             videoUrl(url) {
@@ -211,21 +240,39 @@
                 return '/video/' + url; 
             },
             startLearn(ec) {
+                if (!ec.course) {
+                    this.$message.error("课程信息缺失");
+                    return;
+                }
                 this.currentEc = ec;
                 this.videoFinished = ec.isVideoFinished;
                 this.examPassed = ec.isPassed;
                 this.learnStep = ec.isPassed ? 3 : (ec.isVideoFinished ? 1 : 0);
                 this.learnVisible = true;
                 this.playbackRate = 1.0;
+                this.maxWatchedTime = ec.videoProgress || 0;
                 this.$nextTick(() => {
                     let v = document.getElementById("videoPlayer");
                     if (v) {
                         v.load(); // Reload video source
-                        if (ec.videoProgress) {
-                            v.currentTime = ec.videoProgress;
-                        }
                     }
                 });
+            },
+            onLoadedMetadata(e) {
+                let v = e.target;
+                if (this.currentEc.videoProgress) {
+                    v.currentTime = this.currentEc.videoProgress;
+                }
+            },
+            onSeeking(e) {
+                if (this.videoFinished || this.currentEc.isVideoFinished || this.currentEc.status === 'Finished') {
+                    return; 
+                }
+                let v = e.target;
+                if (v.currentTime > (this.maxWatchedTime || 0) + 1) {
+                     v.currentTime = this.maxWatchedTime || 0;
+                     this.$message.warning("未完成课程不可拖动进度条");
+                }
             },
             handleVisibilityChange() {
                 if (document.hidden && this.learnVisible) {
@@ -239,7 +286,10 @@
                 if (v) v.playbackRate = rate;
             },
             onTimeUpdate(e) {
-                // Could throttle this update
+                let v = e.target;
+                if (v.currentTime > (this.maxWatchedTime || 0)) {
+                    this.maxWatchedTime = v.currentTime;
+                }
             },
             onVideoEnded() {
                 this.videoFinished = true;
@@ -257,7 +307,7 @@
                 let hours = 0;
                 if (finished) {
                      let v = document.getElementById("videoPlayer");
-                     if (v) hours = (v.duration / 3600).toFixed(1);
+                     if (v) hours = (v.duration / 3600).toFixed(4);
                 }
                 this.postRequest("/emp/train/progress", {
                     ecId: this.currentEc.id,
@@ -309,16 +359,21 @@
             },
             calcProgress(ec) {
                 if (ec.status === 'Finished') return 100;
-                if (ec.isVideoFinished && !ec.course.hasExam) return 100;
+                if (ec.isVideoFinished && (!ec.course || !ec.course.hasExam)) return 100;
                 if (ec.isVideoFinished) return 60; // Video done, exam pending
                 return 10; // Started
             },
+            formatTotalHours(h) {
+                if (!h) return 0;
+                return parseFloat(Number(h).toFixed(4));
+            },
             formatDuration(hours) {
-                if (!hours) return '00:00';
-                let h = Math.floor(hours);
-                let m = Math.round((hours - h) * 60);
-                if (m === 60) { h++; m = 0; }
-                return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+                if (!hours) return '00:00:00';
+                let totalSeconds = Math.round(hours * 3600);
+                let h = Math.floor(totalSeconds / 3600);
+                let m = Math.floor((totalSeconds % 3600) / 60);
+                let s = totalSeconds % 60;
+                return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
             }
         }
     }

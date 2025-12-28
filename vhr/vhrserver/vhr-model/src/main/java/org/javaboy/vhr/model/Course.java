@@ -16,10 +16,13 @@ public class Course implements Serializable {
     private Boolean hasExam;
     private Integer examLimit;
     private Double duration;
+    private Integer credit;
     private Date createDate;
 
     public Double getDuration() { return duration; }
     public void setDuration(Double duration) { this.duration = duration; }
+    public Integer getCredit() { return credit; }
+    public void setCredit(Integer credit) { this.credit = credit; }
     private Integer status;
 
     private List<CourseQuestion> questions;

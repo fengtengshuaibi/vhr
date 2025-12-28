@@ -6,21 +6,14 @@
         </div>
         <div style="margin-top: 10px">
             <el-table :data="stats" border style="width: 100%" height="calc(100vh - 150px)">
-                <el-table-column prop="employee.name" label="姓名" width="120" sortable></el-table-column>
-                <el-table-column prop="course.name" label="课程名称" sortable></el-table-column>
-                <el-table-column prop="status" label="状态" width="100" sortable>
-                    <template slot-scope="scope">
-                        <el-tag :type="scope.row.status==='Finished'?'success':'warning'">{{scope.row.status==='Finished'?'已完成':'学习中'}}</el-tag>
-                    </template>
+                <el-table-column prop="name" label="姓名" width="120" sortable></el-table-column>
+                <el-table-column prop="finishedCount" label="已修课程数量" sortable></el-table-column>
+                <el-table-column prop="totalHours" label="总学时(h)" width="120" sortable>
+                     <template slot-scope="scope">
+                        {{parseFloat(Number(scope.row.totalHours).toFixed(4))}}
+                     </template>
                 </el-table-column>
-                <el-table-column prop="studyHours" label="学时(h)" width="100" sortable></el-table-column>
-                <el-table-column prop="examScore" label="考试分数" width="100" sortable></el-table-column>
-                <el-table-column prop="isPassed" label="通过" width="80">
-                    <template slot-scope="scope">
-                        <span v-if="scope.row.isPassed" style="color: green">是</span>
-                        <span v-else style="color: red">否</span>
-                    </template>
-                </el-table-column>
+                <el-table-column prop="totalScore" label="总学分" width="120" sortable></el-table-column>
             </el-table>
         </div>
     </div>

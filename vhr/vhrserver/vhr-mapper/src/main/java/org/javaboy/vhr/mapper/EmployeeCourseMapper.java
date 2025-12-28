@@ -1,6 +1,7 @@
 package org.javaboy.vhr.mapper;
 import org.javaboy.vhr.model.EmployeeCourse;
 import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 public interface EmployeeCourseMapper {
@@ -11,8 +12,10 @@ public interface EmployeeCourseMapper {
     int updateByPrimaryKeySelective(EmployeeCourse record);
     int updateByPrimaryKey(EmployeeCourse record);
     EmployeeCourse getEmployeeCourse(@Param("employeeId") String employeeId, @Param("courseId") Integer courseId);
-    List<EmployeeCourse> getEmployeeCourses(@Param("employeeId") String employeeId, @Param("type") String type);
-    List<EmployeeCourse> getTrainingStats(@Param("keywords") String keywords);
+    List<EmployeeCourse> getEmployeeCourses(@Param("employeeId") String employeeId, @Param("status") String status, @Param("type") String type);
+
+    List<Map<String, Object>> getTrainingStats(@Param("keywords") String keywords);
+
     List<EmployeeCourse> getTop10ByScore();
     Double getTotalStudyHours(String employeeId);
     Integer getTotalExamScore(String employeeId);

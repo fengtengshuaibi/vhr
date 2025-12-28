@@ -12,11 +12,13 @@
         <result column="department_id" property="departmentId" jdbcType="INTEGER"/>
         <result column="has_exam" property="hasExam" jdbcType="BIT"/>
         <result column="exam_limit" property="examLimit" jdbcType="INTEGER"/>
+        <result column="duration" property="duration" jdbcType="DOUBLE"/>
+        <result column="credit" property="credit" jdbcType="INTEGER"/>
         <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
     </resultMap>
     <sql id="Base_Column_List">
-        id, name, description, cover_url, video_url, category, type, department_id, has_exam, exam_limit, create_date, status
+        id, name, description, cover_url, video_url, category, type, department_id, has_exam, exam_limit, duration, credit, create_date, status
     </sql>
     <select id="getAllCourses" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/> from course
@@ -49,6 +51,8 @@
             <if test="departmentId != null">department_id,</if>
             <if test="hasExam != null">has_exam,</if>
             <if test="examLimit != null">exam_limit,</if>
+            <if test="duration != null">duration,</if>
+            <if test="credit != null">credit,</if>
             <if test="createDate != null">create_date,</if>
             <if test="status != null">status,</if>
         </trim>
@@ -62,6 +66,8 @@
             <if test="departmentId != null">#{departmentId},</if>
             <if test="hasExam != null">#{hasExam},</if>
             <if test="examLimit != null">#{examLimit},</if>
+            <if test="duration != null">#{duration},</if>
+            <if test="credit != null">#{credit},</if>
             <if test="createDate != null">#{createDate},</if>
             <if test="status != null">#{status},</if>
         </trim>
@@ -79,6 +85,7 @@
             <if test="hasExam != null">has_exam = #{hasExam},</if>
             <if test="examLimit != null">exam_limit = #{examLimit},</if>
             <if test="duration != null">duration = #{duration},</if>
+            <if test="credit != null">credit = #{credit},</if>
             <if test="status != null">status = #{status},</if>
         </set>
         where id = #{id}
@@ -86,4 +93,13 @@
     <select id="selectByPrimaryKey" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/> from course where id = #{id}
     </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from course where id = #{id}
+    </delete>
+    <delete id="deleteByIds">
+        delete from course where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

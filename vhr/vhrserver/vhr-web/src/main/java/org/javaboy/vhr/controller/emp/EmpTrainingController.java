@@ -21,10 +21,13 @@ public class EmpTrainingController {
     }
 
     @GetMapping("/list")
-    public List<EmployeeCourse> getMyCourses() {
+    public List<EmployeeCourse> getMyCourses(String type, String status) {
         String eid = getCurrentEmployeeId();
+        System.out.println("getMyCourses: eid=" + eid + ", type=" + type + ", status=" + status);
         if (eid == null) return null;
-        return trainingService.getMyCourses(eid);
+        List<EmployeeCourse> list = trainingService.getMyCourses(eid, type, status);
+        System.out.println("getMyCourses: result size=" + (list != null ? list.size() : "null"));
+        return list;
     }
 
     @GetMapping("/all")
@@ -76,6 +79,7 @@ public class EmpTrainingController {
         if (eid != null) {
             map.put("totalHours", trainingService.getTotalHours(eid));
             map.put("totalScore", trainingService.getTotalScore(eid));
+            map.put("finishedCount", trainingService.getCompletedCount(eid));
         }
         map.put("rankList", trainingService.getRankList());
         return map;

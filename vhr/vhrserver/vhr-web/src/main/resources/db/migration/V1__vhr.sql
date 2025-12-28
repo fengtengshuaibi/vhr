@@ -1,4 +1,4 @@
-﻿/*
+/*
 SQLyog Ultimate v12.08 (32 bit)
 MySQL - 8.0.18 : Database - vhr
 *********************************************************************
@@ -347,7 +347,11 @@ CREATE TABLE `hr` (
 
 /*Data for the table `hr` */
 
-insert  into `hr`(`id`,`name`,`phone`,`telephone`,`address`,`enabled`,`username`,`password`,`userface`,`remark`) values (3,'系统管理员','18568887789','029-82881234','深圳南山',1,'admin','$2a$10$ySG2lkvjFHY5O0./CPIE1OI8VJsuKYEzOYzqIa7AJR6sEgSzUFOAm','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL),(5,'李白','18568123489','029-82123434','海口美兰',1,'libai','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL),(10,'韩愈','18568123666','029-82111555','广州番禺',1,'hanyu','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL),(11,'柳宗元','18568123377','029-82111333','广州天河',1,'liuzongyuan','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL),(12,'曾巩','18568128888','029-82111222','广州越秀',1,'zenggong','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL);
+insert into `hr` (`id`, `name`, `phone`, `telephone`, `address`, `enabled`, `username`, `password`, `userface`, `remark`, `employee_id`) values('3','系统管理员','15010862429','029-82881234','北京市丰台区万丰路305亿潼隆之家','1','admin','$2a$10$ySG2lkvjFHY5O0./CPIE1OI8VJsuKYEzOYzqIa7AJR6sEgSzUFOAm','/img/upload/130826199001011244.jpg?t=1766582918928',NULL,'130826199001011244');
+insert into `hr` (`id`, `name`, `phone`, `telephone`, `address`, `enabled`, `username`, `password`, `userface`, `remark`, `employee_id`) values('5','李白','18568123489','029-82123434','海口美兰','1','libai','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL,NULL);
+insert into `hr` (`id`, `name`, `phone`, `telephone`, `address`, `enabled`, `username`, `password`, `userface`, `remark`, `employee_id`) values('10','韩愈','18568123666','029-82111555','广州番禺','1','hanyu','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL,NULL);
+insert into `hr` (`id`, `name`, `phone`, `telephone`, `address`, `enabled`, `username`, `password`, `userface`, `remark`, `employee_id`) values('11','柳宗元','18568123377','029-82111333','广州天河','1','liuzongyuan','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL,NULL);
+insert into `hr` (`id`, `name`, `phone`, `telephone`, `address`, `enabled`, `username`, `password`, `userface`, `remark`, `employee_id`) values('12','曾巩','18568128888','029-82111222','广州越秀','1','zenggong','$2a$10$oE39aG10kB/rFu2vQeCJTu/V/v4n6DRR0f8WyXRiAYvBpmadoOBE.','http://bpic.588ku.com/element_pic/01/40/00/64573ce2edc0728.jpg',NULL,NULL);
 
 /*Table structure for table `hr_role` */
 
@@ -783,6 +787,8 @@ CREATE TABLE `course` (
   `department_id` int(11) DEFAULT NULL COMMENT '所属部门ID(仅必修课)',
   `has_exam` tinyint(1) DEFAULT 0 COMMENT '是否有考试(0:无, 1:有)',
   `exam_limit` int(11) DEFAULT 0 COMMENT '考试次数限制',
+  `duration` double(10,4) DEFAULT 0.0000 COMMENT '课程时长(小时)',
+  `credit` int(11) DEFAULT 0 COMMENT '课程学分',
   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
   `status` int(11) DEFAULT 1 COMMENT '状态(1:启用)',
   PRIMARY KEY (`id`)
@@ -808,7 +814,7 @@ CREATE TABLE `employee_course` (
   `status` varchar(20) DEFAULT 'Learning' COMMENT '学习状态(Learning/Finished)',
   `video_progress` int(11) DEFAULT 0 COMMENT '视频观看进度(秒)',
   `is_video_finished` tinyint(1) DEFAULT 0 COMMENT '视频是否看完(0:否, 1:是)',
-  `study_hours` double(5,1) DEFAULT 0.0 COMMENT '学习时长(小时)',
+  `study_hours` double(10,4) DEFAULT 0.0000 COMMENT '学习时长(小时)',
   `exam_score` int(11) DEFAULT NULL COMMENT '考试得分',
   `exam_attempts` int(11) DEFAULT 0 COMMENT '已考次数',
   `is_passed` tinyint(1) DEFAULT 0 COMMENT '是否通过(0:否, 1:是)',
