@@ -3,15 +3,41 @@
 <mapper namespace="org.javaboy.vhr.mapper.EmployeeremoveMapper" >
   <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.Employeeremove" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="eid" property="eid" jdbcType="INTEGER" />
-    <result column="afterDepId" property="afterdepid" jdbcType="INTEGER" />
-    <result column="afterJobId" property="afterjobid" jdbcType="INTEGER" />
-    <result column="removeDate" property="removedate" jdbcType="DATE" />
+    <result column="eid" property="eid" jdbcType="VARCHAR" />
+    <result column="beforeDepId" property="beforeDepId" jdbcType="INTEGER" />
+    <result column="beforePosId" property="beforePosId" jdbcType="INTEGER" />
+    <result column="afterDepId" property="afterDepId" jdbcType="INTEGER" />
+    <result column="afterJobId" property="afterJobId" jdbcType="INTEGER" />
+    <result column="operateType" property="operateType" jdbcType="INTEGER" />
+    <result column="removeDate" property="removeDate" jdbcType="DATE" />
     <result column="reason" property="reason" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
   </resultMap>
+  <resultMap id="AllEmployeeRemoveInfo" type="org.javaboy.vhr.model.Employeeremove" extends="BaseResultMap">
+    <association property="employee" javaType="org.javaboy.vhr.model.Employee">
+      <id column="empId" property="id"/>
+      <result column="ename" property="name"/>
+      <result column="eidCard" property="idCard"/>
+    </association>
+    <association property="beforeDepartment" javaType="org.javaboy.vhr.model.Department">
+      <id column="bdId" property="id"/>
+      <result column="bdName" property="name"/>
+    </association>
+    <association property="beforePosition" javaType="org.javaboy.vhr.model.Position">
+      <id column="bpId" property="id"/>
+      <result column="bpName" property="name"/>
+    </association>
+    <association property="afterDepartment" javaType="org.javaboy.vhr.model.Department">
+      <id column="adId" property="id"/>
+      <result column="adName" property="name"/>
+    </association>
+    <association property="afterPosition" javaType="org.javaboy.vhr.model.Position">
+      <id column="apId" property="id"/>
+      <result column="apName" property="name"/>
+    </association>
+  </resultMap>
   <sql id="Base_Column_List" >
-    id, eid, afterDepId, afterJobId, removeDate, reason, remark
+    id, eid, beforeDepId, beforePosId, afterDepId, afterJobId, operateType, removeDate, reason, remark
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -24,11 +50,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="org.javaboy.vhr.model.Employeeremove" >
-    insert into employeeremove (id, eid, afterDepId, 
-      afterJobId, removeDate, reason, 
+    insert into employeeremove (id, eid, beforeDepId, beforePosId, afterDepId, 
+      afterJobId, operateType, removeDate, reason, 
       remark)
-    values (#{id,jdbcType=INTEGER}, #{eid,jdbcType=INTEGER}, #{afterdepid,jdbcType=INTEGER}, 
-      #{afterjobid,jdbcType=INTEGER}, #{removedate,jdbcType=DATE}, #{reason,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{eid,jdbcType=VARCHAR}, #{beforeDepId,jdbcType=INTEGER}, 
+      #{beforePosId,jdbcType=INTEGER}, #{afterDepId,jdbcType=INTEGER}, 
+      #{afterJobId,jdbcType=INTEGER}, #{operateType,jdbcType=INTEGER}, #{removeDate,jdbcType=DATE}, #{reason,jdbcType=VARCHAR}, 
       #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Employeeremove" >
@@ -40,13 +67,22 @@
       <if test="eid != null" >
         eid,
       </if>
-      <if test="afterdepid != null" >
+      <if test="beforeDepId != null" >
+        beforeDepId,
+      </if>
+      <if test="beforePosId != null" >
+        beforePosId,
+      </if>
+      <if test="afterDepId != null" >
         afterDepId,
       </if>
-      <if test="afterjobid != null" >
+      <if test="afterJobId != null" >
         afterJobId,
       </if>
-      <if test="removedate != null" >
+      <if test="operateType != null" >
+        operateType,
+      </if>
+      <if test="removeDate != null" >
         removeDate,
       </if>
       <if test="reason != null" >
@@ -61,16 +97,25 @@
         #{id,jdbcType=INTEGER},
       </if>
       <if test="eid != null" >
-        #{eid,jdbcType=INTEGER},
+        #{eid,jdbcType=VARCHAR},
       </if>
-      <if test="afterdepid != null" >
-        #{afterdepid,jdbcType=INTEGER},
+      <if test="beforeDepId != null" >
+        #{beforeDepId,jdbcType=INTEGER},
       </if>
-      <if test="afterjobid != null" >
-        #{afterjobid,jdbcType=INTEGER},
+      <if test="beforePosId != null" >
+        #{beforePosId,jdbcType=INTEGER},
       </if>
-      <if test="removedate != null" >
-        #{removedate,jdbcType=DATE},
+      <if test="afterDepId != null" >
+        #{afterDepId,jdbcType=INTEGER},
+      </if>
+      <if test="afterJobId != null" >
+        #{afterJobId,jdbcType=INTEGER},
+      </if>
+      <if test="operateType != null" >
+        #{operateType,jdbcType=INTEGER},
+      </if>
+      <if test="removeDate != null" >
+        #{removeDate,jdbcType=DATE},
       </if>
       <if test="reason != null" >
         #{reason,jdbcType=VARCHAR},
@@ -84,16 +129,25 @@
     update employeeremove
     <set >
       <if test="eid != null" >
-        eid = #{eid,jdbcType=INTEGER},
+        eid = #{eid,jdbcType=VARCHAR},
       </if>
-      <if test="afterdepid != null" >
-        afterDepId = #{afterdepid,jdbcType=INTEGER},
+      <if test="beforeDepId != null" >
+        beforeDepId = #{beforeDepId,jdbcType=INTEGER},
       </if>
-      <if test="afterjobid != null" >
-        afterJobId = #{afterjobid,jdbcType=INTEGER},
+      <if test="beforePosId != null" >
+        beforePosId = #{beforePosId,jdbcType=INTEGER},
       </if>
-      <if test="removedate != null" >
-        removeDate = #{removedate,jdbcType=DATE},
+      <if test="afterDepId != null" >
+        afterDepId = #{afterDepId,jdbcType=INTEGER},
+      </if>
+      <if test="afterJobId != null" >
+        afterJobId = #{afterJobId,jdbcType=INTEGER},
+      </if>
+      <if test="operateType != null" >
+        operateType = #{operateType,jdbcType=INTEGER},
+      </if>
+      <if test="removeDate != null" >
+        removeDate = #{removeDate,jdbcType=DATE},
       </if>
       <if test="reason != null" >
         reason = #{reason,jdbcType=VARCHAR},
@@ -106,12 +160,31 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="org.javaboy.vhr.model.Employeeremove" >
     update employeeremove
-    set eid = #{eid,jdbcType=INTEGER},
-      afterDepId = #{afterdepid,jdbcType=INTEGER},
-      afterJobId = #{afterjobid,jdbcType=INTEGER},
-      removeDate = #{removedate,jdbcType=DATE},
+    set eid = #{eid,jdbcType=VARCHAR},
+      beforeDepId = #{beforeDepId,jdbcType=INTEGER},
+      beforePosId = #{beforePosId,jdbcType=INTEGER},
+      afterDepId = #{afterDepId,jdbcType=INTEGER},
+      afterJobId = #{afterJobId,jdbcType=INTEGER},
+      operateType = #{operateType,jdbcType=INTEGER},
+      removeDate = #{removeDate,jdbcType=DATE},
       reason = #{reason,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="getEmployeeRemovesByPage" resultMap="AllEmployeeRemoveInfo">
+    select er.*,e.id as empId,e.name as ename,e.idCard as eidCard,d1.id as bdId,d1.name as bdName,p1.id as bpId,p1.name as bpName,d2.id as adId,d2.name as adName,p2.id as apId,p2.name as apName
+    from employeeremove er
+    left join employee e on er.eid=e.idCard
+    left join department d1 on er.beforeDepId=d1.id
+    left join position p1 on er.beforePosId=p1.id
+    left join department d2 on er.afterDepId=d2.id
+    left join position p2 on er.afterJobId=p2.id
+    where 1=1
+    <if test="eid !=null and eid!=''">
+      and er.eid = #{eid}
+    </if>
+    <if test="beginDateScope !=null">
+      and er.removeDate between #{beginDateScope[0]} and #{beginDateScope[1]}
+    </if>
+  </select>
 </mapper>

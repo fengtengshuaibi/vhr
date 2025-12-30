@@ -1,12 +1,14 @@
 package org.javaboy.vhr.model;
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class Employeetrain {
     private Integer id;
 
     private String eid;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Shanghai")
     private Date traindate;
 
     private String traincontent;

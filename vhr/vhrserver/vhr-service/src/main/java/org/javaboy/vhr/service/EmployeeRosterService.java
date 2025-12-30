@@ -29,6 +29,12 @@ public class EmployeeRosterService {
     ExecutivePerformanceMapper executivePerformanceMapper;
     @Autowired
     EmployeetrainMapper employeetrainMapper;
+    @Autowired
+    EmployeeAppraisalMapper employeeAppraisalMapper;
+    @Autowired
+    EmployeeecMapper employeeecMapper;
+    @Autowired
+    EmployeeremoveMapper employeeremoveMapper;
     // ... other mappers
 
     public Map<String, Object> getEmployeeRosterData(String eid) {
@@ -69,6 +75,30 @@ public class EmployeeRosterService {
             }
         }
         map.put("execPerformance", execPerformance);
+
+        // Trainings
+        List<Employeetrain> trains = employeetrainMapper.getEmployeeTrainsByPage(null, null, new Employeetrain(), new Date[]{getYearStart(), getYearEnd()});
+        List<Employeetrain> myTrains = new java.util.ArrayList<>();
+        if (trains != null) {
+            for(Employeetrain et : trains) {
+                if(et.getEid().equals(eid)) {
+                    myTrains.add(et);
+                }
+            }
+        }
+        map.put("trains", myTrains);
+
+        // Appraisals
+        List<EmployeeAppraisal> appraisals = employeeAppraisalMapper.getEmployeeAppraisalsByPage(eid, null);
+        map.put("appraisals", appraisals);
+
+        // EC (Rewards/Punishments)
+        List<Employeeec> ecs = employeeecMapper.getEmployeeEcsByPage(eid, null);
+        map.put("ecs", ecs);
+
+        // Removes (Transfers)
+        List<Employeeremove> removes = employeeremoveMapper.getEmployeeRemovesByPage(eid, null);
+        map.put("removes", removes);
         
         return map;
     }

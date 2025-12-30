@@ -1,21 +1,35 @@
 package org.javaboy.vhr.model;
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class Employeeremove {
     private Integer id;
 
-    private Integer eid;
+    private String eid;
 
-    private Integer afterdepid;
+    private Integer beforeDepId;
 
-    private Integer afterjobid;
+    private Integer beforePosId;
 
-    private Date removedate;
+    private Integer afterDepId;
+
+    private Integer afterJobId;
+
+    private Integer operateType;
+
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Shanghai")
+    private Date removeDate;
 
     private String reason;
 
     private String remark;
+    
+    private Department beforeDepartment;
+    private Position beforePosition;
+    private Department afterDepartment;
+    private Position afterPosition;
+    private Employee employee;
 
     public Integer getId() {
         return id;
@@ -25,36 +39,60 @@ public class Employeeremove {
         this.id = id;
     }
 
-    public Integer getEid() {
+    public String getEid() {
         return eid;
     }
 
-    public void setEid(Integer eid) {
+    public void setEid(String eid) {
         this.eid = eid;
     }
 
-    public Integer getAfterdepid() {
-        return afterdepid;
+    public Integer getBeforeDepId() {
+        return beforeDepId;
     }
 
-    public void setAfterdepid(Integer afterdepid) {
-        this.afterdepid = afterdepid;
+    public void setBeforeDepId(Integer beforeDepId) {
+        this.beforeDepId = beforeDepId;
     }
 
-    public Integer getAfterjobid() {
-        return afterjobid;
+    public Integer getBeforePosId() {
+        return beforePosId;
     }
 
-    public void setAfterjobid(Integer afterjobid) {
-        this.afterjobid = afterjobid;
+    public void setBeforePosId(Integer beforePosId) {
+        this.beforePosId = beforePosId;
     }
 
-    public Date getRemovedate() {
-        return removedate;
+    public Integer getAfterDepId() {
+        return afterDepId;
     }
 
-    public void setRemovedate(Date removedate) {
-        this.removedate = removedate;
+    public void setAfterDepId(Integer afterDepId) {
+        this.afterDepId = afterDepId;
+    }
+
+    public Integer getAfterJobId() {
+        return afterJobId;
+    }
+
+    public void setAfterJobId(Integer afterJobId) {
+        this.afterJobId = afterJobId;
+    }
+
+    public Integer getOperateType() {
+        return operateType;
+    }
+
+    public void setOperateType(Integer operateType) {
+        this.operateType = operateType;
+    }
+
+    public Date getRemoveDate() {
+        return removeDate;
+    }
+
+    public void setRemoveDate(Date removeDate) {
+        this.removeDate = removeDate;
     }
 
     public String getReason() {
@@ -71,5 +109,45 @@ public class Employeeremove {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public Department getBeforeDepartment() {
+        return beforeDepartment;
+    }
+
+    public void setBeforeDepartment(Department beforeDepartment) {
+        this.beforeDepartment = beforeDepartment;
+    }
+
+    public Position getBeforePosition() {
+        return beforePosition;
+    }
+
+    public void setBeforePosition(Position beforePosition) {
+        this.beforePosition = beforePosition;
+    }
+
+    public Department getAfterDepartment() {
+        return afterDepartment;
+    }
+
+    public void setAfterDepartment(Department afterDepartment) {
+        this.afterDepartment = afterDepartment;
+    }
+
+    public Position getAfterPosition() {
+        return afterPosition;
+    }
+
+    public void setAfterPosition(Position afterPosition) {
+        this.afterPosition = afterPosition;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }

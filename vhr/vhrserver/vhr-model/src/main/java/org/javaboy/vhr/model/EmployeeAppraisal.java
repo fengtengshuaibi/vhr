@@ -3,19 +3,15 @@ package org.javaboy.vhr.model;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class Employeeec {
+public class EmployeeAppraisal {
     private Integer id;
 
     private String eid;
 
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Shanghai")
-    private Date ecDate;
+    private Date appDate;
 
-    private String ecReason;
-
-    private Integer ecPoint;
-
-    private Integer ecType;
+    private String appResult;
 
     private String remark;
     
@@ -37,36 +33,20 @@ public class Employeeec {
         this.eid = eid;
     }
 
-    public Date getEcDate() {
-        return ecDate;
+    public Date getAppDate() {
+        return appDate;
     }
 
-    public void setEcDate(Date ecDate) {
-        this.ecDate = ecDate;
+    public void setAppDate(Date appDate) {
+        this.appDate = appDate;
     }
 
-    public String getEcReason() {
-        return ecReason;
+    public String getAppResult() {
+        return appResult;
     }
 
-    public void setEcReason(String ecReason) {
-        this.ecReason = ecReason == null ? null : ecReason.trim();
-    }
-
-    public Integer getEcPoint() {
-        return ecPoint;
-    }
-
-    public void setEcPoint(Integer ecPoint) {
-        this.ecPoint = ecPoint;
-    }
-
-    public Integer getEcType() {
-        return ecType;
-    }
-
-    public void setEcType(Integer ecType) {
-        this.ecType = ecType;
+    public void setAppResult(String appResult) {
+        this.appResult = appResult == null ? null : appResult.trim();
     }
 
     public String getRemark() {

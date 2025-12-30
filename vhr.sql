@@ -275,6 +275,20 @@ CREATE TABLE `employeeec` (
 
 /*Data for the table `employeeec` */
 
+/*Table structure for table `employeeappraisal` */
+DROP TABLE IF EXISTS `employeeappraisal`;
+
+CREATE TABLE `employeeappraisal` (
+                                     `id` int(11) NOT NULL AUTO_INCREMENT,
+                                     `eid` char(18) DEFAULT NULL COMMENT '员工身份证号',
+                                     `appDate` date DEFAULT NULL COMMENT '评优日期',
+                                     `appResult` varchar(255) DEFAULT NULL COMMENT '评优说明',
+                                     `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+                                     PRIMARY KEY (`id`),
+                                     KEY `pid` (`eid`),
+                                     CONSTRAINT `employeeappraisal_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工评优表';
+
 /*Table structure for table `employeeremove` */
 
 DROP TABLE IF EXISTS `employeeremove`;
@@ -282,8 +296,11 @@ DROP TABLE IF EXISTS `employeeremove`;
 CREATE TABLE `employeeremove` (
                                   `id` int(11) NOT NULL AUTO_INCREMENT,
                                   `eid` char(18) DEFAULT NULL,
+                                  `beforeDepId` int(11) DEFAULT NULL COMMENT '调动前部门',
+                                  `beforePosId` int(11) DEFAULT NULL COMMENT '调动前职位',
                                   `afterDepId` int(11) DEFAULT NULL COMMENT '调动后部门',
                                   `afterJobId` int(11) DEFAULT NULL COMMENT '调动后职位',
+                                  `operateType` int(11) DEFAULT NULL COMMENT '操作类型：0-晋升 1-降级 2-调动',
                                   `removeDate` date DEFAULT NULL COMMENT '调动日期',
                                   `reason` varchar(255) DEFAULT NULL COMMENT '调动原因',
                                   `remark` varchar(255) DEFAULT NULL,
@@ -463,7 +480,7 @@ INSERT INTO `menu` (`id`, `url`, `path`, `component`, `name`, `iconCls`, `keepAl
                                                                                                                                 (38, '/emp/train/find/**', '/emp/train/find', 'EmpTrainFind', '课程查找', NULL, NULL, 1, 36, 1),
                                                                                                                                 (39, '/personnel/contract/**', '/per/contract', 'PerContract', '合同管理', NULL, NULL, 1, 3, 1);
 /*Table structure for table `menu_role` */
-
+INSERT INTO `menu` (`id`, `url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`) VALUES (8, '/personnel/appraisal/**', '/per/appraisal', 'PerAppraisal', '员工评优', NULL, NULL, 1, 3, 1);
 DROP TABLE IF EXISTS `menu_role`;
 
 CREATE TABLE `menu_role` (
@@ -488,6 +505,7 @@ INSERT INTO `menu_role` (`mid`, `rid`) VALUES
                                            (37, 1), (37, 6),
                                            (38, 1), (38, 6),
                                            (39, 1), (39, 2), (39, 6);
+INSERT INTO `menu_role` (`mid`, `rid`) VALUES (8, 6);
 /*Table structure for table `msgcontent` */
 
 DROP TABLE IF EXISTS `msgcontent`;

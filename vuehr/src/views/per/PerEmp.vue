@@ -219,15 +219,73 @@
                                     
                                     <!-- 4 Boxes -->
                                     <div class="four-boxes">
-                                        <div class="small-box">内部调动记录</div>
-                                        <div class="small-box">晋升/降级记录</div>
-                                        <div class="small-box">
-                                            <div>评优</div>
-                                            <div class="box-detail">月度之星: (空)</div>
+                                        <div class="small-box table-box">
+                                            <div class="box-title">内部调动记录</div>
+                                            <div class="box-content">
+                                                 <div class="mini-table-header">
+                                                     <span style="flex: 25">日期</span>
+                                                     <span style="flex: 20">前部门</span>
+                                                     <span style="flex: 20">前职位</span>
+                                                     <span style="flex: 20">后部门</span>
+                                                     <span style="flex: 20">后职位</span>
+                                                 </div>
+                                                 <div class="mini-table-row" v-for="item in getTransfers()" :key="item.id">
+                                                     <span style="flex: 25">{{formatDate(item.removeDate)}}</span>
+                                                     <span style="flex: 20">{{item.beforeDepartment ? item.beforeDepartment.name : ''}}</span>
+                                                     <span style="flex: 20">{{item.beforePosition ? item.beforePosition.name : ''}}</span>
+                                                     <span style="flex: 20">{{item.afterDepartment ? item.afterDepartment.name : ''}}</span>
+                                                     <span style="flex: 20">{{item.afterPosition ? item.afterPosition.name : ''}}</span>
+                                                 </div>
+                                                 <div v-if="getTransfers().length === 0" class="no-data">暂无记录</div>
+                                            </div>
                                         </div>
-                                        <div class="small-box">
-                                            <div>奖惩记录</div>
-                                            <div class="box-detail">客户通报表扬</div>
+                                        <div class="small-box table-box">
+                                            <div class="box-title">晋升/降级记录</div>
+                                            <div class="box-content">
+                                                 <div class="mini-table-header">
+                                                     <span style="flex: 3">日期</span>
+                                                     <span style="flex: 3">前职位</span>
+                                                     <span style="flex: 3">后职位</span>
+                                                     <span style="flex: 2">类型</span>
+                                                 </div>
+                                                 <div class="mini-table-row" v-for="item in getPromotions()" :key="item.id">
+                                                     <span style="flex: 3">{{formatDate(item.removeDate)}}</span>
+                                                     <span style="flex: 3">{{item.beforePosition ? item.beforePosition.name : ''}}</span>
+                                                     <span style="flex: 3">{{item.afterPosition ? item.afterPosition.name : ''}}</span>
+                                                     <span style="flex: 2">{{item.operateType == 0 ? '晋升' : '降级'}}</span>
+                                                 </div>
+                                                 <div v-if="getPromotions().length === 0" class="no-data">暂无记录</div>
+                                            </div>
+                                        </div>
+                                        <div class="small-box table-box">
+                                            <div class="box-title">评优</div>
+                                            <div class="box-content">
+                                                 <div class="mini-table-header">
+                                                     <span style="flex: 3">日期</span>
+                                                     <span style="flex: 7">说明</span>
+                                                 </div>
+                                                 <div class="mini-table-row" v-for="item in (rosterData.appraisals || [])" :key="item.id">
+                                                     <span style="flex: 3">{{formatDate(item.appDate)}}</span>
+                                                     <span style="flex: 7">{{item.appResult}}</span>
+                                                 </div>
+                                                 <div v-if="(!rosterData.appraisals || rosterData.appraisals.length === 0)" class="no-data">暂无记录</div>
+                                            </div>
+                                        </div>
+                                        <div class="small-box table-box">
+                                            <div class="box-title">奖惩记录</div>
+                                            <div class="box-content">
+                                                 <div class="mini-table-header">
+                                                     <span style="flex: 3">日期</span>
+                                                     <span style="flex: 2">类型</span>
+                                                     <span style="flex: 5">说明</span>
+                                                 </div>
+                                                 <div class="mini-table-row" v-for="item in (rosterData.ecs || [])" :key="item.id">
+                                                     <span style="flex: 3">{{formatDate(item.ecDate)}}</span>
+                                                     <span style="flex: 2">{{item.ecType == 0 ? '奖励' : '惩罚'}}</span>
+                                                     <span style="flex: 5">{{item.ecReason}}</span>
+                                                 </div>
+                                                 <div v-if="(!rosterData.ecs || rosterData.ecs.length === 0)" class="no-data">暂无记录</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -372,17 +430,37 @@
                         </div>
                     </div>
 
-                    <!-- Footer: Internal Training -->
+                            <!-- Footer: Internal Training -->
                     <div class="roster-footer">
-                        <div class="footer-left">
+                        <div class="footer-left" style="background-color: #00008B;">
                             <div class="footer-icon">内部<br>培训</div>
                         </div>
                         <div class="footer-content">
-                            <div class="training-header">2025年度参加培训场次: 0/0</div>
-                            <div class="training-timeline">
-                                <div class="t-cell" v-for="i in 10" :key="i">
-                                    <div class="t-date">&nbsp;</div>
-                                    <div class="t-status">&nbsp;</div>
+                            <div class="training-header" style="color: #00008B;">{{new Date().getFullYear()}}年度参加培训场次: {{rosterData.trains ? rosterData.trains.length : 0}}</div>
+                            <div class="training-timeline" style="border-color: #00008B;">
+                                <!-- Header Column -->
+                                <div class="t-cell header-cell" style="border-right-color: #00008B; display: flex; flex-direction: column; height: 60px; width: 80px; flex: none; background: #e6e6fa;">
+                                    <div class="t-top" style="flex: 1; border-bottom: 1px solid #00008B; color: #00008B; font-size: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; line-height: 1.2; font-weight: bold;">
+                                        <span>培训日期</span>
+                                        <span>课程名称</span>
+                                    </div>
+                                    <div class="t-bottom" style="height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #00008B; font-weight: bold;">
+                                        课程得分
+                                    </div>
+                                </div>
+
+                                <div class="t-cell" v-for="(t, index) in (rosterData.trains || [])" :key="index" style="border-right-color: #00008B; display: flex; flex-direction: column; height: 60px;">
+                                    <div class="t-top" style="flex: 1; border-bottom: 1px solid #00008B; color: #00008B; font-size: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; line-height: 1.2;">
+                                        <span>{{formatDate(t.traindate).substring(5, 10)}}</span>
+                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">{{t.traincontent}}</span>
+                                    </div>
+                                    <div class="t-bottom" style="height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #00008B; font-weight: bold;">
+                                        {{t.score}}分
+                                    </div>
+                                </div>
+                                <div class="t-cell" v-for="i in (10 - (rosterData.trains ? rosterData.trains.length : 0))" :key="'empty'+i" style="border-right-color: #00008B; display: flex; flex-direction: column; height: 60px;">
+                                    <div class="t-top" style="flex: 1; border-bottom: 1px solid #00008B;">&nbsp;</div>
+                                    <div class="t-bottom" style="height: 20px;">&nbsp;</div>
                                 </div>
                             </div>
                         </div>
@@ -484,6 +562,14 @@
                 if (!this.rosterData || !this.rosterData.execPerformance) return '';
                 const val = this.rosterData.execPerformance['quarter' + q];
                 return val != null ? val : '';
+            },
+            getTransfers() {
+                if (!this.rosterData || !this.rosterData.removes) return [];
+                return this.rosterData.removes.filter(item => item.operateType === 2);
+            },
+            getPromotions() {
+                if (!this.rosterData || !this.rosterData.removes) return [];
+                return this.rosterData.removes.filter(item => item.operateType === 0 || item.operateType === 1);
             }
         }
     }
@@ -542,9 +628,9 @@
 .header-num {
     width: 60px;
     height: 60px;
-    border: 3px solid #409EFF;
+    border: 3px solid #00008B; /* Dark Blue */
     border-radius: 10px;
-    color: #409EFF;
+    color: #00008B; /* Dark Blue */
     font-size: 36px;
     font-weight: bold;
     display: flex;
@@ -555,8 +641,7 @@
     background: white;
 }
 .header-title-box {
-    background: #409EFF; /* Gradient in image? Flat blue is safer */
-    background: linear-gradient(to right, #6faefc, #409eff);
+    background: #00008B; /* Dark Blue */
     color: white;
     height: 50px;
     border-radius: 0 25px 25px 0;
@@ -589,8 +674,7 @@
 .timeline-icon {
     width: 50px;
     height: 50px;
-    background: #2c3e50; /* Dark blue/Navy */
-    background: #409EFF;
+    background: #00008B; /* Dark Blue */
     border-radius: 50%;
     color: white;
     font-size: 12px;
@@ -631,7 +715,7 @@
     flex: 100%;
 }
 .info-item .label {
-    color: #409EFF;
+    color: #00008B; /* Dark Blue */
     font-weight: bold;
     margin-right: 5px;
 }
@@ -641,7 +725,7 @@
 
 /* Specific Boxes */
 .education-box, .attendance-box-bg, .contract-box-bg, .interview-box-bg {
-    background: #ecf5ff;
+    background: #e6e6fa; /* Light lavender/blueish for contrast */
     padding: 10px;
     border-radius: 8px;
 }
@@ -660,14 +744,14 @@
 }
 .small-box {
     width: 48%;
-    background: #d9ecff;
+    background: #e6e6fa;
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
     text-align: center;
     font-size: 12px;
     font-weight: bold;
-    color: #409EFF;
+    color: #00008B; /* Dark Blue */
     min-height: 60px;
     display: flex;
     flex-direction: column;
@@ -686,7 +770,7 @@
     margin-top: 10px;
 }
 .contract-row {
-    background: #d9ecff;
+    background: #e6e6fa;
     border-radius: 5px;
     padding: 5px;
     margin-bottom: 5px;
@@ -696,7 +780,7 @@
 }
 .c-num {
     font-weight: bold;
-    color: #409EFF;
+    color: #00008B; /* Dark Blue */
     margin-right: 5px;
     font-size: 14px;
 }
@@ -714,24 +798,24 @@
 .perf-grid {
     display: flex;
     flex-wrap: nowrap; /* Force single line */
-    border: 1px solid #409EFF;
+    border: 1px solid #00008B; /* Dark Blue */
     border-radius: 5px;
     overflow: hidden;
 }
 .perf-cell {
     flex: 1; /* Equal width */
-    border-right: 1px solid #409EFF;
+    border-right: 1px solid #00008B; /* Dark Blue */
     text-align: center;
 }
 .perf-cell:last-child {
     border-right: none;
 }
 .perf-month {
-    background: #ecf5ff;
-    color: #409EFF;
+    background: #e6e6fa;
+    color: #00008B; /* Dark Blue */
     font-size: 12px;
     padding: 2px 0;
-    border-bottom: 1px solid #409EFF;
+    border-bottom: 1px solid #00008B; /* Dark Blue */
     white-space: nowrap;
 }
 .perf-score {
@@ -755,7 +839,7 @@
 
 /* Interview */
 .interview-block {
-    background: #d9ecff;
+    background: #e6e6fa;
     border-radius: 5px;
     padding: 8px;
 }
@@ -777,15 +861,15 @@
 }
 .interview-empty-box.large {
     height: 150px;
-    background: #ecf5ff;
+    background: #e6e6fa;
 }
 
 /* Footer */
 .roster-footer {
     display: flex;
     margin-top: 20px;
-    border: 1px solid #409EFF; /* Or just timeline */
-    background: #ecf5ff;
+    border: 1px solid #00008B; /* Dark Blue */
+    background: #e6e6fa;
     border-radius: 10px;
     padding: 10px;
 }
@@ -794,7 +878,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #2c3e50; /* Dark circle */
+    background: #00008B; /* Dark Blue */
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -812,20 +896,66 @@
 }
 .training-header {
     font-weight: bold;
-    color: #409EFF;
+    color: #00008B; /* Dark Blue */
     margin-bottom: 5px;
 }
 .training-timeline {
     display: flex;
-    border: 1px solid #409EFF;
+    border: 1px solid #00008B; /* Dark Blue */
     background: white;
 }
 .t-cell {
     flex: 1;
-    border-right: 1px solid #409EFF;
+    border-right: 1px solid #00008B; /* Dark Blue */
     height: 40px;
 }
 .t-cell:last-child {
     border-right: none;
+}
+
+/* Table Box Styles */
+.table-box {
+    display: block !important; /* Override flex */
+    padding: 0 !important;
+    overflow: hidden;
+}
+.box-title {
+    background: #00008B;
+    color: white;
+    padding: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+.box-content {
+    padding: 5px;
+    background: white;
+}
+.mini-table-header {
+    display: flex;
+    font-size: 10px; /* Smaller font for headers */
+    font-weight: bold;
+    color: #00008B;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 2px;
+    margin-bottom: 2px;
+}
+.mini-table-row {
+    display: flex;
+    font-size: 10px; /* Very small font for content */
+    margin-bottom: 2px;
+    color: #333;
+    line-height: 1.2;
+}
+.mini-table-row span, .mini-table-header span {
+    padding-right: 2px;
+    word-break: break-all;
+    white-space: normal;
+}
+.no-data {
+    text-align: center;
+    color: #999;
+    font-size: 10px;
+    margin-top: 10px;
 }
 </style>

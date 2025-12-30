@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javaboy.vhr.mapper.EmployeeAppraisalMapper" >
+  <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.EmployeeAppraisal" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="eid" property="eid" jdbcType="VARCHAR" />
+    <result column="appDate" property="appDate" jdbcType="DATE" />
+    <result column="appResult" property="appResult" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="AllEmployeeAppraisalInfo" type="org.javaboy.vhr.model.EmployeeAppraisal" extends="BaseResultMap">
+    <association property="employee" javaType="org.javaboy.vhr.model.Employee">
+      <id column="empId" property="id"/>
+      <result column="ename" property="name"/>
+      <result column="eidCard" property="idCard"/>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, eid, appDate, appResult, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from employeeappraisal
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from employeeappraisal
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.javaboy.vhr.model.EmployeeAppraisal" >
+    insert into employeeappraisal (id, eid, appDate, 
+      appResult, remark)
+    values (#{id,jdbcType=INTEGER}, #{eid,jdbcType=VARCHAR}, #{appDate,jdbcType=DATE}, 
+      #{appResult,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.javaboy.vhr.model.EmployeeAppraisal" >
+    insert into employeeappraisal
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="eid != null" >
+        eid,
+      </if>
+      <if test="appDate != null" >
+        appDate,
+      </if>
+      <if test="appResult != null" >
+        appResult,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="eid != null" >
+        #{eid,jdbcType=VARCHAR},
+      </if>
+      <if test="appDate != null" >
+        #{appDate,jdbcType=DATE},
+      </if>
+      <if test="appResult != null" >
+        #{appResult,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.EmployeeAppraisal" >
+    update employeeappraisal
+    <set >
+      <if test="eid != null" >
+        eid = #{eid,jdbcType=VARCHAR},
+      </if>
+      <if test="appDate != null" >
+        appDate = #{appDate,jdbcType=DATE},
+      </if>
+      <if test="appResult != null" >
+        appResult = #{appResult,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.javaboy.vhr.model.EmployeeAppraisal" >
+    update employeeappraisal
+    set eid = #{eid,jdbcType=VARCHAR},
+      appDate = #{appDate,jdbcType=DATE},
+      appResult = #{appResult,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getEmployeeAppraisalsByPage" resultMap="AllEmployeeAppraisalInfo">
+    select ea.*,e.id as empId,e.name as ename,e.idCard as eidCard from employeeappraisal ea,employee e where ea.eid=e.idCard
+    <if test="eid !=null and eid!=''">
+      and ea.eid = #{eid}
+    </if>
+    <if test="beginDateScope !=null">
+      and ea.appDate between #{beginDateScope[0]} and #{beginDateScope[1]}
+    </if>
+  </select>
+</mapper>
