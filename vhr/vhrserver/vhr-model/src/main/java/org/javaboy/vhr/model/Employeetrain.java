@@ -5,13 +5,33 @@ import java.util.Date;
 public class Employeetrain {
     private Integer id;
 
-    private Integer eid;
+    private String eid;
 
     private Date traindate;
 
     private String traincontent;
 
     private String remark;
+
+    private Integer score;
+
+    private Employee employee;
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 
     public Integer getId() {
         return id;
@@ -21,11 +41,11 @@ public class Employeetrain {
         this.id = id;
     }
 
-    public Integer getEid() {
+    public String getEid() {
         return eid;
     }
 
-    public void setEid(Integer eid) {
+    public void setEid(String eid) {
         this.eid = eid;
     }
 

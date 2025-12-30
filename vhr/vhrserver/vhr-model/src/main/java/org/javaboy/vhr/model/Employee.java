@@ -35,6 +35,8 @@ public class Employee implements Serializable {
 
     private Integer posId;
 
+    private String engageForm;
+
     private String tiptopDegree;
 
     private String specialty;
@@ -43,6 +45,14 @@ public class Employee implements Serializable {
 
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
     private Date beginDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+    private Date beginContract;
+
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "Asia/Shanghai")
+    private Date endContract;
+
+    private Double contractTerm;
 
     private String workState;
 
@@ -239,6 +249,14 @@ public class Employee implements Serializable {
         this.posId = posId;
     }
 
+    public String getEngageForm() {
+        return engageForm;
+    }
+
+    public void setEngageForm(String engageForm) {
+        this.engageForm = engageForm;
+    }
+
     public String getTiptopDegree() {
         return tiptopDegree;
     }
@@ -277,6 +295,30 @@ public class Employee implements Serializable {
 
     public void setWorkState(String workState) {
         this.workState = workState;
+    }
+
+    public Date getBeginContract() {
+        return beginContract;
+    }
+
+    public void setBeginContract(Date beginContract) {
+        this.beginContract = beginContract;
+    }
+
+    public Date getEndContract() {
+        return endContract;
+    }
+
+    public void setEndContract(Date endContract) {
+        this.endContract = endContract;
+    }
+
+    public Double getContractTerm() {
+        return contractTerm;
+    }
+
+    public void setContractTerm(Double contractTerm) {
+        this.contractTerm = contractTerm;
     }
 
     public Date getConversionTime() {
@@ -520,10 +562,14 @@ public class Employee implements Serializable {
                 ", address='" + address + '\'' +
                 ", departmentId=" + departmentId +
                 ", posId=" + posId +
+                ", engageForm='" + engageForm + '\'' +
                 ", tiptopDegree='" + tiptopDegree + '\'' +
                 ", specialty='" + specialty + '\'' +
                 ", school='" + school + '\'' +
                 ", beginDate=" + beginDate +
+                ", beginContract=" + beginContract +
+                ", endContract=" + endContract +
+                ", contractTerm=" + contractTerm +
                 ", workState='" + workState + '\'' +
                 ", conversionTime=" + conversionTime +
                 ", notWorkDate=" + notWorkDate +

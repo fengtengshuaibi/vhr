@@ -248,7 +248,6 @@
                 <el-table-column v-if="showColumns.gender" prop="gender" label="性别" align="left" width="50"></el-table-column>
                 <el-table-column v-if="showColumns.departmentId" prop="department.name" width="100" align="left" label="所属部门"></el-table-column>
                 <el-table-column v-if="showColumns.posId" prop="position.name" width="100" label="职位"></el-table-column>
-                <el-table-column v-if="showColumns.jobLevelId" prop="jobLevel.name" width="100" label="职称"></el-table-column>
                 <el-table-column v-if="showColumns.age" prop="age" label="年龄" width="60"></el-table-column>
                 <el-table-column v-if="showColumns.birthday" prop="birthday" width="95" align="left" label="出生日期"></el-table-column>
                 <el-table-column v-if="showColumns.nationId" prop="nation.name" width="50" label="民族"></el-table-column>
@@ -323,6 +322,7 @@
                 width="80%">
             <div>
                 <el-form :model="emp" :rules="rules" ref="empForm">
+                    <el-divider content-position="left">基本信息</el-divider>
                     <el-row>
                         <el-col :span="6">
                             <el-form-item label="姓名:" prop="name">
@@ -363,6 +363,7 @@
                             </el-form-item>
                         </el-col>
                     </el-row>
+                    <el-divider content-position="left">户籍/居住信息</el-divider>
                     <el-row>
                         <el-col :span="6">
                             <el-form-item label="民族:" prop="nationId">
@@ -395,24 +396,13 @@
                             </el-form-item>
                         </el-col>
                     </el-row>
+                    <el-divider content-position="left">职位部门信息</el-divider>
                     <el-row>
                         <el-col :span="6">
                             <el-form-item label="职位:" prop="posId">
                                 <el-select v-model="emp.posId" placeholder="职位" size="mini" style="width: 150px;">
                                     <el-option
                                             v-for="item in positions"
-                                            :key="item.id"
-                                            :label="item.name"
-                                            :value="item.id">
-                                    </el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="5">
-                            <el-form-item label="职称:" prop="jobLevelId">
-                                <el-select v-model="emp.jobLevelId" placeholder="职称" size="mini" style="width: 150px;">
-                                    <el-option
-                                            v-for="item in joblevels"
                                             :key="item.id"
                                             :label="item.name"
                                             :value="item.id">
@@ -444,6 +434,7 @@
                             </el-form-item>
                         </el-col>
                     </el-row>
+                    <el-divider content-position="left">学历信息</el-divider>
                     <el-row>
                         <el-col :span="6">
                             <el-form-item label="学历:" prop="tiptopDegree">
@@ -522,10 +513,11 @@
                         </el-col>
                         <el-col :span="6">
                             <el-form-item label="合同期限:" prop="contractTerm">
-                                <el-input size="mini" style="width: 120px" type="number" v-model="emp.contractTerm" placeholder="合同期限(年)"></el-input>
+                                <el-input size="mini" style="width: 120px" type="number" v-model="emp.contractTerm" placeholder="自动计算结束日期"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
+                    <el-divider content-position="left">个人详细信息</el-divider>
                     <el-row>
                         <el-col :span="8">
                             <el-form-item label="身份证号码:" prop="idCard">
@@ -686,7 +678,7 @@
                             </el-form-item>
                         </el-col>
                          <el-col :span="6">
-                            <el-form-item label="离职原因:" prop="resignationReason">
+                            <el-form-item label="离职原因:" prop="resignationReason" v-if="emp.workState === '离职'">
                                 <el-input size="mini" style="width: 120px" v-model="emp.resignationReason" placeholder="离职原因(当前)" maxlength="255"></el-input>
                             </el-form-item>
                         </el-col>
@@ -708,7 +700,7 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
-                            <el-form-item label="离职日期:" prop="notWorkDate">
+                            <el-form-item label="离职日期:" prop="notWorkDate" v-if="emp.workState === '离职'">
                                 <el-date-picker v-model="emp.notWorkDate" size="mini" type="date" value-format="yyyy-MM-dd" style="width: 120px;" placeholder="离职日期"></el-date-picker>
                             </el-form-item>
                         </el-col>
@@ -851,7 +843,6 @@
                     phone: "18565558897",
                     address: "深圳市南山区",
                     departmentId: null,
-                    jobLevelId: 9,
                     posId: 29,
                     engageForm: "劳务合同",
                     tiptopDegree: "本科",
@@ -917,7 +908,6 @@
                     phone: [{required: true, message: '请输入电话号码', trigger: 'blur'}],
                     address: [{required: true, message: '请输入员工地址', trigger: 'blur'}],
                     departmentId: [{required: true, message: '请输入部门名称', trigger: 'blur'}],
-                    jobLevelId: [{required: true, message: '请输入职称', trigger: 'blur'}],
                     posId: [{required: true, message: '请输入职位', trigger: 'blur'}],
                     engageForm: [{required: true, message: '请输入聘用形式', trigger: 'blur'}],
                     tiptopDegree: [{required: true, message: '请输入学历', trigger: 'blur'}],
@@ -944,6 +934,34 @@
                     })
                 },
                 deep: true
+            },
+            'emp.beginContract': function () {
+                this.calculateEndContract();
+            },
+            'emp.contractTerm': function () {
+                this.calculateEndContract();
+            },
+            'emp.beginDate': function (val) {
+                if (val && !this.emp.workAge) {
+                    let start = new Date(val);
+                    let now = new Date();
+                    let diff = now.getTime() - start.getTime();
+                    let years = (diff / (1000 * 60 * 60 * 24 * 365)).toFixed(1);
+                    this.emp.workAge = years;
+                }
+            },
+            'emp.workAge': function (val) {
+                if (val && !this.emp.beginDate) {
+                    let years = parseFloat(val);
+                    if (!isNaN(years)) {
+                        let now = new Date();
+                        let start = new Date(now.getTime() - years * 365 * 24 * 60 * 60 * 1000);
+                        let y = start.getFullYear();
+                        let m = (start.getMonth() + 1).toString().padStart(2, '0');
+                        let d = start.getDate().toString().padStart(2, '0');
+                        this.emp.beginDate = `${y}-${m}-${d}`;
+                    }
+                }
             }
         },
         mounted() {
@@ -1012,6 +1030,7 @@
                     specialty: "",
                     school: "",
                     beginDate: "",
+                    workState: "在职",
                     contractTerm: 2,
                     conversionTime: "",
                     notWorkDate: null,
@@ -1284,6 +1303,25 @@
                         this.total = resp.total;
                     }
                 });
+            },
+            calculateEndContract() {
+                if (this.emp.beginContract && this.emp.contractTerm) {
+                    let parts = this.emp.beginContract.split('-');
+                    if (parts.length === 3) {
+                        let year = parseInt(parts[0]);
+                        let month = parseInt(parts[1]) - 1; 
+                        let day = parseInt(parts[2]);
+                        
+                        let term = parseInt(this.emp.contractTerm);
+                        if (!isNaN(term)) {
+                            let endDate = new Date(year + term, month, day - 1);
+                            let y = endDate.getFullYear();
+                            let m = (endDate.getMonth() + 1).toString().padStart(2, '0');
+                            let d = endDate.getDate().toString().padStart(2, '0');
+                            this.emp.endContract = `${y}-${m}-${d}`;
+                        }
+                    }
+                }
             }
         }
     }

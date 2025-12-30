@@ -3,14 +3,49 @@
 <mapper namespace="org.javaboy.vhr.mapper.EmployeetrainMapper" >
   <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.Employeetrain" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="eid" property="eid" jdbcType="INTEGER" />
+    <result column="eid" property="eid" jdbcType="VARCHAR" />
     <result column="trainDate" property="traindate" jdbcType="DATE" />
     <result column="trainContent" property="traincontent" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="AllEmployeetrainInfo" type="org.javaboy.vhr.model.Employeetrain" extends="BaseResultMap">
+    <association property="employee" javaType="org.javaboy.vhr.model.Employee">
+      <id column="empId" property="id"/>
+      <result column="ename" property="name"/>
+      <result column="eidCard" property="idCard"/>
+    </association>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, eid, trainDate, trainContent, remark
+    id, eid, trainDate, trainContent, remark, score
   </sql>
+  <select id="getEmployeeTrainsByPage" resultMap="AllEmployeetrainInfo">
+    select et.*,e.id as empId,e.name as ename,e.idCard as eidCard from employeetrain et,employee e where et.eid=e.idCard
+    <if test="train.employee !=null and train.employee.name !=null and train.employee.name !=''">
+      and e.name like concat('%',#{train.employee.name},'%')
+    </if>
+    <if test="train.traincontent !=null and train.traincontent !=''">
+      and et.trainContent like concat('%',#{train.traincontent},'%')
+    </if>
+    <if test="beginDateScope !=null">
+      and et.trainDate between #{beginDateScope[0]} and #{beginDateScope[1]}
+    </if>
+    <if test="page !=null and size !=null">
+      limit #{page},#{size}
+    </if>
+  </select>
+  <select id="getTotal" resultType="java.lang.Long">
+    select count(*) from employeetrain et,employee e where et.eid=e.idCard
+    <if test="train.employee !=null and train.employee.name !=null and train.employee.name !=''">
+      and e.name like concat('%',#{train.employee.name},'%')
+    </if>
+    <if test="train.traincontent !=null and train.traincontent !=''">
+      and et.trainContent like concat('%',#{train.traincontent},'%')
+    </if>
+    <if test="beginDateScope !=null">
+      and et.trainDate between #{beginDateScope[0]} and #{beginDateScope[1]}
+    </if>
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -23,9 +58,9 @@
   </delete>
   <insert id="insert" parameterType="org.javaboy.vhr.model.Employeetrain" >
     insert into employeetrain (id, eid, trainDate, 
-      trainContent, remark)
-    values (#{id,jdbcType=INTEGER}, #{eid,jdbcType=INTEGER}, #{traindate,jdbcType=DATE}, 
-      #{traincontent,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+      trainContent, remark, score)
+    values (#{id,jdbcType=INTEGER}, #{eid,jdbcType=VARCHAR}, #{traindate,jdbcType=DATE}, 
+      #{traincontent,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{score,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="org.javaboy.vhr.model.Employeetrain" >
     insert into employeetrain
@@ -45,13 +80,16 @@
       <if test="remark != null" >
         remark,
       </if>
+      <if test="score != null" >
+        score,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
       <if test="eid != null" >
-        #{eid,jdbcType=INTEGER},
+        #{eid,jdbcType=VARCHAR},
       </if>
       <if test="traindate != null" >
         #{traindate,jdbcType=DATE},
@@ -62,13 +100,16 @@
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="score != null" >
+        #{score,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.Employeetrain" >
     update employeetrain
     <set >
       <if test="eid != null" >
-        eid = #{eid,jdbcType=INTEGER},
+        eid = #{eid,jdbcType=VARCHAR},
       </if>
       <if test="traindate != null" >
         trainDate = #{traindate,jdbcType=DATE},
@@ -79,15 +120,19 @@
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="org.javaboy.vhr.model.Employeetrain" >
     update employeetrain
-    set eid = #{eid,jdbcType=INTEGER},
+    set eid = #{eid,jdbcType=VARCHAR},
       trainDate = #{traindate,jdbcType=DATE},
       trainContent = #{traincontent,jdbcType=VARCHAR},
-      remark = #{remark,jdbcType=VARCHAR}
+      remark = #{remark,jdbcType=VARCHAR},
+      score = #{score,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

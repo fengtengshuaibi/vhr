@@ -138,11 +138,15 @@ CREATE TABLE `employee` (
                             `address` varchar(64) DEFAULT NULL COMMENT '联系地址',
                             `departmentId` int(11) DEFAULT NULL COMMENT '所属部门',
                             `posId` int(11) DEFAULT NULL COMMENT '职位ID',
+                            `engageForm` varchar(32) DEFAULT NULL COMMENT '聘用形式',
                             `tiptopDegree` enum('博士','硕士','本科','大专','高中','初中','小学','其他') DEFAULT NULL COMMENT '最高学历',
                             `specialty` varchar(32) DEFAULT NULL COMMENT '所属专业',
                             `school` varchar(32) DEFAULT NULL COMMENT '毕业院校',
                             `beginDate` date DEFAULT NULL COMMENT '入职日期',
-                            `workState` enum('在职','离职') DEFAULT '在职' COMMENT '在职状态',
+                            `beginContract` date DEFAULT NULL COMMENT '合同起始日期',
+                            `endContract` date DEFAULT NULL COMMENT '合同终止日期',
+                            `contractTerm` double DEFAULT NULL COMMENT '合同期限',
+                            `workState` enum('在职','离职') DEFAULT '在职' COMMENT '工作状态',
                             `conversionTime` date DEFAULT NULL COMMENT '转正日期',
                             `notWorkDate` date DEFAULT NULL COMMENT '离职日期',
                             `workAge` double(4,1) DEFAULT NULL COMMENT '工龄',
@@ -299,6 +303,7 @@ CREATE TABLE `employeetrain` (
                                  `eid` char(18) DEFAULT NULL COMMENT '员工编号',
                                  `trainDate` date DEFAULT NULL COMMENT '培训日期',
                                  `trainContent` varchar(255) DEFAULT NULL COMMENT '培训内容',
+                                 `score` int(11) DEFAULT NULL COMMENT '培训成绩',
                                  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
                                  PRIMARY KEY (`id`),
                                  KEY `pid` (`eid`),
@@ -426,7 +431,6 @@ INSERT INTO `menu` (`id`, `url`, `path`, `component`, `name`, `iconCls`, `keepAl
                                                                                                                                 (5, '/', '/home', 'Home', '统计管理', 'fa fa-bar-chart', NULL, 1, 1, 1),
                                                                                                                                 (6, '/', '/home', 'Home', '系统管理', 'fa fa-windows', NULL, 1, 1, 1),
                                                                                                                                 (7, '/employee/basic/**', '/emp/basic', 'EmpBasic', '基本资料', NULL, NULL, 1, 2, 1),
-                                                                                                                                (8, '/employee/advanced/**', '/emp/adv', 'EmpAdv', '高级资料', NULL, NULL, 1, 2, 1),
                                                                                                                                 (9, '/personnel/emp/**', '/per/emp', 'PerEmp', '员工花名册', NULL, NULL, 1, 3, 1),
                                                                                                                                 (10, '/personnel/ec/**', '/per/ec', 'PerEc', '员工奖惩', NULL, NULL, 1, 3, 1),
                                                                                                                                 (11, '/train/**', '/train', 'Home', '培训管理', 'fa fa-graduation-cap', NULL, 1, 1, 1),
@@ -456,7 +460,8 @@ INSERT INTO `menu` (`id`, `url`, `path`, `component`, `name`, `iconCls`, `keepAl
                                                                                                                                 (35, '/train/stats/**', '/train/stats', 'PerTrainStats', '培训统计', NULL, NULL, 1, 11, 1),
                                                                                                                                 (36, '/', '/home', 'Home', '在线学习', 'fa fa-graduation-cap', NULL, 1, 1, 1),
                                                                                                                                 (37, '/emp/train/learn/**', '/emp/train/learn', 'EmpTrainLearn', '课程学习', NULL, NULL, 1, 36, 1),
-                                                                                                                                (38, '/emp/train/find/**', '/emp/train/find', 'EmpTrainFind', '课程查找', NULL, NULL, 1, 36, 1);
+                                                                                                                                (38, '/emp/train/find/**', '/emp/train/find', 'EmpTrainFind', '课程查找', NULL, NULL, 1, 36, 1),
+                                                                                                                                (39, '/personnel/contract/**', '/per/contract', 'PerContract', '合同管理', NULL, NULL, 1, 3, 1);
 /*Table structure for table `menu_role` */
 
 DROP TABLE IF EXISTS `menu_role`;
@@ -481,7 +486,8 @@ INSERT INTO `menu_role` (`mid`, `rid`) VALUES
                                            (34, 1), (34, 6),
                                            (35, 1), (35, 6),
                                            (37, 1), (37, 6),
-                                           (38, 1), (38, 6);
+                                           (38, 1), (38, 6),
+                                           (39, 1), (39, 2), (39, 6);
 /*Table structure for table `msgcontent` */
 
 DROP TABLE IF EXISTS `msgcontent`;
@@ -814,7 +820,7 @@ CREATE TABLE `employee_course` (
                                    `status` varchar(20) DEFAULT 'Learning' COMMENT '学习状态(Learning/Finished)',
                                    `video_progress` int(11) DEFAULT 0 COMMENT '视频观看进度(秒)',
                                    `is_video_finished` tinyint(1) DEFAULT 0 COMMENT '视频是否看完(0:否, 1:是)',
-                                   `study_hours` double(5,1) DEFAULT 0.0 COMMENT '学习时长(小时)',
+                                   `study_hours` double(10,4) DEFAULT 0.0000 COMMENT '学习时长(小时)',
                                    `exam_score` int(11) DEFAULT NULL COMMENT '考试得分',
                                    `exam_attempts` int(11) DEFAULT 0 COMMENT '已考次数',
                                    `is_passed` tinyint(1) DEFAULT 0 COMMENT '是否通过(0:否, 1:是)',

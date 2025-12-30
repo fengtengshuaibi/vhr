@@ -46,7 +46,11 @@ public class OpLogAspect {
         OpLog opLog = new OpLog();
         opLog.setHrid(hr.getId());
         opLog.setAdddate(new Date());
-        opLog.setOperate("执行操作: " + className + "." + methodName + ", 参数: " + args);
+        String operate = "执行操作: " + className + "." + methodName + ", 参数: " + args;
+        if (operate.length() > 255) {
+            operate = operate.substring(0, 255);
+        }
+        opLog.setOperate(operate);
         opLogService.addOpLog(opLog);
     }
 }

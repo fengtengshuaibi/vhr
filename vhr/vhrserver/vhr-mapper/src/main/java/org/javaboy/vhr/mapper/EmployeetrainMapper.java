@@ -1,6 +1,10 @@
 package org.javaboy.vhr.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.javaboy.vhr.model.Employeetrain;
+
+import java.util.Date;
+import java.util.List;
 
 public interface EmployeetrainMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +18,8 @@ public interface EmployeetrainMapper {
     int updateByPrimaryKeySelective(Employeetrain record);
 
     int updateByPrimaryKey(Employeetrain record);
+
+    List<Employeetrain> getEmployeeTrainsByPage(@Param("page") Integer page, @Param("size") Integer size, @Param("train") Employeetrain employeetrain, @Param("beginDateScope") Date[] beginDateScope);
+
+    Long getTotal(@Param("train") Employeetrain employeetrain, @Param("beginDateScope") Date[] beginDateScope);
 }

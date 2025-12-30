@@ -36,4 +36,6 @@ public interface EmployeeMapper {
     Integer updateEmployeeSalaryById(@Param("eid") Integer eid, @Param("sid") Integer sid);
 
     Employee selectByEid(Integer id);
+
+    void updateWorkAge();
 }

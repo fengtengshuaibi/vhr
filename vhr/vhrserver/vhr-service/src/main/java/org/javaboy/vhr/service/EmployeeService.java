@@ -140,4 +140,8 @@ public class EmployeeService {
     public Employee getEmployeeById(String empId) {
         return employeeMapper.getEmployeeById(empId);
     }
+
+    public void updateWorkAge() {
+        employeeMapper.updateWorkAge();
+    }
 }

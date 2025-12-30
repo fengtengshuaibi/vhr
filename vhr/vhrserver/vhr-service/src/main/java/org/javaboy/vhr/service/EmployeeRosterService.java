@@ -27,6 +27,8 @@ public class EmployeeRosterService {
     EmployeePerformanceMapper employeePerformanceMapper;
     @Autowired
     ExecutivePerformanceMapper executivePerformanceMapper;
+    @Autowired
+    EmployeetrainMapper employeetrainMapper;
     // ... other mappers
 
     public Map<String, Object> getEmployeeRosterData(String eid) {
@@ -41,9 +43,11 @@ public class EmployeeRosterService {
         map.put("contract", contract);
         
         // Performance
-        List<EmployeePerformance> perList = employeePerformanceMapper.getEmployeePerformanceByPage(null, null, employee.getName(), 2025, null, null);
+        List<EmployeePerformance> perList = employeePerformanceMapper.getEmployeePerformanceByPage(null, null, employee.getName(), null, null, null);
         EmployeePerformance performance = null;
-        if (perList != null) {
+        if (perList != null && !perList.isEmpty()) {
+            // Find latest year
+            perList.sort((p1, p2) -> p2.getYear().compareTo(p1.getYear()));
             for (EmployeePerformance p : perList) {
                 if (p.getEid().equals(eid)) {
                     performance = p;
@@ -53,9 +57,10 @@ public class EmployeeRosterService {
         }
         map.put("performance", performance);
         
-        List<ExecutivePerformance> execList = executivePerformanceMapper.getExecutivePerformanceByPage(null, null, employee.getName(), 2025, null, null);
+        List<ExecutivePerformance> execList = executivePerformanceMapper.getExecutivePerformanceByPage(null, null, employee.getName(), null, null, null);
         ExecutivePerformance execPerformance = null;
-        if (execList != null) {
+        if (execList != null && !execList.isEmpty()) {
+            execList.sort((p1, p2) -> p2.getYear().compareTo(p1.getYear()));
             for (ExecutivePerformance p : execList) {
                 if (p.getEid().equals(eid)) {
                     execPerformance = p;
@@ -75,9 +80,10 @@ public class EmployeeRosterService {
         
         Contract contract = contractMapper.selectByPrimaryKey(eid);
         // Performance
-        List<EmployeePerformance> perList = employeePerformanceMapper.getEmployeePerformanceByPage(null, null, employee.getName(), 2025, null, null);
+        List<EmployeePerformance> perList = employeePerformanceMapper.getEmployeePerformanceByPage(null, null, employee.getName(), null, null, null);
         EmployeePerformance performance = null;
-        if (perList != null) {
+        if (perList != null && !perList.isEmpty()) {
+            perList.sort((p1, p2) -> p2.getYear().compareTo(p1.getYear()));
             for (EmployeePerformance p : perList) {
                 if (p.getEid().equals(eid)) {
                     performance = p;
@@ -86,9 +92,10 @@ public class EmployeeRosterService {
             }
         }
         
-        List<ExecutivePerformance> execList = executivePerformanceMapper.getExecutivePerformanceByPage(null, null, employee.getName(), 2025, null, null);
+        List<ExecutivePerformance> execList = executivePerformanceMapper.getExecutivePerformanceByPage(null, null, employee.getName(), null, null, null);
         ExecutivePerformance execPerformance = null;
-        if (execList != null) {
+        if (execList != null && !execList.isEmpty()) {
+            execList.sort((p1, p2) -> p2.getYear().compareTo(p1.getYear()));
             for (ExecutivePerformance p : execList) {
                 if (p.getEid().equals(eid)) {
                     execPerformance = p;
@@ -108,7 +115,7 @@ public class EmployeeRosterService {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         // Background
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(new Color(0, 0, 139)); // Dark Blue Background
         g2d.fillRect(0, 0, width, height);
 
         // Font
@@ -120,7 +127,7 @@ public class EmployeeRosterService {
         // Header
         g2d.setColor(Color.WHITE);
         g2d.setFont(titleFont);
-        g2d.setColor(new Color(64, 158, 255));
+        // g2d.setColor(new Color(0, 0, 139)); // No longer dark blue text on dark blue background
         g2d.drawString("员工花名册 - " + employee.getName(), 1200, 50);
 
         // Sections
@@ -286,7 +293,63 @@ public class EmployeeRosterService {
         curY += 20;
         
         curY = drawSubSection(g2d, "内部培训", x, curY, width, labelFont);
-        drawField(g2d, "培训记录", "(空)", x, curY, valueFont);
+        
+        // Fetch training data for current year
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+        String currentYear = yearFormat.format(new Date());
+        
+        // Use EmployeeTrainMapper (need to inject)
+        // Since we are in EmployeeRosterService, we need to autowire EmployeetrainMapper
+        List<Employeetrain> trains = employeetrainMapper.getEmployeeTrainsByPage(null, null, new Employeetrain(), new Date[]{getYearStart(), getYearEnd()});
+        
+        int count = 0;
+        List<Employeetrain> myTrains = new java.util.ArrayList<>();
+        if (trains != null) {
+            for(Employeetrain et : trains) {
+                if(et.getEid().equals(emp.getIdCard())) {
+                    myTrains.add(et);
+                    count++;
+                }
+            }
+        }
+        
+        drawField(g2d, "年份", currentYear, x, curY, valueFont);
+        drawField(g2d, "参加培训总场次", count + "场", x + 200, curY, valueFont);
+        curY += 30;
+        
+        if (myTrains.isEmpty()) {
+             drawField(g2d, "", "暂无培训记录", x, curY, valueFont);
+        } else {
+             SimpleDateFormat mdFormat = new SimpleDateFormat("MM:dd");
+             for (Employeetrain t : myTrains) {
+                 String dateStr = mdFormat.format(t.getTraindate());
+                 String content = t.getTraincontent();
+                 Integer score = t.getScore();
+                 String line = dateStr + " " + content + " (得分:" + (score != null ? score : 0) + ")";
+                 drawField(g2d, "", line, x, curY, valueFont);
+                 curY += 20;
+             }
+        }
+    }
+
+    private Date getYearStart() {
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        c.set(java.util.Calendar.MONTH, 0);
+        c.set(java.util.Calendar.DAY_OF_MONTH, 1);
+        c.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        c.set(java.util.Calendar.MINUTE, 0);
+        c.set(java.util.Calendar.SECOND, 0);
+        return c.getTime();
+    }
+    
+    private Date getYearEnd() {
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        c.set(java.util.Calendar.MONTH, 11);
+        c.set(java.util.Calendar.DAY_OF_MONTH, 31);
+        c.set(java.util.Calendar.HOUR_OF_DAY, 23);
+        c.set(java.util.Calendar.MINUTE, 59);
+        c.set(java.util.Calendar.SECOND, 59);
+        return c.getTime();
     }
 
     private void drawSection3(Graphics2D g2d, String num, String title, int x, int y, int width, Font headerFont, Font labelFont, Font valueFont, Employee emp) {
@@ -310,12 +373,12 @@ public class EmployeeRosterService {
     }
 
     private void drawSectionHeader(Graphics2D g2d, String num, String title, int x, int y, int width, Font font) {
-        // Draw blue rounded rectangle background for header
-        g2d.setColor(new Color(64, 158, 255));
+        // Draw white rounded rectangle background for header (contrast against dark blue bg)
+        g2d.setColor(Color.WHITE); 
         g2d.fillRoundRect(x, y, width, 60, 20, 20);
         
         // Draw Number
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(new Color(0, 0, 139)); // Dark Blue Text
         g2d.setFont(new Font("SimHei", Font.BOLD, 48));
         g2d.drawString(num, x + 20, y + 45);
         
@@ -325,28 +388,21 @@ public class EmployeeRosterService {
     }
 
     private int drawSubSection(Graphics2D g2d, String title, int x, int y, int width, Font font) {
-        // Circle icon
-        g2d.setColor(new Color(64, 158, 255));
+        // Circle icon - White
+        g2d.setColor(Color.WHITE); 
         g2d.fillOval(x, y - 20, 50, 50);
         
-        // Text inside circle (if needed, or just text next to it)
-        // Let's mimic the style: Blue circle with text inside? Or Text next to icon?
-        // User's image style description is limited. I'll do:
-        // Blue Circle with White Text inside for 2 chars?
-        // Or just a Blue Circle marker.
-        
-        // Let's try: Blue Circle with first 2 chars of title
-        g2d.setColor(Color.WHITE);
+        // Text inside circle - Dark Blue
+        g2d.setColor(new Color(0, 0, 139));
         g2d.setFont(new Font("SimHei", Font.BOLD, 14));
         String shortTitle = title.length() > 2 ? title.substring(0, 2) : title;
         g2d.drawString(shortTitle, x + 10, y + 10);
         
-        // Gray background rectangle for the rest of the line?
-        // Let's do a simple light blue bar
+        // Bar - Light Blue/White
         g2d.setColor(new Color(236, 245, 255));
         g2d.fillRect(x + 60, y - 10, width - 60, 30);
         
-        g2d.setColor(new Color(64, 158, 255));
+        g2d.setColor(new Color(0, 0, 139)); // Dark Blue Text
         g2d.setFont(new Font("SimHei", Font.BOLD, 16));
         g2d.drawString(title, x + 70, y + 10);
         
@@ -356,7 +412,7 @@ public class EmployeeRosterService {
 
     private void drawField(Graphics2D g2d, String label, String value, int x, int y, Font font) {
         g2d.setFont(font);
-        g2d.setColor(Color.DARK_GRAY);
+        g2d.setColor(Color.WHITE); // White text on dark background
         if (label != null && !label.isEmpty()) {
             g2d.drawString(label + ": " + (value == null ? "" : value), x, y);
         } else {
