@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javaboy.vhr.mapper.AttendanceLeaveMapper" >
+  <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.AttendanceLeave" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="year" property="year" jdbcType="INTEGER" />
+    <result column="month" property="month" jdbcType="INTEGER" />
+    <result column="late_early_leave_times" property="lateEarlyLeaveTimes" jdbcType="INTEGER" />
+    <result column="missing_card_times" property="missingCardTimes" jdbcType="INTEGER" />
+    <result column="overtime_hours" property="overtimeHours" jdbcType="DOUBLE" />
+    <result column="comp_leave_hours" property="compLeaveHours" jdbcType="DOUBLE" />
+    <result column="personal_leave_days" property="personalLeaveDays" jdbcType="DOUBLE" />
+    <result column="sick_leave_days" property="sickLeaveDays" jdbcType="DOUBLE" />
+    <result column="annual_leave_days" property="annualLeaveDays" jdbcType="DOUBLE" />
+    <result column="marriage_leave_days" property="marriageLeaveDays" jdbcType="DOUBLE" />
+    <result column="prenatal_check_leave_hours" property="prenatalCheckLeaveHours" jdbcType="DOUBLE" />
+    <result column="maternity_leave_days" property="maternityLeaveDays" jdbcType="DOUBLE" />
+    <result column="paternity_leave_days" property="paternityLeaveDays" jdbcType="DOUBLE" />
+    <result column="breastfeeding_leave_hours" property="breastfeedingLeaveHours" jdbcType="DOUBLE" />
+    <result column="childcare_leave_hours" property="childcareLeaveHours" jdbcType="DOUBLE" />
+    <result column="funeral_leave_days" property="funeralLeaveDays" jdbcType="DOUBLE" />
+    <result column="work_injury_leave_days" property="workInjuryLeaveDays" jdbcType="DOUBLE" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, id_card, name, year, month, late_early_leave_times, missing_card_times, overtime_hours, 
+    comp_leave_hours, personal_leave_days, sick_leave_days, annual_leave_days, marriage_leave_days, 
+    prenatal_check_leave_hours, maternity_leave_days, paternity_leave_days, breastfeeding_leave_hours, 
+    childcare_leave_hours, funeral_leave_days, work_injury_leave_days
+  </sql>
+
+  <select id="getAllAttendanceLeaves" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from attendance_leave
+    <where>
+      <if test="keyword != null and keyword != ''">
+        and name like concat('%',#{keyword},'%')
+      </if>
+    </where>
+    order by id desc
+    <if test="page != null and size != null">
+      limit #{page},#{size}
+    </if>
+  </select>
+
+  <select id="getTotal" resultType="java.lang.Long">
+    select count(*) from attendance_leave
+    <where>
+      <if test="keyword != null and keyword != ''">
+        and name like concat('%',#{keyword},'%')
+      </if>
+    </where>
+  </select>
+
+  <insert id="insert" parameterType="org.javaboy.vhr.model.AttendanceLeave" useGeneratedKeys="true" keyProperty="id">
+    insert into attendance_leave (id_card, name, year, month, late_early_leave_times, 
+      missing_card_times, overtime_hours, comp_leave_hours, personal_leave_days, 
+      sick_leave_days, annual_leave_days, marriage_leave_days, prenatal_check_leave_hours, 
+      maternity_leave_days, paternity_leave_days, breastfeeding_leave_hours, 
+      childcare_leave_hours, funeral_leave_days, work_injury_leave_days)
+    values (#{idCard,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{year,jdbcType=INTEGER}, #{month,jdbcType=INTEGER}, 
+      #{lateEarlyLeaveTimes,jdbcType=INTEGER}, #{missingCardTimes,jdbcType=INTEGER}, #{overtimeHours,jdbcType=DOUBLE}, 
+      #{compLeaveHours,jdbcType=DOUBLE}, #{personalLeaveDays,jdbcType=DOUBLE}, #{sickLeaveDays,jdbcType=DOUBLE}, 
+      #{annualLeaveDays,jdbcType=DOUBLE}, #{marriageLeaveDays,jdbcType=DOUBLE}, #{prenatalCheckLeaveHours,jdbcType=DOUBLE}, 
+      #{maternityLeaveDays,jdbcType=DOUBLE}, #{paternityLeaveDays,jdbcType=DOUBLE}, #{breastfeedingLeaveHours,jdbcType=DOUBLE}, 
+      #{childcareLeaveHours,jdbcType=DOUBLE}, #{funeralLeaveDays,jdbcType=DOUBLE}, #{workInjuryLeaveDays,jdbcType=DOUBLE})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.AttendanceLeave" >
+    update attendance_leave
+    <set >
+      <if test="idCard != null" >
+        id_card = #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null" >
+        year = #{year,jdbcType=INTEGER},
+      </if>
+      <if test="month != null" >
+        month = #{month,jdbcType=INTEGER},
+      </if>
+      <if test="lateEarlyLeaveTimes != null" >
+        late_early_leave_times = #{lateEarlyLeaveTimes,jdbcType=INTEGER},
+      </if>
+      <if test="missingCardTimes != null" >
+        missing_card_times = #{missingCardTimes,jdbcType=INTEGER},
+      </if>
+      <if test="overtimeHours != null" >
+        overtime_hours = #{overtimeHours,jdbcType=DOUBLE},
+      </if>
+      <if test="compLeaveHours != null" >
+        comp_leave_hours = #{compLeaveHours,jdbcType=DOUBLE},
+      </if>
+      <if test="personalLeaveDays != null" >
+        personal_leave_days = #{personalLeaveDays,jdbcType=DOUBLE},
+      </if>
+      <if test="sickLeaveDays != null" >
+        sick_leave_days = #{sickLeaveDays,jdbcType=DOUBLE},
+      </if>
+      <if test="annualLeaveDays != null" >
+        annual_leave_days = #{annualLeaveDays,jdbcType=DOUBLE},
+      </if>
+      <if test="marriageLeaveDays != null" >
+        marriage_leave_days = #{marriageLeaveDays,jdbcType=DOUBLE},
+      </if>
+      <if test="prenatalCheckLeaveHours != null" >
+        prenatal_check_leave_hours = #{prenatalCheckLeaveHours,jdbcType=DOUBLE},
+      </if>
+      <if test="maternityLeaveDays != null" >
+        maternity_leave_days = #{maternityLeaveDays,jdbcType=DOUBLE},
+      </if>
+      <if test="paternityLeaveDays != null" >
+        paternity_leave_days = #{paternityLeaveDays,jdbcType=DOUBLE},
+      </if>
+      <if test="breastfeedingLeaveHours != null" >
+        breastfeeding_leave_hours = #{breastfeedingLeaveHours,jdbcType=DOUBLE},
+      </if>
+      <if test="childcareLeaveHours != null" >
+        childcare_leave_hours = #{childcareLeaveHours,jdbcType=DOUBLE},
+      </if>
+      <if test="funeralLeaveDays != null" >
+        funeral_leave_days = #{funeralLeaveDays,jdbcType=DOUBLE},
+      </if>
+      <if test="workInjuryLeaveDays != null" >
+        work_injury_leave_days = #{workInjuryLeaveDays,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from attendance_leave
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into attendance_leave (id_card, name, year, month, late_early_leave_times, 
+      missing_card_times, overtime_hours, comp_leave_hours, personal_leave_days, 
+      sick_leave_days, annual_leave_days, marriage_leave_days, prenatal_check_leave_hours, 
+      maternity_leave_days, paternity_leave_days, breastfeeding_leave_hours, 
+      childcare_leave_hours, funeral_leave_days, work_injury_leave_days)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.idCard,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.year,jdbcType=INTEGER}, #{item.month,jdbcType=INTEGER}, 
+      #{item.lateEarlyLeaveTimes,jdbcType=INTEGER}, #{item.missingCardTimes,jdbcType=INTEGER}, #{item.overtimeHours,jdbcType=DOUBLE}, 
+      #{item.compLeaveHours,jdbcType=DOUBLE}, #{item.personalLeaveDays,jdbcType=DOUBLE}, #{item.sickLeaveDays,jdbcType=DOUBLE}, 
+      #{item.annualLeaveDays,jdbcType=DOUBLE}, #{item.marriageLeaveDays,jdbcType=DOUBLE}, #{item.prenatalCheckLeaveHours,jdbcType=DOUBLE}, 
+      #{item.maternityLeaveDays,jdbcType=DOUBLE}, #{item.paternityLeaveDays,jdbcType=DOUBLE}, #{item.breastfeedingLeaveHours,jdbcType=DOUBLE}, 
+      #{item.childcareLeaveHours,jdbcType=DOUBLE}, #{item.funeralLeaveDays,jdbcType=DOUBLE}, #{item.workInjuryLeaveDays,jdbcType=DOUBLE})
+    </foreach>
+  </insert>
+
+  <select id="getAttendanceLeaveByIdCard" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from attendance_leave
+    where id_card = #{idCard}
+    order by year desc, month desc
+  </select>
+</mapper>

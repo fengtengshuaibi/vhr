@@ -30,7 +30,6 @@
                         width="55">
                 </el-table-column>
                 <el-table-column prop="name" fixed align="left" label="姓名" width="90"></el-table-column>
-                <el-table-column prop="workID" label="工号" align="left" width="85"></el-table-column>
                 <el-table-column prop="gender" label="性别" align="left" width="85"></el-table-column>
                 <el-table-column prop="birthday" width="95" align="left" label="出生日期"></el-table-column>
                 <el-table-column prop="idCard" width="150" align="left" label="身份证号码"></el-table-column>
@@ -122,7 +121,7 @@
                                         <div class="info-item"><span class="label">民族:</span> {{rosterData.employee.nation ? rosterData.employee.nation.name : ''}}</div>
                                     </div>
                                     <div class="info-row">
-                                        <div class="info-item full-width"><span class="label">身份证:</span> {{rosterData.employee.idCard}}</div>
+                                        <div class="info-item full-width"><span class="label">身份证号:</span> {{rosterData.employee.idCard}}</div>
                                     </div>
                                     <div class="info-row">
                                         <div class="info-item"><span class="label">身份证开始日期:</span> {{formatDate(rosterData.employee.idCardStartDate)}}</div>
@@ -130,7 +129,7 @@
                                     </div>
                                     <div class="info-row">
                                         <div class="info-item"><span class="label">政治面貌:</span> {{rosterData.employee.politicsstatus ? rosterData.employee.politicsstatus.name : ''}}</div>
-                                        <div class="info-item"><span class="label">户口类别:</span> (空)</div>
+                                        <div class="info-item"><span class="label">户口类别:</span> {{rosterData.employee.hukouType || ''}}</div>
                                     </div>
                                     <div class="info-row">
                                         <div class="info-item full-width"><span class="label">户口所在地:</span> {{rosterData.employee.nativePlace}}</div>
@@ -145,7 +144,7 @@
                                         <div class="info-item full-width"><span class="label">联系方式:</span> {{rosterData.employee.phone}}</div>
                                     </div>
                                     <div class="info-row">
-                                        <div class="info-item full-width"><span class="label">工作邮箱:</span> (空)</div>
+                                        <div class="info-item full-width"><span class="label">工作邮箱:</span> {{rosterData.employee.email}}</div>
                                     </div>
                                     <div class="info-row">
                                         <div class="info-item"><span class="label">紧急联系人:</span> {{rosterData.employee.emergencyContact}}</div>
@@ -173,8 +172,7 @@
                                         <div class="info-item full-width"><span class="label">专业资格证书:</span> {{rosterData.employee.certificate || '(无)'}}</div>
                                     </div>
                                     <div class="info-row mt-10">
-                                        <div class="info-item full-width"><span class="label">培训经历:</span></div>
-                                        <div class="text-content">{{rosterData.employee.trainingHistory || '(无)'}}</div>
+                                        <div class="info-item full-width"><span class="label">培训经历:</span> {{rosterData.employee.trainingHistory || '(无)'}}</div>
                                     </div>
                                 </div>
                             </div>
@@ -301,7 +299,9 @@
                                     <div class="info-row">
                                         <div class="info-item"><span class="label">用工类型:</span> {{rosterData.contract ? rosterData.contract.employmentType : ''}}</div>
                                         <div class="info-item"><span class="label">合同期限类型:</span> {{rosterData.contract ? rosterData.contract.contractType : ''}}</div>
-                                        <div class="info-item"><span class="label">续签次数:</span> {{rosterData.contract ? rosterData.contract.signCount : ''}}</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-item"><span class="label">签订次数:</span> {{rosterData.contract ? rosterData.contract.signCount : ''}}</div>
                                         <div class="info-item"><span class="label">合同文件扫描件:</span> {{(rosterData.contract && rosterData.contract.attachments) ? '已上传' : '未上传'}}</div>
                                     </div>
                                     <div class="contract-list">
@@ -315,42 +315,46 @@
                                             <div class="c-num">02</div>
                                             <div class="c-detail">二次签订日期: {{rosterData.contract ? formatDate(rosterData.contract.secondSignDate) : ''}}</div>
                                             <div class="c-detail">二次签订期限(年): {{rosterData.contract ? rosterData.contract.secondSignTerm : ''}}</div>
-                                            <div class="c-detail">合同终止日期:</div>
+                                            <div class="c-detail">合同终止日期: {{calculateContractEndDate(rosterData.contract ? rosterData.contract.secondSignDate : null, rosterData.contract ? rosterData.contract.secondSignTerm : null)}}</div>
                                         </div>
                                         <div class="contract-row">
                                             <div class="c-num">03</div>
                                             <div class="c-detail">三次签订日期: {{rosterData.contract ? formatDate(rosterData.contract.thirdSignDate) : ''}}</div>
-                                            <div class="c-detail">三次签订期限(年):</div>
-                                            <div class="c-detail">合同终止日期:</div>
+                                            <div class="c-detail">三次签订期限(年): {{(rosterData.contract && rosterData.contract.thirdSignDate) ? '∞' : ''}}</div>
+                                            <div class="c-detail">合同终止日期: {{(rosterData.contract && rosterData.contract.thirdSignDate) ? '∞' : ''}}</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Attendance -->
                             <div class="timeline-item">
                                 <div class="timeline-left">
                                     <div class="timeline-icon">考勤<br>休假</div>
                                     <div class="timeline-line"></div>
                                 </div>
                                 <div class="timeline-content attendance-box-bg">
+                                    <div style="font-size: 12px; font-weight: bold; color: #00008B; margin-bottom: 5px;">{{new Date().getFullYear()}}年度汇总</div>
                                     <div class="info-row">
-                                        <div class="info-item"><span class="label">迟到/早退:</span> (空)</div>
-                                        <div class="info-item"><span class="label">加班(小时):</span> (空)</div>
-                                        <div class="info-item"><span class="label">年假(天):</span> (空)</div>
-                                        <div class="info-item"><span class="label">病假(天):</span> (空)</div>
+                                        <div class="info-item"><span class="label">迟到/早退:</span> {{getAttendanceSum('lateEarlyLeaveTimes')}}次</div>
+                                        <div class="info-item"><span class="label">缺卡:</span> {{getAttendanceSum('missingCardTimes')}}次</div>
+                                        <div class="info-item"><span class="label">加班:</span> {{getAttendanceSum('overtimeHours')}}h</div>
+                                        <div class="info-item"><span class="label">调休:</span> {{getAttendanceSum('compLeaveHours')}}h</div>
                                     </div>
                                     <div class="info-row">
-                                        <div class="info-item"><span class="label">事假(天):</span> (空)</div>
-                                        <div class="info-item"><span class="label">婚假(天):</span> (空)</div>
-                                        <div class="info-item"><span class="label">产检假(小时):</span> (空)</div>
-                                        <div class="info-item"><span class="label">产假(天):</span> (空)</div>
+                                        <div class="info-item"><span class="label">年假:</span> {{getAttendanceSum('annualLeaveDays')}}天</div>
+                                        <div class="info-item"><span class="label">病假:</span> {{getAttendanceSum('sickLeaveDays')}}天</div>
+                                        <div class="info-item"><span class="label">事假:</span> {{getAttendanceSum('personalLeaveDays')}}天</div>
+                                        <div class="info-item"><span class="label">婚假:</span> {{getAttendanceSum('marriageLeaveDays')}}天</div>
                                     </div>
                                     <div class="info-row">
-                                        <div class="info-item"><span class="label">陪产假(天):</span> (空)</div>
-                                        <div class="info-item"><span class="label">育儿假(小时):</span> (空)</div>
-                                        <div class="info-item"><span class="label">丧假(天):</span> (空)</div>
-                                        <div class="info-item"><span class="label">调休(小时):</span> (空)</div>
+                                        <div class="info-item"><span class="label">产假:</span> {{getAttendanceSum('maternityLeaveDays')}}天</div>
+                                        <div class="info-item"><span class="label">陪产假:</span> {{getAttendanceSum('paternityLeaveDays')}}天</div>
+                                        <div class="info-item"><span class="label">丧假:</span> {{getAttendanceSum('funeralLeaveDays')}}天</div>
+                                        <div class="info-item"><span class="label">工伤假:</span> {{getAttendanceSum('workInjuryLeaveDays')}}天</div>
+                                    </div>
+                                    <div class="info-row">
+                                        <div class="info-item"><span class="label">产检假:</span> {{getAttendanceSum('prenatalCheckLeaveHours')}}h</div>
+                                        <div class="info-item"><span class="label">哺乳假:</span> {{getAttendanceSum('breastfeedingLeaveHours')}}h</div>
+                                        <div class="info-item"><span class="label">育儿假:</span> {{getAttendanceSum('childcareLeaveHours')}}h</div>
                                     </div>
                                 </div>
                             </div>
@@ -358,10 +362,14 @@
                             <!-- Performance -->
                             <div class="timeline-item">
                                 <div class="timeline-left">
-                                    <div class="timeline-icon">绩效<br>管理</div>
+                                    <div class="timeline-icon">绩效<br>考核</div>
                                 </div>
                                 <div class="timeline-content performance-box-bg">
                                     <div class="perf-grid">
+                                        <div class="perf-cell" style="width: 60px; flex: none;">
+                                            <div class="perf-month">所属月</div>
+                                            <div class="perf-score" style="font-weight: bold; color: #00008B;">考核结果</div>
+                                        </div>
                                         <div class="perf-cell" v-for="m in 12" :key="m">
                                             <div class="perf-month">{{m}}月</div>
                                             <div class="perf-score">{{getPerformanceMonth(m)}}</div>
@@ -390,31 +398,57 @@
                                 </div>
                             </div>
 
-                            <!-- Interview Records -->
+                            <!-- Interview Records: Probation -->
                             <div class="timeline-item">
                                 <div class="timeline-left">
-                                    <div class="timeline-icon">面谈<br>记录</div>
+                                    <div class="timeline-icon">试用期<br>访谈</div>
                                     <div class="timeline-line"></div>
                                 </div>
                                 <div class="timeline-content interview-box-bg">
-                                    <div class="interview-block">
-                                        <div class="interview-title">试用期3个月</div>
-                                        <div class="interview-text">
-                                            (暂无记录)
-                                        </div>
-                                    </div>
-                                    <div class="interview-block mt-10">
-                                        <div class="interview-title">转正前(5个月)</div>
-                                        <div class="interview-empty-box"></div>
-                                    </div>
-                                    <div class="interview-block mt-10">
-                                        <div class="interview-title">入职三年</div>
-                                        <div class="interview-empty-box"></div>
-                                    </div>
-                                    <div class="interview-block mt-10">
-                                        <div class="interview-title">入职六/八年</div>
-                                        <div class="interview-empty-box"></div>
-                                    </div>
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                        <thead>
+                                            <tr>
+                                                <th style="border: 1px solid #999; padding: 5px; color: #00008B; width: 100px;">日期</th>
+                                                <th style="border: 1px solid #999; padding: 5px; color: #00008B;">访谈内容</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                             <tr v-for="item in getInterviews([0])" :key="item.id">
+                                                 <td style="border: 1px solid #999; padding: 5px; vertical-align: top;">{{formatDate(item.interviewDate)}}</td>
+                                                 <td style="border: 1px solid #999; padding: 5px; vertical-align: top;">{{item.content}}</td>
+                                             </tr>
+                                             <tr v-if="getInterviews([0]).length === 0">
+                                                 <td colspan="2" style="border: 1px solid #999; padding: 5px; text-align: center;">暂无记录</td>
+                                             </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Interview Records: Contract Renewal -->
+                            <div class="timeline-item">
+                                <div class="timeline-left">
+                                    <div class="timeline-icon">合同<br>续签</div>
+                                    <div class="timeline-line"></div>
+                                </div>
+                                <div class="timeline-content interview-box-bg">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                        <thead>
+                                            <tr>
+                                                <th style="border: 1px solid #999; padding: 5px; color: #00008B; width: 100px;">日期</th>
+                                                <th style="border: 1px solid #999; padding: 5px; color: #00008B;">访谈内容</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                             <tr v-for="item in getInterviews([1])" :key="item.id">
+                                                 <td style="border: 1px solid #999; padding: 5px; vertical-align: top;">{{formatDate(item.interviewDate)}}</td>
+                                                 <td style="border: 1px solid #999; padding: 5px; vertical-align: top;">{{item.content}}</td>
+                                             </tr>
+                                             <tr v-if="getInterviews([1]).length === 0">
+                                                 <td colspan="2" style="border: 1px solid #999; padding: 5px; text-align: center;">暂无记录</td>
+                                             </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
 
@@ -423,8 +457,24 @@
                                 <div class="timeline-left">
                                     <div class="timeline-icon">绩效<br>访谈</div>
                                 </div>
-                                <div class="timeline-content">
-                                    <div class="interview-empty-box large"></div>
+                                <div class="timeline-content interview-box-bg">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                        <thead>
+                                            <tr>
+                                                <th style="border: 1px solid #999; padding: 5px; color: #00008B; width: 100px;">日期</th>
+                                                <th style="border: 1px solid #999; padding: 5px; color: #00008B;">访谈内容</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                             <tr v-for="item in getInterviews([2])" :key="item.id">
+                                                 <td style="border: 1px solid #999; padding: 5px; vertical-align: top;">{{formatDate(item.interviewDate)}}</td>
+                                                 <td style="border: 1px solid #999; padding: 5px; vertical-align: top;">{{item.content}}</td>
+                                             </tr>
+                                             <tr v-if="getInterviews([2]).length === 0">
+                                                 <td colspan="2" style="border: 1px solid #999; padding: 5px; text-align: center;">暂无记录</td>
+                                             </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -570,6 +620,70 @@
             getPromotions() {
                 if (!this.rosterData || !this.rosterData.removes) return [];
                 return this.rosterData.removes.filter(item => item.operateType === 0 || item.operateType === 1);
+            },
+            getInterviews(types) {
+                if (!this.rosterData || !this.rosterData.interviews) return [];
+                return this.rosterData.interviews.filter(item => types.includes(item.type));
+            },
+            parseAttachments(urlStr) {
+                if (!urlStr) return [];
+                try {
+                    if (urlStr.startsWith('[')) {
+                        return JSON.parse(urlStr);
+                    } else {
+                        return [];
+                    }
+                } catch (e) {
+                    return [];
+                }
+            },
+            isImage(url) {
+                if (!url) return false;
+                const ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+                return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext);
+            },
+            downloadFile(url) {
+                window.open(url, '_blank');
+            },
+            calculateContractEndDate(startDate, term) {
+                if (!startDate || !term) return '';
+                let start = new Date(startDate);
+                let year = start.getFullYear();
+                let month = start.getMonth();
+                let day = start.getDate();
+                let termNum = parseFloat(term);
+                if (isNaN(termNum)) return '';
+                
+                // Add years
+                let endYear = year + Math.floor(termNum);
+                let remainingTerm = termNum - Math.floor(termNum);
+                let endMonth = month;
+                
+                // Simple logic: just add years. 
+                // Ideally we should handle months if term is 1.5 etc, but term is usually integer.
+                // Assuming term is integer years for now as per typical contract logic
+                
+                let endDate = new Date(endYear, endMonth, day);
+                // Contract usually ends 1 day before the anniversary
+                endDate.setDate(endDate.getDate() - 1);
+                
+                let y = endDate.getFullYear();
+                let m = (endDate.getMonth() + 1).toString().padStart(2, '0');
+                let d = endDate.getDate().toString().padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            },
+            getAttendanceSum(prop) {
+                if (!this.rosterData || !this.rosterData.attendanceLeaves) return 0;
+                let currentYear = new Date().getFullYear();
+                let sum = 0;
+                this.rosterData.attendanceLeaves.forEach(item => {
+                    if (item.year === currentYear) {
+                        let val = item[prop];
+                        if (val) sum += parseFloat(val);
+                    }
+                });
+                // Format to remove unnecessary decimals
+                return parseFloat(sum.toFixed(2));
             }
         }
     }

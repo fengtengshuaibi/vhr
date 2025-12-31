@@ -39,3 +39,6 @@ vhr:
 contract:
   upload:
     path: D:\projects\vhr\vhr\contract_files\
+interview:
+  upload:
+    path: D:\projects\vhr\vhr\interview_files\

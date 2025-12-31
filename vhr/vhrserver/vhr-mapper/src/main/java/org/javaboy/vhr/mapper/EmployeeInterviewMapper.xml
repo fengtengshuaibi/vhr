@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.javaboy.vhr.mapper.EmployeeInterviewMapper" >
+  <resultMap id="BaseResultMap" type="org.javaboy.vhr.model.EmployeeInterview" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="eid" property="eid" jdbcType="VARCHAR" />
+    <result column="year" property="year" jdbcType="INTEGER" />
+    <result column="interview_date" property="interviewDate" jdbcType="DATE" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="attachment_url" property="attachmentUrl" jdbcType="VARCHAR" />
+    <result column="createDate" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="AllEmployeeInterviewInfo" type="org.javaboy.vhr.model.EmployeeInterview" extends="BaseResultMap">
+    <association property="employee" javaType="org.javaboy.vhr.model.Employee">
+      <id column="eid" property="idCard"/>
+      <result column="name" property="name"/>
+      <result column="workID" property="workID"/>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, eid, year, interview_date, type, content, attachment_url, createDate
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from employee_interview
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from employee_interview
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.javaboy.vhr.model.EmployeeInterview" >
+    insert into employee_interview (id, eid, year, 
+      interview_date, type, content, 
+      attachment_url, createDate)
+    values (#{id,jdbcType=INTEGER}, #{eid,jdbcType=VARCHAR}, #{year,jdbcType=INTEGER}, 
+      #{interviewDate,jdbcType=DATE}, #{type,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{attachmentUrl,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="org.javaboy.vhr.model.EmployeeInterview" >
+    insert into employee_interview
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="eid != null" >
+        eid,
+      </if>
+      <if test="year != null" >
+        year,
+      </if>
+      <if test="interviewDate != null" >
+        interview_date,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="attachmentUrl != null" >
+        attachment_url,
+      </if>
+      <if test="createDate != null" >
+        createDate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="eid != null" >
+        #{eid,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null" >
+        #{year,jdbcType=INTEGER},
+      </if>
+      <if test="interviewDate != null" >
+        #{interviewDate,jdbcType=DATE},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentUrl != null" >
+        #{attachmentUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.javaboy.vhr.model.EmployeeInterview" >
+    update employee_interview
+    <set >
+      <if test="eid != null" >
+        eid = #{eid,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null" >
+        year = #{year,jdbcType=INTEGER},
+      </if>
+      <if test="interviewDate != null" >
+        interview_date = #{interviewDate,jdbcType=DATE},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="attachmentUrl != null" >
+        attachment_url = #{attachmentUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        createDate = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.javaboy.vhr.model.EmployeeInterview" >
+    update employee_interview
+    set eid = #{eid,jdbcType=VARCHAR},
+      year = #{year,jdbcType=INTEGER},
+      interview_date = #{interviewDate,jdbcType=DATE},
+      type = #{type,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR},
+      attachment_url = #{attachmentUrl,jdbcType=VARCHAR},
+      createDate = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getEmployeeInterviewsByPage" resultMap="AllEmployeeInterviewInfo">
+    select ei.*, e.name
+    from employee_interview ei 
+    join employee e on ei.eid = e.idCard 
+    where 1=1
+    <if test="empName != null and empName != ''">
+        and e.name like concat('%', #{empName}, '%')
+    </if>
+    <if test="type != null">
+        and ei.type = #{type}
+    </if>
+    <if test="year != null">
+        and ei.year = #{year}
+    </if>
+    <if test="page != null and size != null">
+      limit #{page},#{size}
+    </if>
+  </select>
+  
+  <select id="getTotal" resultType="java.lang.Long">
+    select count(*) 
+    from employee_interview ei 
+    join employee e on ei.eid = e.idCard 
+    where 1=1
+    <if test="empName != null and empName != ''">
+        and e.name like concat('%', #{empName}, '%')
+    </if>
+    <if test="type != null">
+        and ei.type = #{type}
+    </if>
+    <if test="year != null">
+        and ei.year = #{year}
+    </if>
+  </select>
+  
+  <select id="getEmployeeInterviewsByEid" resultMap="AllEmployeeInterviewInfo">
+    select ei.*, e.name 
+    from employee_interview ei 
+    join employee e on ei.eid = e.idCard 
+    where ei.eid = #{eid}
+  </select>
+
+  <select id="getEmployeeInterviewsByEidAndYear" resultMap="AllEmployeeInterviewInfo">
+    select ei.*, e.name 
+    from employee_interview ei 
+    join employee e on ei.eid = e.idCard 
+    where ei.eid = #{eid} and ei.year = #{year}
+  </select>
+</mapper>

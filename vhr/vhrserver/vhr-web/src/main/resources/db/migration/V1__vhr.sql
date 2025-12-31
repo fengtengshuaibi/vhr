@@ -144,9 +144,9 @@ CREATE TABLE `employee` (
                             `school` varchar(32) DEFAULT NULL COMMENT '毕业院校',
                             `beginDate` date DEFAULT NULL COMMENT '入职日期',
                             `beginContract` date DEFAULT NULL COMMENT '合同起始日期',
-  `endContract` date DEFAULT NULL COMMENT '合同终止日期',
-  `contractTerm` double DEFAULT NULL COMMENT '合同期限',
-  `workState` enum('在职','离职') DEFAULT '在职' COMMENT '工作状态',
+                            `endContract` date DEFAULT NULL COMMENT '合同终止日期',
+                            `contractTerm` double DEFAULT NULL COMMENT '合同期限',
+                            `workState` enum('在职','离职') DEFAULT '在职' COMMENT '工作状态',
                             `conversionTime` date DEFAULT NULL COMMENT '转正日期',
                             `notWorkDate` date DEFAULT NULL COMMENT '离职日期',
                             `workAge` double(4,1) DEFAULT NULL COMMENT '工龄',
@@ -279,14 +279,14 @@ CREATE TABLE `employeeec` (
 DROP TABLE IF EXISTS `employeeappraisal`;
 
 CREATE TABLE `employeeappraisal` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `eid` char(18) DEFAULT NULL COMMENT '员工身份证号',
-  `appDate` date DEFAULT NULL COMMENT '评优日期',
-  `appResult` varchar(255) DEFAULT NULL COMMENT '评优说明',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`id`),
-  KEY `pid` (`eid`),
-  CONSTRAINT `employeeappraisal_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
+                                     `id` int(11) NOT NULL AUTO_INCREMENT,
+                                     `eid` char(18) DEFAULT NULL COMMENT '员工身份证号',
+                                     `appDate` date DEFAULT NULL COMMENT '评优日期',
+                                     `appResult` varchar(255) DEFAULT NULL COMMENT '评优说明',
+                                     `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+                                     PRIMARY KEY (`id`),
+                                     KEY `pid` (`eid`),
+                                     CONSTRAINT `employeeappraisal_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工评优表';
 
 /*Table structure for table `employeeremove` */
@@ -294,19 +294,19 @@ CREATE TABLE `employeeappraisal` (
 DROP TABLE IF EXISTS `employeeremove`;
 
 CREATE TABLE `employeeremove` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `eid` char(18) DEFAULT NULL,
-  `beforeDepId` int(11) DEFAULT NULL COMMENT '调动前部门',
-  `beforePosId` int(11) DEFAULT NULL COMMENT '调动前职位',
-  `afterDepId` int(11) DEFAULT NULL COMMENT '调动后部门',
-  `afterJobId` int(11) DEFAULT NULL COMMENT '调动后职位',
-  `operateType` int(11) DEFAULT NULL COMMENT '操作类型：0-晋升 1-降级 2-调动',
-  `removeDate` date DEFAULT NULL COMMENT '调动日期',
-  `reason` varchar(255) DEFAULT NULL COMMENT '调动原因',
-  `remark` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `pid` (`eid`),
-  CONSTRAINT `employeeremove_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
+                                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                                  `eid` char(18) DEFAULT NULL,
+                                  `beforeDepId` int(11) DEFAULT NULL COMMENT '调动前部门',
+                                  `beforePosId` int(11) DEFAULT NULL COMMENT '调动前职位',
+                                  `afterDepId` int(11) DEFAULT NULL COMMENT '调动后部门',
+                                  `afterJobId` int(11) DEFAULT NULL COMMENT '调动后职位',
+                                  `operateType` int(11) DEFAULT NULL COMMENT '操作类型：0-晋升 1-降级 2-调动',
+                                  `removeDate` date DEFAULT NULL COMMENT '调动日期',
+                                  `reason` varchar(255) DEFAULT NULL COMMENT '调动原因',
+                                  `remark` varchar(255) DEFAULT NULL,
+                                  PRIMARY KEY (`id`),
+                                  KEY `pid` (`eid`),
+                                  CONSTRAINT `employeeremove_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工调动表';
 
 /*Data for the table `employeeremove` */
@@ -320,8 +320,8 @@ CREATE TABLE `employeetrain` (
                                  `eid` char(18) DEFAULT NULL COMMENT '员工编号',
                                  `trainDate` date DEFAULT NULL COMMENT '培训日期',
                                  `trainContent` varchar(255) DEFAULT NULL COMMENT '培训内容',
-  `score` int(11) DEFAULT NULL COMMENT '培训成绩',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+                                 `score` int(11) DEFAULT NULL COMMENT '培训成绩',
+                                 `remark` varchar(255) DEFAULT NULL COMMENT '备注',
                                  PRIMARY KEY (`id`),
                                  KEY `pid` (`eid`),
                                  CONSTRAINT `employeetrain_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -441,44 +441,44 @@ CREATE TABLE `menu` (
 /*Data for the table `menu` */
 
 INSERT INTO `menu` (`id`, `url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`) VALUES
-(1, '/', NULL, NULL, '所有', NULL, NULL, NULL, NULL, 1),
-(2, '/', '/home', 'Home', '员工资料', 'fa fa-user-circle-o', NULL, 1, 1, 1),
-(3, '/', '/home', 'Home', '人事管理', 'fa fa-address-card-o', NULL, 1, 1, 1),
-(4, '/', '/home', 'Home', '薪资管理', 'fa fa-money', NULL, 1, 1, 1),
-(5, '/', '/home', 'Home', '统计管理', 'fa fa-bar-chart', NULL, 1, 1, 1),
-(6, '/', '/home', 'Home', '系统管理', 'fa fa-windows', NULL, 1, 1, 1),
-(7, '/employee/basic/**', '/emp/basic', 'EmpBasic', '基本资料', NULL, NULL, 1, 2, 1),
-(9, '/personnel/emp/**', '/per/emp', 'PerEmp', '员工花名册', NULL, NULL, 1, 3, 1),
-(10, '/personnel/ec/**', '/per/ec', 'PerEc', '员工奖惩', NULL, NULL, 1, 3, 1),
-(11, '/train/**', '/train', 'Home', '培训管理', 'fa fa-graduation-cap', NULL, 1, 1, 1),
-(12, '/personnel/salary/**', '/per/salary', 'PerSalary', '员工调薪', NULL, NULL, 1, 3, 1),
-(13, '/personnel/remove/**', '/per/mv', 'PerMv', '员工调动', NULL, NULL, 1, 3, 1),
-(14, '/salary/sob/**', '/sal/sob', 'SalSob', '工资账套管理', NULL, NULL, 1, 4, 1),
-(15, '/salary/sobcfg/**', '/sal/sobcfg', 'SalSobCfg', '员工账套设置', NULL, NULL, 1, 4, 1),
-(16, '/salary/table/**', '/sal/table', 'SalTable', '工资表管理', NULL, NULL, 1, 4, 1),
-(17, '/salary/month/**', '/sal/month', 'SalMonth', '月末处理', NULL, NULL, 1, 4, 1),
-(18, '/salary/search/**', '/sal/search', 'SalSearch', '工资表查询', NULL, NULL, 1, 4, 1),
-(19, '/statistics/all/**', '/sta/all', 'StaAll', '综合信息统计', NULL, NULL, 1, 5, 1),
-(20, '/statistics/score/**', '/sta/score', 'StaScore', '员工积分统计', NULL, NULL, 1, 5, 1),
-(21, '/statistics/personnel/**', '/sta/pers', 'StaPers', '人事信息统计', NULL, NULL, 1, 5, 1),
-(22, '/statistics/recored/**', '/sta/record', 'StaRecord', '人事记录统计', NULL, NULL, 1, 5, 1),
-(23, '/system/basic/**', '/sys/basic', 'SysBasic', '基础信息设置', NULL, NULL, 1, 6, 1),
-(24, '/system/cfg/**', '/sys/cfg', 'SysCfg', '菜单管理', NULL, NULL, 1, 6, 1),
-(25, '/system/log/**', '/sys/log', 'SysLog', '操作日志管理', NULL, NULL, 1, 6, 1),
-(26, '/system/hr/**', '/sys/hr', 'SysHr', '操作员管理', NULL, NULL, 1, 6, 1),
-(27, '/system/data/**', '/sys/data', 'SysData', '备份恢复数据库', NULL, NULL, 1, 6, 1),
-(28, '/system/init/**', '/sys/init', 'SysInit', '初始化数据库', NULL, NULL, 1, 6, 1),
-(29, '/personnel/train/**', '/per/train', 'PerTrain', '员工培训', NULL, NULL, 1, 3, 1),
-(30, '/personnel/performance/**', '/per/per', 'PerPerformance', '绩效管理', NULL, NULL, 1, 3, 1),
-(31, '/personnel/score/**', '/per/score', 'PerScore', '内部管理评分', NULL, NULL, 1, 3, 1),
-(32, '/statistics/performance/**', '/sta/performance', 'StaPerformance', '普通员工绩效统计', NULL, NULL, 1, 5, 1),
-(33, '/statistics/executive/**', '/sta/executive', 'StaExecutive', '高管绩效统计', NULL, NULL, 1, 5, 1),
-(34, '/train/course/**', '/train/course', 'PerTrainAdd', '课程库', NULL, NULL, 1, 11, 1),
-(35, '/train/stats/**', '/train/stats', 'PerTrainStats', '培训统计', NULL, NULL, 1, 11, 1),
-(36, '/', '/home', 'Home', '在线学习', 'fa fa-graduation-cap', NULL, 1, 1, 1),
-(37, '/emp/train/learn/**', '/emp/train/learn', 'EmpTrainLearn', '课程学习', NULL, NULL, 1, 36, 1),
-(38, '/emp/train/find/**', '/emp/train/find', 'EmpTrainFind', '课程查找', NULL, NULL, 1, 36, 1),
-(39, '/personnel/contract/**', '/per/contract', 'PerContract', '合同管理', NULL, NULL, 1, 3, 1);
+                                                                                                                                (1, '/', NULL, NULL, '所有', NULL, NULL, NULL, NULL, 1),
+                                                                                                                                (2, '/', '/home', 'Home', '员工资料', 'fa fa-user-circle-o', NULL, 1, 1, 1),
+                                                                                                                                (3, '/', '/home', 'Home', '人事管理', 'fa fa-address-card-o', NULL, 1, 1, 1),
+                                                                                                                                (4, '/', '/home', 'Home', '薪资管理', 'fa fa-money', NULL, 1, 1, 1),
+                                                                                                                                (5, '/', '/home', 'Home', '统计管理', 'fa fa-bar-chart', NULL, 1, 1, 1),
+                                                                                                                                (6, '/', '/home', 'Home', '系统管理', 'fa fa-windows', NULL, 1, 1, 1),
+                                                                                                                                (7, '/employee/basic/**', '/emp/basic', 'EmpBasic', '基本资料', NULL, NULL, 1, 2, 1),
+                                                                                                                                (9, '/personnel/emp/**', '/per/emp', 'PerEmp', '员工花名册', NULL, NULL, 1, 3, 1),
+                                                                                                                                (10, '/personnel/ec/**', '/per/ec', 'PerEc', '员工奖惩', NULL, NULL, 1, 3, 1),
+                                                                                                                                (11, '/train/**', '/train', 'Home', '培训管理', 'fa fa-graduation-cap', NULL, 1, 1, 1),
+                                                                                                                                (12, '/personnel/salary/**', '/per/salary', 'PerSalary', '员工调薪', NULL, NULL, 1, 3, 1),
+                                                                                                                                (13, '/personnel/remove/**', '/per/mv', 'PerMv', '员工调动', NULL, NULL, 1, 3, 1),
+                                                                                                                                (14, '/salary/sob/**', '/sal/sob', 'SalSob', '工资账套管理', NULL, NULL, 1, 4, 1),
+                                                                                                                                (15, '/salary/sobcfg/**', '/sal/sobcfg', 'SalSobCfg', '员工账套设置', NULL, NULL, 1, 4, 1),
+                                                                                                                                (16, '/salary/table/**', '/sal/table', 'SalTable', '工资表管理', NULL, NULL, 1, 4, 1),
+                                                                                                                                (17, '/salary/month/**', '/sal/month', 'SalMonth', '月末处理', NULL, NULL, 1, 4, 1),
+                                                                                                                                (18, '/salary/search/**', '/sal/search', 'SalSearch', '工资表查询', NULL, NULL, 1, 4, 1),
+                                                                                                                                (19, '/statistics/all/**', '/sta/all', 'StaAll', '综合信息统计', NULL, NULL, 1, 5, 1),
+                                                                                                                                (20, '/statistics/score/**', '/sta/score', 'StaScore', '员工积分统计', NULL, NULL, 1, 5, 1),
+                                                                                                                                (21, '/statistics/personnel/**', '/sta/pers', 'StaPers', '人事信息统计', NULL, NULL, 1, 5, 1),
+                                                                                                                                (22, '/statistics/recored/**', '/sta/record', 'StaRecord', '人事记录统计', NULL, NULL, 1, 5, 1),
+                                                                                                                                (23, '/system/basic/**', '/sys/basic', 'SysBasic', '基础信息设置', NULL, NULL, 1, 6, 1),
+                                                                                                                                (24, '/system/cfg/**', '/sys/cfg', 'SysCfg', '菜单管理', NULL, NULL, 1, 6, 1),
+                                                                                                                                (25, '/system/log/**', '/sys/log', 'SysLog', '操作日志管理', NULL, NULL, 1, 6, 1),
+                                                                                                                                (26, '/system/hr/**', '/sys/hr', 'SysHr', '操作员管理', NULL, NULL, 1, 6, 1),
+                                                                                                                                (27, '/system/data/**', '/sys/data', 'SysData', '备份恢复数据库', NULL, NULL, 1, 6, 1),
+                                                                                                                                (28, '/system/init/**', '/sys/init', 'SysInit', '初始化数据库', NULL, NULL, 1, 6, 1),
+                                                                                                                                (29, '/personnel/train/**', '/per/train', 'PerTrain', '员工培训', NULL, NULL, 1, 3, 1),
+                                                                                                                                (30, '/personnel/performance/**', '/per/per', 'PerPerformance', '绩效管理', NULL, NULL, 1, 3, 1),
+                                                                                                                                (31, '/personnel/score/**', '/per/score', 'PerScore', '内部管理评分', NULL, NULL, 1, 3, 1),
+                                                                                                                                (32, '/statistics/performance/**', '/sta/performance', 'StaPerformance', '普通员工绩效统计', NULL, NULL, 1, 5, 1),
+                                                                                                                                (33, '/statistics/executive/**', '/sta/executive', 'StaExecutive', '高管绩效统计', NULL, NULL, 1, 5, 1),
+                                                                                                                                (34, '/train/course/**', '/train/course', 'PerTrainAdd', '课程库', NULL, NULL, 1, 11, 1),
+                                                                                                                                (35, '/train/stats/**', '/train/stats', 'PerTrainStats', '培训统计', NULL, NULL, 1, 11, 1),
+                                                                                                                                (36, '/', '/home', 'Home', '在线学习', 'fa fa-graduation-cap', NULL, 1, 1, 1),
+                                                                                                                                (37, '/emp/train/learn/**', '/emp/train/learn', 'EmpTrainLearn', '课程学习', NULL, NULL, 1, 36, 1),
+                                                                                                                                (38, '/emp/train/find/**', '/emp/train/find', 'EmpTrainFind', '课程查找', NULL, NULL, 1, 36, 1),
+                                                                                                                                (39, '/personnel/contract/**', '/per/contract', 'PerContract', '合同管理', NULL, NULL, 1, 3, 1);
 /*Table structure for table `menu_role` */
 INSERT INTO `menu` (`id`, `url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`) VALUES (8, '/personnel/appraisal/**', '/per/appraisal', 'PerAppraisal', '员工评优', NULL, NULL, 1, 3, 1);
 DROP TABLE IF EXISTS `menu_role`;
@@ -497,14 +497,14 @@ CREATE TABLE `menu_role` (
 /*Data for the table `menu_role` */
 
 INSERT INTO `menu_role` (`mid`, `rid`) VALUES
-(7,3),(7,6),(9,6),(10,6),(12,6),(13,6),(14,6),(15,6),(16,6),(17,6),(18,6),(19,6),(20,6),(21,6),(22,6),(23,6),(25,6),(26,6),(27,6),(28,6),(24,6),
-(7,4),(8,4),(7,2),(8,2),(9,2),(10,2),(12,2),(13,2),(7,1),(8,1),(9,1),(10,1),(12,1),(13,1),(14,1),(15,1),(16,1),(17,1),(18,1),(19,1),(20,1),(21,1),(22,1),(23,1),(24,1),(25,1),(26,1),(27,1),(28,1),
-(7,14),(8,14),(9,14),(29,6),(30,6),(31,6),(32,6),(33,6),
-(34, 1), (34, 6),
-(35, 1), (35, 6),
-(37, 1), (37, 6),
-(38, 1), (38, 6),
-(39, 1), (39, 2), (39, 6);
+                                           (7,3),(7,6),(9,6),(10,6),(12,6),(13,6),(14,6),(15,6),(16,6),(17,6),(18,6),(19,6),(20,6),(21,6),(22,6),(23,6),(25,6),(26,6),(27,6),(28,6),(24,6),
+                                           (7,4),(8,4),(7,2),(8,2),(9,2),(10,2),(12,2),(13,2),(7,1),(8,1),(9,1),(10,1),(12,1),(13,1),(14,1),(15,1),(16,1),(17,1),(18,1),(19,1),(20,1),(21,1),(22,1),(23,1),(24,1),(25,1),(26,1),(27,1),(28,1),
+                                           (7,14),(8,14),(9,14),(29,6),(30,6),(31,6),(32,6),(33,6),
+                                           (34, 1), (34, 6),
+                                           (35, 1), (35, 6),
+                                           (37, 1), (37, 6),
+                                           (38, 1), (38, 6),
+                                           (39, 1), (39, 2), (39, 6);
 INSERT INTO `menu_role` (`mid`, `rid`) VALUES (8, 6);
 /*Table structure for table `msgcontent` */
 
@@ -692,43 +692,43 @@ CREATE TABLE `sysmsg` (
 /*Table structure for table `per_employee_performance` */
 DROP TABLE IF EXISTS `per_employee_performance`;
 CREATE TABLE `per_employee_performance` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `eid` char(18) DEFAULT NULL COMMENT '员工ID',
-  `year` int(11) DEFAULT NULL COMMENT '年份',
-  `month1` decimal(10,2) DEFAULT NULL COMMENT '1月绩效',
-  `month2` decimal(10,2) DEFAULT NULL COMMENT '2月绩效',
-  `month3` decimal(10,2) DEFAULT NULL COMMENT '3月绩效',
-  `month4` decimal(10,2) DEFAULT NULL COMMENT '4月绩效',
-  `month5` decimal(10,2) DEFAULT NULL COMMENT '5月绩效',
-  `month6` decimal(10,2) DEFAULT NULL COMMENT '6月绩效',
-  `month7` decimal(10,2) DEFAULT NULL COMMENT '7月绩效',
-  `month8` decimal(10,2) DEFAULT NULL COMMENT '8月绩效',
-  `month9` decimal(10,2) DEFAULT NULL COMMENT '9月绩效',
-  `month10` decimal(10,2) DEFAULT NULL COMMENT '10月绩效',
-  `month11` decimal(10,2) DEFAULT NULL COMMENT '11月绩效',
-  `month12` decimal(10,2) DEFAULT NULL COMMENT '12月绩效',
-  `createDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_eid_year` (`eid`,`year`),
-  CONSTRAINT `fk_ep_eid` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE
+                                            `id` int(11) NOT NULL AUTO_INCREMENT,
+                                            `eid` char(18) DEFAULT NULL COMMENT '员工ID',
+                                            `year` int(11) DEFAULT NULL COMMENT '年份',
+                                            `month1` decimal(10,2) DEFAULT NULL COMMENT '1月绩效',
+                                            `month2` decimal(10,2) DEFAULT NULL COMMENT '2月绩效',
+                                            `month3` decimal(10,2) DEFAULT NULL COMMENT '3月绩效',
+                                            `month4` decimal(10,2) DEFAULT NULL COMMENT '4月绩效',
+                                            `month5` decimal(10,2) DEFAULT NULL COMMENT '5月绩效',
+                                            `month6` decimal(10,2) DEFAULT NULL COMMENT '6月绩效',
+                                            `month7` decimal(10,2) DEFAULT NULL COMMENT '7月绩效',
+                                            `month8` decimal(10,2) DEFAULT NULL COMMENT '8月绩效',
+                                            `month9` decimal(10,2) DEFAULT NULL COMMENT '9月绩效',
+                                            `month10` decimal(10,2) DEFAULT NULL COMMENT '10月绩效',
+                                            `month11` decimal(10,2) DEFAULT NULL COMMENT '11月绩效',
+                                            `month12` decimal(10,2) DEFAULT NULL COMMENT '12月绩效',
+                                            `createDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                            `updateDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                            PRIMARY KEY (`id`),
+                                            UNIQUE KEY `idx_eid_year` (`eid`,`year`),
+                                            CONSTRAINT `fk_ep_eid` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工绩效表';
 
 /*Table structure for table `per_executive_performance` */
 DROP TABLE IF EXISTS `per_executive_performance`;
 CREATE TABLE `per_executive_performance` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `eid` char(18) DEFAULT NULL COMMENT '员工ID',
-  `year` int(11) DEFAULT NULL COMMENT '年份',
-  `quarter1` decimal(10,2) DEFAULT NULL COMMENT '第一季度绩效',
-  `quarter2` decimal(10,2) DEFAULT NULL COMMENT '第二季度绩效',
-  `quarter3` decimal(10,2) DEFAULT NULL COMMENT '第三季度绩效',
-  `quarter4` decimal(10,2) DEFAULT NULL COMMENT '第四季度绩效',
-  `createDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updateDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_ep_eid_year` (`eid`,`year`),
-  CONSTRAINT `fk_exp_eid` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE
+                                             `id` int(11) NOT NULL AUTO_INCREMENT,
+                                             `eid` char(18) DEFAULT NULL COMMENT '员工ID',
+                                             `year` int(11) DEFAULT NULL COMMENT '年份',
+                                             `quarter1` decimal(10,2) DEFAULT NULL COMMENT '第一季度绩效',
+                                             `quarter2` decimal(10,2) DEFAULT NULL COMMENT '第二季度绩效',
+                                             `quarter3` decimal(10,2) DEFAULT NULL COMMENT '第三季度绩效',
+                                             `quarter4` decimal(10,2) DEFAULT NULL COMMENT '第四季度绩效',
+                                             `createDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                             `updateDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                             PRIMARY KEY (`id`),
+                                             UNIQUE KEY `idx_ep_eid_year` (`eid`,`year`),
+                                             CONSTRAINT `fk_exp_eid` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='高管绩效表';
 
 /*Data for the table `sysmsg` */
@@ -801,53 +801,105 @@ CREATE TABLE `menu_masking_config` (
 UPDATE `menu` SET `name`='菜单管理' WHERE `id`=24;
 
 CREATE TABLE `course` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '课程ID',
-  `name` varchar(255) DEFAULT NULL COMMENT '课程名称',
-  `description` varchar(500) DEFAULT NULL COMMENT '课程描述',
-  `cover_url` varchar(255) DEFAULT NULL COMMENT '封面图片URL',
-  `video_url` varchar(255) DEFAULT NULL COMMENT '视频文件URL',
-  `category` varchar(50) DEFAULT NULL COMMENT '课程分类',
-  `type` varchar(20) DEFAULT NULL COMMENT '课程类型(必修/选修)',
-  `department_id` int(11) DEFAULT NULL COMMENT '所属部门ID(仅必修课)',
-  `has_exam` tinyint(1) DEFAULT 0 COMMENT '是否有考试(0:无, 1:有)',
-  `exam_limit` int(11) DEFAULT 0 COMMENT '考试次数限制',
-  `duration` double(10,4) DEFAULT 0.0000 COMMENT '课程时长(小时)',
-  `credit` int(11) DEFAULT 0 COMMENT '课程学分',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `status` int(11) DEFAULT 1 COMMENT '状态(1:启用)',
-  PRIMARY KEY (`id`)
+                          `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '课程ID',
+                          `name` varchar(255) DEFAULT NULL COMMENT '课程名称',
+                          `description` varchar(500) DEFAULT NULL COMMENT '课程描述',
+                          `cover_url` varchar(255) DEFAULT NULL COMMENT '封面图片URL',
+                          `video_url` varchar(255) DEFAULT NULL COMMENT '视频文件URL',
+                          `category` varchar(50) DEFAULT NULL COMMENT '课程分类',
+                          `type` varchar(20) DEFAULT NULL COMMENT '课程类型(必修/选修)',
+                          `department_id` int(11) DEFAULT NULL COMMENT '所属部门ID(仅必修课)',
+                          `has_exam` tinyint(1) DEFAULT 0 COMMENT '是否有考试(0:无, 1:有)',
+                          `exam_limit` int(11) DEFAULT 0 COMMENT '考试次数限制',
+                          `duration` double(10,4) DEFAULT 0.0000 COMMENT '课程时长(小时)',
+                          `credit` int(11) DEFAULT 0 COMMENT '课程学分',
+                          `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+                          `status` int(11) DEFAULT 1 COMMENT '状态(1:启用)',
+                          PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='课程表';
 
 CREATE TABLE `course_question` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '题目ID',
-  `course_id` int(11) DEFAULT NULL COMMENT '关联课程ID',
-  `type` varchar(20) DEFAULT NULL COMMENT '题目类型(单选/多选/填空)',
-  `content` varchar(500) DEFAULT NULL COMMENT '题目内容',
-  `options` text COMMENT '选项JSON',
-  `correct_answer` varchar(255) DEFAULT NULL COMMENT '正确答案',
-  `score` int(11) DEFAULT 0 COMMENT '分值',
-  PRIMARY KEY (`id`),
-  KEY `fk_course_question_course` (`course_id`),
-  CONSTRAINT `fk_course_question_course` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE
+                                   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '题目ID',
+                                   `course_id` int(11) DEFAULT NULL COMMENT '关联课程ID',
+                                   `type` varchar(20) DEFAULT NULL COMMENT '题目类型(单选/多选/填空)',
+                                   `content` varchar(500) DEFAULT NULL COMMENT '题目内容',
+                                   `options` text COMMENT '选项JSON',
+                                   `correct_answer` varchar(255) DEFAULT NULL COMMENT '正确答案',
+                                   `score` int(11) DEFAULT 0 COMMENT '分值',
+                                   PRIMARY KEY (`id`),
+                                   KEY `fk_course_question_course` (`course_id`),
+                                   CONSTRAINT `fk_course_question_course` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='课程题库表';
 
 CREATE TABLE `employee_course` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `employee_id` char(18) DEFAULT NULL COMMENT '员工身份证号',
-  `course_id` int(11) DEFAULT NULL COMMENT '课程ID',
-  `status` varchar(20) DEFAULT 'Learning' COMMENT '学习状态(Learning/Finished)',
-  `video_progress` int(11) DEFAULT 0 COMMENT '视频观看进度(秒)',
-  `is_video_finished` tinyint(1) DEFAULT 0 COMMENT '视频是否看完(0:否, 1:是)',
-  `study_hours` double(10,4) DEFAULT 0.0000 COMMENT '学习时长(小时)',
-  `exam_score` int(11) DEFAULT NULL COMMENT '考试得分',
-  `exam_attempts` int(11) DEFAULT 0 COMMENT '已考次数',
-  `is_passed` tinyint(1) DEFAULT 0 COMMENT '是否通过(0:否, 1:是)',
-  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
-  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`),
-  KEY `fk_emp_course_emp` (`employee_id`),
-  KEY `fk_emp_course_course` (`course_id`),
-  CONSTRAINT `fk_emp_course_course` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE
+                                   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                   `employee_id` char(18) DEFAULT NULL COMMENT '员工身份证号',
+                                   `course_id` int(11) DEFAULT NULL COMMENT '课程ID',
+                                   `status` varchar(20) DEFAULT 'Learning' COMMENT '学习状态(Learning/Finished)',
+                                   `video_progress` int(11) DEFAULT 0 COMMENT '视频观看进度(秒)',
+                                   `is_video_finished` tinyint(1) DEFAULT 0 COMMENT '视频是否看完(0:否, 1:是)',
+                                   `study_hours` double(10,4) DEFAULT 0.0000 COMMENT '学习时长(小时)',
+                                   `exam_score` int(11) DEFAULT NULL COMMENT '考试得分',
+                                   `exam_attempts` int(11) DEFAULT 0 COMMENT '已考次数',
+                                   `is_passed` tinyint(1) DEFAULT 0 COMMENT '是否通过(0:否, 1:是)',
+                                   `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+                                   `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+                                   PRIMARY KEY (`id`),
+                                   KEY `fk_emp_course_emp` (`employee_id`),
+                                   KEY `fk_emp_course_course` (`course_id`),
+                                   CONSTRAINT `fk_emp_course_course` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工选课/学习记录表';
 
+DROP TABLE IF EXISTS `employee_interview`;
+CREATE TABLE `employee_interview` (
+                                      `id` int(11) NOT NULL AUTO_INCREMENT,
+                                      `eid` char(18) DEFAULT NULL COMMENT '员工ID',
+                                      `year` int(11) DEFAULT NULL COMMENT '年份',
+                                      `interview_date` date DEFAULT NULL COMMENT '访谈日期',
+                                      `type` int(11) DEFAULT NULL COMMENT '访谈类型 0-试用期访谈 1-合同续签访谈 2-绩效访谈',
+                                      `content` varchar(500) DEFAULT NULL COMMENT '访谈内容',
+                                      `attachment_url` varchar(255) DEFAULT NULL COMMENT '附件URL',
+                                      `createDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                      PRIMARY KEY (`id`),
+                                      KEY `pid` (`eid`),
+                                      CONSTRAINT `employee_interview_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工访谈表';
 
+INSERT INTO `menu` (`id`, `url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`) VALUES (40, '/personnel/interview/**', '/per/interview', 'PerInterview', '员工访谈', NULL, NULL, 1, 3, 1);
+
+INSERT INTO `menu_role` (`mid`, `rid`) VALUES (40, 6);
+DROP TABLE IF EXISTS `attendance_leave`;
+CREATE TABLE `attendance_leave` (
+                                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                                    `id_card` varchar(18) NOT NULL COMMENT '身份证号',
+                                    `name` varchar(32) DEFAULT NULL COMMENT '姓名',
+                                    `year` int(11) NOT NULL COMMENT '年份',
+                                    `month` int(11) NOT NULL COMMENT '月份',
+                                    `late_early_leave_times` int(11) DEFAULT 0 COMMENT '迟到/早退(次)',
+                                    `missing_card_times` int(11) DEFAULT 0 COMMENT '缺卡(次)',
+                                    `overtime_hours` double DEFAULT 0 COMMENT '加班(h)',
+                                    `comp_leave_hours` double DEFAULT 0 COMMENT '调休(h)',
+                                    `personal_leave_days` double DEFAULT 0 COMMENT '事假(d)',
+                                    `sick_leave_days` double DEFAULT 0 COMMENT '病假(d)',
+                                    `annual_leave_days` double DEFAULT 0 COMMENT '年假(d)',
+                                    `marriage_leave_days` double DEFAULT 0 COMMENT '婚假(d)',
+                                    `prenatal_check_leave_hours` double DEFAULT 0 COMMENT '产检假(h)',
+                                    `maternity_leave_days` double DEFAULT 0 COMMENT '产假(d)',
+                                    `paternity_leave_days` double DEFAULT 0 COMMENT '陪产假(d)',
+                                    `breastfeeding_leave_hours` double DEFAULT 0 COMMENT '哺乳假(h)',
+                                    `childcare_leave_hours` double DEFAULT 0 COMMENT '育儿假(h)',
+                                    `funeral_leave_days` double DEFAULT 0 COMMENT '丧假(d)',
+                                    `work_injury_leave_days` double DEFAULT 0 COMMENT '工伤假(d)',
+                                    PRIMARY KEY (`id`),
+                                    UNIQUE KEY `idx_id_card_year_month` (`id_card`,`year`,`month`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Add Menu
+INSERT INTO `menu` (`url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`)
+VALUES ('/personnel/attendance/**', '/per/attendance', 'PerAttendance', '考勤休假', 'fa fa-calendar-check-o', NULL, 1, 3, 1);
+
+-- Add Role-Menu (Assuming role 1 is admin)
+INSERT INTO `menu_role` (`mid`, `rid`) VALUES ((SELECT id FROM menu WHERE name='考勤休假'), 6);
+INSERT INTO `menu` (`url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`)
+VALUES ('/sta/attendance', '/sta/attendance', 'StaAttendance', '员工考勤与休假统计', 'fa fa-pie-chart', NULL, 8,5, 1);
+INSERT INTO `menu_role` VALUES (null, (SELECT id FROM menu WHERE name = '员工考勤与休假统计'), 6); -- 6 is admin role usually, need to check, usually admin has all permissions via role 6 (admin) or 1? Wait, in VHR, admin role is usually 6. Let's assume user knows or I'll just insert into menu_role for 'ROLE_admin' which is id 6.

@@ -57,7 +57,6 @@ public class POIUtils {
         for (int i = 0; i < 50; i++) {
             sheet.setColumnWidth(i, 15 * 256);
         }
-        
         //6. 创建标题行
         HSSFRow r0 = sheet.createRow(0);
         String[] headers = {
@@ -506,5 +505,222 @@ public class POIUtils {
         resultMap.put("list", list);
         resultMap.put("errors", errors);
         return resultMap;
+    }
+
+    public static ResponseEntity<byte[]> attendance2Excel(List<AttendanceLeave> list) {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        workbook.createInformationProperties();
+        DocumentSummaryInformation docInfo = workbook.getDocumentSummaryInformation();
+        docInfo.setCategory("考勤休假信息");
+        docInfo.setManager("javaboy");
+        docInfo.setCompany("www.javaboy.org");
+        SummaryInformation summInfo = workbook.getSummaryInformation();
+        summInfo.setTitle("考勤休假信息表");
+        summInfo.setAuthor("javaboy");
+        summInfo.setComments("本文档由 javaboy 提供");
+        HSSFCellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        HSSFSheet sheet = workbook.createSheet("考勤休假信息表");
+        for (int i = 0; i < 20; i++) {
+            sheet.setColumnWidth(i, 15 * 256);
+        }
+        
+        HSSFRow r0 = sheet.createRow(0);
+        String[] headers = {
+            "姓名", "身份证号", "年份", "月份", 
+            "迟到/早退(次)", "缺卡(次)", "加班(h)", "调休(h)", 
+            "事假(d)", "病假(d)", "年假(d)", "婚假(d)", 
+            "产检假(h)", "产假(d)", "陪产假(d)", "哺乳假(h)", 
+            "育儿假(h)", "丧假(d)", "工伤假(d)"
+        };
+        
+        for (int i = 0; i < headers.length; i++) {
+            HSSFCell cell = r0.createCell(i);
+            cell.setCellStyle(headerStyle);
+            cell.setCellValue(headers[i]);
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            AttendanceLeave al = list.get(i);
+            HSSFRow row = sheet.createRow(i + 1);
+            row.createCell(0).setCellValue(al.getName());
+            row.createCell(1).setCellValue(al.getIdCard());
+            row.createCell(2).setCellValue(al.getYear());
+            row.createCell(3).setCellValue(al.getMonth());
+            if(al.getLateEarlyLeaveTimes() != null) row.createCell(4).setCellValue(al.getLateEarlyLeaveTimes());
+            if(al.getMissingCardTimes() != null) row.createCell(5).setCellValue(al.getMissingCardTimes());
+            if(al.getOvertimeHours() != null) row.createCell(6).setCellValue(al.getOvertimeHours());
+            if(al.getCompLeaveHours() != null) row.createCell(7).setCellValue(al.getCompLeaveHours());
+            if(al.getPersonalLeaveDays() != null) row.createCell(8).setCellValue(al.getPersonalLeaveDays());
+            if(al.getSickLeaveDays() != null) row.createCell(9).setCellValue(al.getSickLeaveDays());
+            if(al.getAnnualLeaveDays() != null) row.createCell(10).setCellValue(al.getAnnualLeaveDays());
+            if(al.getMarriageLeaveDays() != null) row.createCell(11).setCellValue(al.getMarriageLeaveDays());
+            if(al.getPrenatalCheckLeaveHours() != null) row.createCell(12).setCellValue(al.getPrenatalCheckLeaveHours());
+            if(al.getMaternityLeaveDays() != null) row.createCell(13).setCellValue(al.getMaternityLeaveDays());
+            if(al.getPaternityLeaveDays() != null) row.createCell(14).setCellValue(al.getPaternityLeaveDays());
+            if(al.getBreastfeedingLeaveHours() != null) row.createCell(15).setCellValue(al.getBreastfeedingLeaveHours());
+            if(al.getChildcareLeaveHours() != null) row.createCell(16).setCellValue(al.getChildcareLeaveHours());
+            if(al.getFuneralLeaveDays() != null) row.createCell(17).setCellValue(al.getFuneralLeaveDays());
+            if(al.getWorkInjuryLeaveDays() != null) row.createCell(18).setCellValue(al.getWorkInjuryLeaveDays());
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        HttpHeaders headers2 = new HttpHeaders();
+        try {
+            headers2.setContentDispositionFormData("attachment", new String("考勤休假表.xls".getBytes("UTF-8"), "ISO-8859-1"));
+            headers2.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            workbook.write(baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<byte[]>(baos.toByteArray(), headers2, HttpStatus.CREATED);
+    }
+
+    public static ResponseEntity<byte[]> attendanceImportTemplate() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("考勤休假导入模板");
+        HSSFRow r0 = sheet.createRow(0);
+        String[] headers = {
+            "姓名", "身份证号", "年份", "月份", 
+            "迟到/早退(次)", "缺卡(次)", "加班(h)", "调休(h)", 
+            "事假(d)", "病假(d)", "年假(d)", "婚假(d)", 
+            "产检假(h)", "产假(d)", "陪产假(d)", "哺乳假(h)", 
+            "育儿假(h)", "丧假(d)", "工伤假(d)"
+        };
+        HSSFCellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.YELLOW.index);
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        
+        // Add comments/tips
+        HSSFPatriarch drawing = sheet.createDrawingPatriarch();
+        
+        for (int i = 0; i < headers.length; i++) {
+            HSSFCell cell = r0.createCell(i);
+            cell.setCellStyle(headerStyle);
+            cell.setCellValue(headers[i]);
+            sheet.setColumnWidth(i, 15 * 256);
+            
+            HSSFComment comment = drawing.createCellComment(new HSSFClientAnchor(0, 0, 0, 0, (short) 3, 3, (short) 5, 6));
+            String tip = "";
+            switch (i) {
+                case 0: tip = "必填，文本，最大长度10"; break;
+                case 1: tip = "必填，文本，最大长度18，用于匹配员工"; break;
+                case 2: tip = "必填，数字，4位年份"; break;
+                case 3: tip = "必填，数字，1-12"; break;
+                default: tip = "非必填，数字，精确到小数点后1位"; break;
+            }
+            comment.setString(new HSSFRichTextString(tip));
+            cell.setCellComment(comment);
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        HttpHeaders headers2 = new HttpHeaders();
+        try {
+            headers2.setContentDispositionFormData("attachment", new String("考勤休假导入模板.xls".getBytes("UTF-8"), "ISO-8859-1"));
+            headers2.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            workbook.write(baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<byte[]>(baos.toByteArray(), headers2, HttpStatus.CREATED);
+    }
+
+    public static Map<String, Object> excel2Attendance(MultipartFile file) {
+        Map<String, Object> resultMap = new HashMap<>();
+        List<AttendanceLeave> list = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+        
+        AttendanceLeave al = null;
+        try {
+            Workbook workbook = WorkbookFactory.create(file.getInputStream());
+            int numberOfSheets = workbook.getNumberOfSheets();
+            for (int i = 0; i < numberOfSheets; i++) {
+                Sheet sheet = workbook.getSheetAt(i);
+                int physicalNumberOfRows = sheet.getPhysicalNumberOfRows();
+                for (int j = 0; j < physicalNumberOfRows; j++) {
+                    if (j == 0) continue; //跳过标题行
+                    Row row = sheet.getRow(j);
+                    if (row == null) continue;
+                    
+                    int physicalNumberOfCells = row.getPhysicalNumberOfCells();
+                    al = new AttendanceLeave();
+                    boolean hasError = false;
+                    StringBuilder errorMsg = new StringBuilder("第 " + (j + 1) + " 行: ");
+                    
+                    // Assuming columns are in order
+                    // 0: Name, 1: ID Card, 2: Year, 3: Month, ...
+                    
+                    for (int k = 0; k < physicalNumberOfCells; k++) {
+                        Cell cell = row.getCell(k);
+                        if (cell == null) continue;
+                        
+                        try {
+                            switch (k) {
+                                case 0: 
+                                    if(cell.getCellType() == CellType.STRING) al.setName(cell.getStringCellValue()); 
+                                    break;
+                                case 1: 
+                                    if(cell.getCellType() == CellType.STRING) {
+                                        if (cell.getStringCellValue().length() > 18) throw new IllegalArgumentException("身份证超长");
+                                        al.setIdCard(cell.getStringCellValue());
+                                    }
+                                    break;
+                                case 2: 
+                                    if(cell.getCellType() == CellType.NUMERIC) al.setYear((int)cell.getNumericCellValue());
+                                    else if(cell.getCellType() == CellType.STRING) al.setYear(Integer.parseInt(cell.getStringCellValue()));
+                                    break;
+                                case 3: 
+                                    if(cell.getCellType() == CellType.NUMERIC) al.setMonth((int)cell.getNumericCellValue());
+                                    else if(cell.getCellType() == CellType.STRING) al.setMonth(Integer.parseInt(cell.getStringCellValue()));
+                                    break;
+                                case 4: al.setLateEarlyLeaveTimes((int)getNumericValue(cell)); break;
+                                case 5: al.setMissingCardTimes((int)getNumericValue(cell)); break;
+                                case 6: al.setOvertimeHours(getNumericValue(cell)); break;
+                                case 7: al.setCompLeaveHours(getNumericValue(cell)); break;
+                                case 8: al.setPersonalLeaveDays(getNumericValue(cell)); break;
+                                case 9: al.setSickLeaveDays(getNumericValue(cell)); break;
+                                case 10: al.setAnnualLeaveDays(getNumericValue(cell)); break;
+                                case 11: al.setMarriageLeaveDays(getNumericValue(cell)); break;
+                                case 12: al.setPrenatalCheckLeaveHours(getNumericValue(cell)); break;
+                                case 13: al.setMaternityLeaveDays(getNumericValue(cell)); break;
+                                case 14: al.setPaternityLeaveDays(getNumericValue(cell)); break;
+                                case 15: al.setBreastfeedingLeaveHours(getNumericValue(cell)); break;
+                                case 16: al.setChildcareLeaveHours(getNumericValue(cell)); break;
+                                case 17: al.setFuneralLeaveDays(getNumericValue(cell)); break;
+                                case 18: al.setWorkInjuryLeaveDays(getNumericValue(cell)); break;
+                            }
+                        } catch (Exception e) {
+                            hasError = true;
+                            errorMsg.append("列").append(k + 1).append("错误: ").append(e.getMessage()).append("; ");
+                        }
+                    }
+                    if (hasError) {
+                        errors.add(errorMsg.toString());
+                    } else if (al.getIdCard() == null || al.getIdCard().isEmpty()) {
+                        errors.add("第 " + (j + 1) + " 行: 身份证号为空");
+                    } else {
+                        list.add(al);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            errors.add("文件读取失败");
+        }
+        resultMap.put("list", list);
+        resultMap.put("errors", errors);
+        return resultMap;
+    }
+
+    private static double getNumericValue(Cell cell) {
+        if (cell.getCellType() == CellType.NUMERIC) {
+            return cell.getNumericCellValue();
+        } else if (cell.getCellType() == CellType.STRING) {
+            String val = cell.getStringCellValue();
+            if (val == null || val.trim().isEmpty()) return 0;
+            return Double.parseDouble(val);
+        }
+        return 0;
     }
 }

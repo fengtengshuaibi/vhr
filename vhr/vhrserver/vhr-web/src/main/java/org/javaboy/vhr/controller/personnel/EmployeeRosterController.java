@@ -34,15 +34,4 @@ public class EmployeeRosterController {
     public Map<String, Object> getEmployeeRosterData(@PathVariable String eid) {
         return employeeRosterService.getEmployeeRosterData(eid);
     }
-
-    @GetMapping("/roster/{eid}")
-    public ResponseEntity<byte[]> getEmployeeRosterImage(@PathVariable String eid) {
-        byte[] imageBytes = employeeRosterService.generateRosterImage(eid);
-        if (imageBytes == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-    }
 }

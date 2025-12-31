@@ -57,6 +57,8 @@ public class Employee implements Serializable {
     private String workState;
 
     private Double workAge;
+
+    private String workID;
     
     // New Fields
     private Integer age;
@@ -343,6 +345,14 @@ public class Employee implements Serializable {
 
     public void setWorkAge(Double workAge) {
         this.workAge = workAge;
+    }
+
+    public String getWorkID() {
+        return workID;
+    }
+
+    public void setWorkID(String workID) {
+        this.workID = workID;
     }
 
     public Integer getAge() {

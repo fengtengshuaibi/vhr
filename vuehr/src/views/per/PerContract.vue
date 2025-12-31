@@ -162,7 +162,7 @@
                         prop="endDate"
                         width="100"
                         align="left"
-                        label="截止日期">
+                        label="最新合同终止日期">
                 </el-table-column>
                 <el-table-column
                         prop="daysToExpiry"
@@ -184,13 +184,14 @@
                             width="300"
                             trigger="click">
                             <div>
-                                <div v-if="!scope.row.attachments">暂无附件</div>
-                                <div v-else v-for="(file, index) in scope.row.attachments.split(',')" :key="index" style="margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;" :title="file">{{ file }}</span>
-                                    <el-button type="text" size="mini" @click="downloadFile(file)">下载</el-button>
+                                <div v-if="!scope.row.attachments || parseAttachments(scope.row.attachments).length === 0">暂无附件</div>
+                                <div v-else v-for="(file, index) in parseAttachments(scope.row.attachments)" :key="index" style="margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;" :title="file.name">{{ file.name }}</span>
+                                    <el-button type="text" size="mini" @click="downloadFile(file.url)">下载</el-button>
                                 </div>
                             </div>
-                            <el-button slot="reference" type="text" size="mini">查看附件</el-button>
+                            <el-button slot="reference" type="text" size="mini" v-if="scope.row.attachments && parseAttachments(scope.row.attachments).length > 0">查看附件</el-button>
+                            <span slot="reference" v-else>无</span>
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -334,16 +335,21 @@
                     </el-row>
                     <el-row>
                         <el-col :span="24">
-                            <el-form-item label="附件:" prop="attachments">
+                            <el-form-item label="附件:">
+                                <div v-for="(file, index) in fileList" :key="index" style="display: flex; align-items: center; margin-bottom: 5px;">
+                                    <span style="margin-right: 10px;">{{file.name}}</span>
+                                    <el-button type="text" icon="el-icon-delete" style="color: #f56c6c;" @click="removeFile(file, index)"></el-button>
+                                </div>
                                 <el-upload
-                                    class="upload-demo"
-                                    action="/personnel/contract/upload"
-                                    :on-success="handleUploadSuccess"
-                                    :on-remove="handleRemove"
-                                    :file-list="fileList"
-                                    multiple>
+                                        class="upload-demo"
+                                        action="/personnel/contract/upload"
+                                        :on-success="handleUploadSuccess"
+                                        :on-error="handleUploadError"
+                                        :before-upload="beforeUploadFile"
+                                        multiple
+                                        :show-file-list="false">
                                     <el-button size="small" type="primary">点击上传</el-button>
-                                    <div slot="tip" class="el-upload__tip">只能上传文件，且不超过500kb</div>
+                                    <div slot="tip" class="el-upload__tip">只能上传文件，且不超过10MB</div>
                                 </el-upload>
                             </el-form-item>
                         </el-col>
@@ -472,6 +478,85 @@
                 this.searchValue.departmentId = data.id;
                 this.popVisible2 = !this.popVisible2
             },
+            handleUploadSuccess(response, file, fileList) {
+                if (response.status === 200) {
+                    let fileObj = JSON.parse(response.obj);
+                    // Use a temporary date or today's date if we don't know the exact folder on server yet
+                    // URL format: .../download/YYYYMMDD/filename
+                    let urlParts = fileObj.url.split('/');
+                    let date = urlParts[urlParts.length - 2];
+                    this.fileList.push({name: fileObj.name, url: fileObj.url, date: date});
+                    this.updateAttachmentUrl();
+                    this.$message.success('上传成功');
+                } else {
+                    this.$message.error(response.msg);
+                }
+            },
+            removeFile(file, index) {
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    // Try to extract date from URL if not present in object
+                    let date = file.date;
+                    if (!date && file.url) {
+                        let urlParts = file.url.split('/');
+                        date = urlParts[urlParts.length - 2];
+                    }
+                    if (date && file.name) {
+                        this.deleteRequest("/personnel/contract/file?fileName=" + file.name + "&date=" + date).then(resp => {
+                            if (resp) {
+                                this.fileList.splice(index, 1);
+                                this.updateAttachmentUrl();
+                            }
+                        });
+                    } else {
+                        // Fallback for legacy data or error
+                        this.fileList.splice(index, 1);
+                        this.updateAttachmentUrl();
+                    }
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            handleRemove(file, fileList) {
+                // Not used
+            },
+            updateAttachmentUrl() {
+                // Store as JSON array string: [{"name":"abc.txt","url":"..."}]
+                this.contract.attachments = JSON.stringify(this.fileList);
+            },
+            handleUploadError(err, file, fileList) {
+                this.$message.error('上传失败');
+            },
+            beforeUploadFile(file) {
+                const isLt10M = file.size / 1024 / 1024 < 10;
+                if (!isLt10M) {
+                    this.$message.error('上传文件大小不能超过 10MB!');
+                }
+                return isLt10M;
+            },
+            downloadFile(url) {
+                window.open(url, '_blank');
+            },
+            parseAttachments(urlStr) {
+                if (!urlStr) return [];
+                try {
+                    // Check if it's a JSON array
+                    if (urlStr.startsWith('[')) {
+                        return JSON.parse(urlStr);
+                    } else {
+                        // Backward compatibility or legacy string handling if needed
+                        return [];
+                    }
+                } catch (e) {
+                    return [];
+                }
+            },
             onError(err, file, fileList) {
                 this.importDataBtnText = '导入数据';
                 this.importDataBtnIcon = 'el-icon-upload2';
@@ -510,14 +595,8 @@
             },
             showEditEmpView(data) {
                 this.title = '编辑合同';
-                this.contract = data;
-                this.fileList = [];
-                if (data.attachments) {
-                    let attachments = data.attachments.split(',');
-                    attachments.forEach(name => {
-                        this.fileList.push({name: name, url: ''});
-                    });
-                }
+                this.contract = Object.assign({}, data);
+                this.fileList = this.parseAttachments(data.attachments);
                 this.dialogVisible = true;
             },
             deleteEmp(data) {

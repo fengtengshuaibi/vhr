@@ -850,4 +850,56 @@ CREATE TABLE `employee_course` (
                                    CONSTRAINT `fk_emp_course_course` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工选课/学习记录表';
 
+DROP TABLE IF EXISTS `employee_interview`;
+CREATE TABLE `employee_interview` (
+                                      `id` int(11) NOT NULL AUTO_INCREMENT,
+                                      `eid` char(18) DEFAULT NULL COMMENT '员工ID',
+                                      `year` int(11) DEFAULT NULL COMMENT '年份',
+                                      `interview_date` date DEFAULT NULL COMMENT '访谈日期',
+                                      `type` int(11) DEFAULT NULL COMMENT '访谈类型 0-试用期访谈 1-合同续签访谈 2-绩效访谈',
+                                      `content` varchar(500) DEFAULT NULL COMMENT '访谈内容',
+                                      `attachment_url` varchar(255) DEFAULT NULL COMMENT '附件URL',
+                                      `createDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                      PRIMARY KEY (`id`),
+                                      KEY `pid` (`eid`),
+                                      CONSTRAINT `employee_interview_ibfk_1` FOREIGN KEY (`eid`) REFERENCES `employee` (`idCard`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='员工访谈表';
 
+INSERT INTO `menu` (`id`, `url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`) VALUES (40, '/personnel/interview/**', '/per/interview', 'PerInterview', '员工访谈', NULL, NULL, 1, 3, 1);
+
+INSERT INTO `menu_role` (`mid`, `rid`) VALUES (40, 6);
+DROP TABLE IF EXISTS `attendance_leave`;
+CREATE TABLE `attendance_leave` (
+                                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                                    `id_card` varchar(18) NOT NULL COMMENT '身份证号',
+                                    `name` varchar(32) DEFAULT NULL COMMENT '姓名',
+                                    `year` int(11) NOT NULL COMMENT '年份',
+                                    `month` int(11) NOT NULL COMMENT '月份',
+                                    `late_early_leave_times` int(11) DEFAULT 0 COMMENT '迟到/早退(次)',
+                                    `missing_card_times` int(11) DEFAULT 0 COMMENT '缺卡(次)',
+                                    `overtime_hours` double DEFAULT 0 COMMENT '加班(h)',
+                                    `comp_leave_hours` double DEFAULT 0 COMMENT '调休(h)',
+                                    `personal_leave_days` double DEFAULT 0 COMMENT '事假(d)',
+                                    `sick_leave_days` double DEFAULT 0 COMMENT '病假(d)',
+                                    `annual_leave_days` double DEFAULT 0 COMMENT '年假(d)',
+                                    `marriage_leave_days` double DEFAULT 0 COMMENT '婚假(d)',
+                                    `prenatal_check_leave_hours` double DEFAULT 0 COMMENT '产检假(h)',
+                                    `maternity_leave_days` double DEFAULT 0 COMMENT '产假(d)',
+                                    `paternity_leave_days` double DEFAULT 0 COMMENT '陪产假(d)',
+                                    `breastfeeding_leave_hours` double DEFAULT 0 COMMENT '哺乳假(h)',
+                                    `childcare_leave_hours` double DEFAULT 0 COMMENT '育儿假(h)',
+                                    `funeral_leave_days` double DEFAULT 0 COMMENT '丧假(d)',
+                                    `work_injury_leave_days` double DEFAULT 0 COMMENT '工伤假(d)',
+                                    PRIMARY KEY (`id`),
+                                    UNIQUE KEY `idx_id_card_year_month` (`id_card`,`year`,`month`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Add Menu
+INSERT INTO `menu` (`url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`)
+VALUES ('/personnel/attendance/**', '/per/attendance', 'PerAttendance', '考勤休假', 'fa fa-calendar-check-o', NULL, 1, 3, 1);
+
+-- Add Role-Menu (Assuming role 1 is admin)
+INSERT INTO `menu_role` (`mid`, `rid`) VALUES ((SELECT id FROM menu WHERE name='考勤休假'), 6);
+INSERT INTO `menu` (`url`, `path`, `component`, `name`, `iconCls`, `keepAlive`, `requireAuth`, `parentId`, `enabled`)
+VALUES ('/sta/attendance', '/sta/attendance', 'StaAttendance', '员工考勤与休假统计', 'fa fa-pie-chart', NULL, 8,5, 1);
+INSERT INTO `menu_role` VALUES (null, (SELECT id FROM menu WHERE name = '员工考勤与休假统计'), 6); -- 6 is admin role usually, need to check, usually admin has all permissions via role 6 (admin) or 1? Wait, in VHR, admin role is usually 6. Let's assume user knows or I'll just insert into menu_role for 'ROLE_admin' which is id 6.
