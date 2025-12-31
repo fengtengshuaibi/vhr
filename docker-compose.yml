@@ -1,0 +1,86 @@
+version: '3'
+services:
+  vhr-mysql:
+    image: mysql:5.7
+    container_name: vhr-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: vhr
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - vhr-net
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  vhr-redis:
+    image: redis:5.0
+    container_name: vhr-redis
+    command: redis-server --requirepass pass1234
+    ports:
+      - "6379:6379"
+    networks:
+      - vhr-net
+
+  vhr-rabbitmq:
+    image: rabbitmq:3.8-management
+    container_name: vhr-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - vhr-net
+
+  vhr-backend:
+    build: 
+      context: ./vhr
+      dockerfile: Dockerfile
+    container_name: vhr-backend
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://vhr-mysql:3306/vhr?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root123
+      SPRING_REDIS_HOST: vhr-redis
+      SPRING_REDIS_PASSWORD: pass1234
+      SPRING_RABBITMQ_HOST: vhr-rabbitmq
+      # Override upload paths for Linux container environment
+      VHR_UPLOAD_PATH: /app/upload/
+      VHR_VIDEO_PATH: /app/video_files/
+      CONTRACT_UPLOAD_PATH: /app/contract_files/
+      INTERVIEW_UPLOAD_PATH: /app/interview_files/
+    depends_on:
+      - vhr-mysql
+      - vhr-redis
+      - vhr-rabbitmq
+    networks:
+      - vhr-net
+    volumes:
+      - ./vhr_data/upload:/app/upload
+      - ./vhr_data/video_files:/app/video_files
+      - ./vhr_data/contract_files:/app/contract_files
+      - ./vhr_data/interview_files:/app/interview_files
+
+  vhr-frontend:
+    build:
+      context: ./vuehr
+      dockerfile: Dockerfile
+    container_name: vhr-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - vhr-backend
+    networks:
+      - vhr-net
+
+networks:
+  vhr-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
